@@ -1,12 +1,13 @@
 // nuxt.config.ts
 import { defineNuxtConfig } from "nuxt/config";
+import Aura from '@primevue/themes/aura';
 
 export default defineNuxtConfig({
   // Optional date or versioning
   // compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
 
-  modules: ["@nuxtjs/strapi", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts"],
+  modules: ["@nuxtjs/strapi", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts", '@primevue/nuxt-module'],
 
   // Basic Strapi config:
   strapi: {
@@ -14,6 +15,13 @@ export default defineNuxtConfig({
     url: process.env.STRAPI_URL || "http://localhost:1337",
     // You can adjust options here if needed
   },
+  primevue: {
+    options: {
+        theme: {
+            preset: Aura
+        }
+    }
+    },
 
   googleFonts: {
     families: {

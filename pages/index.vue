@@ -1,29 +1,33 @@
-<!-- pages/index.vue -->
 <template>
-  <div class="relative overflow-hidden">
-    <!-- Background Circle -->
-    <div
-      class="absolute top-1/2 -right-1/4 transform -translate-y-1/2 flex items-center justify-center -z-10"
-    >
+  <div>
+    <!-- We choose variant="transparent" so it overlays the hero -->
+    <HeaderBar variant="transparent" />
+
+    <div class="relative overflow-hidden">
+      <!-- Big circle background, etc. -->
       <div
-        class="w-[80rem] h-[80rem] bg-blue-500 rounded-full blur-3xl opacity-75"
-      ></div>
+        class="absolute top-1/2 -right-1/4 transform -translate-y-1/2 flex items-center justify-center -z-10"
+      >
+        <div
+          class="w-[80rem] h-[80rem] bg-blue-500 rounded-full blur-3xl opacity-75"
+        ></div>
+      </div>
+
+      <!-- Hero Section (no pt-16, we want overlap) -->
+      <HeroSection
+        :heading="heroContent.title"
+        :subheading="heroContent.subtitle"
+        class="min-h-screen"
+      />
+
+      <!-- Cards Section -->
+      <CardSection :cards="cards" class="min-h-screen" />
     </div>
-
-    <!-- Hero Section -->
-    <HeroSection
-      :heading="heroContent.title"
-      :subheading="heroContent.subtitle"
-      class="min-h-screen"
-    />
-
-    <!-- Cards Section (Inspiration / Curation) -->
-    <CardSection :cards="cards" class="min-h-screen" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import HeaderBar from "~/components/layout/HeaderBar.vue";
 import HeroSection from "~/components/sections/HeroSection.vue";
 import CardSection from "~/components/sections/CardSection.vue";
 
@@ -54,24 +58,6 @@ const cards = ref([
 </script>
 
 <style>
-/* Custom scrollbar styling */
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #3178f2;
-  border-radius: 6px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #1e50a2;
-}
-
 /* Responsive Card Section */
 @media (max-width: 768px) {
   .card-section {

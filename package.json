@@ -1,11 +1,15 @@
 {
   "name": "nuxt-app",
   "dependencies": {
+    "@iconify/vue": "^4.3.0",
     "@nuxtjs/google-fonts": "^3.2.0",
     "@nuxtjs/strapi": "2.0.0",
     "@nuxtjs/tailwindcss": "6.13.1",
+    "@primevue/themes": "^4.2.5",
     "@radix-ui/colors": "^3.0.0",
+    "add": "^2.0.6",
     "nuxt": "^3.15.2",
+    "primevue": "^4.2.5",
     "reka-ui": "^1.0.0-alpha.8",
     "vue": "latest",
     "vue-router": "latest"
@@ -18,5 +22,8 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@primevue/nuxt-module": "^4.2.5"
+  }
 }

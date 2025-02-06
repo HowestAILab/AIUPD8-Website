@@ -1,11 +1,9 @@
-<!-- layouts/default.vue -->
 <template>
-  <div class="relative flex flex-col min-h-screen font-sans overflow-hidden">
-    <!-- Header / Navbar -->
-    <HeaderBar />
+  <div class="relative flex flex-col min-h-screen font-sans">
+    <!-- No Header here. Let each page decide its own Header. -->
 
     <!-- Main content area -->
-    <main class="relative z-10 flex-grow">
+    <main class="flex-grow">
       <NuxtPage />
     </main>
 
@@ -15,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Footer from "~/components/layout/Footer.vue";
 </script>
 

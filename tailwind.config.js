@@ -13,11 +13,21 @@ module.exports = {
     extend: {
       // Example custom colors for branding (remove or modify as needed)
       colors: {
+        primary: {
+          light: "#3291ff",
+          DEFAULT: "#0070f3",
+          dark: "#0366d6",
+        },
+        neutral: {
+          light: "#f1f1f1",
+          DEFAULT: "#d1d1d1",
+          dark: "#1a1a1a",
+        },
         blueBrand: "#3178F2",
         darkBlueBrand: "#1E50A2",
       },
       fontFamily: {
-        sans: ['"Space Grotesk"', 'sans-serif'],
+        sans: ['"Space Grotesk"', "sans-serif"],
       },
       keyframes: {
         slideDown: {
