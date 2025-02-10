@@ -1,6 +1,6 @@
 <template>
   <div
-    class="border bg-white shadow-sm rounded-lg overflow-hidden flex flex-col"
+    class="border bg-light-page-background shadow-sm rounded-lg overflow-hidden flex flex-col"
   >
     <!-- Top image -->
     <div class="relative">
@@ -11,7 +11,7 @@
       />
       <div
         v-if="item.isFavorite"
-        class="absolute top-2 right-2 bg-pink-400 text-white text-xs px-2 py-1 rounded-full"
+        class="absolute top-2 right-2 bg-accent-extra text-dark-page-text-dark text-xs px-2 py-1 rounded-full"
       >
         our favourite
       </div>
@@ -22,7 +22,7 @@
       <h3 class="text-xl font-semibold">{{ item.title }}</h3>
 
       <!-- example “Use/Setup/Pricing” lines or pills -->
-      <div class="flex flex-col gap-1 text-sm text-gray-600">
+      <div class="flex flex-col gap-1 text-sm text-light-page-text-light">
         <div class="flex items-center gap-2">
           <span class="font-bold">Use:</span>
           <span>{{ item.use }}</span>
@@ -39,15 +39,17 @@
     </div>
 
     <!-- Footer / Actions -->
-    <div class="px-4 py-2 bg-gray-100 flex items-center justify-between">
+    <div class="px-4 py-2 bg-highlight flex items-center justify-between">
       <button
         @click="seeMore(item)"
-        class="text-blue-600 hover:text-blue-800 font-medium"
+        class="text-main hover:text-accent font-medium"
       >
         see more
       </button>
 
-      <label class="flex items-center text-sm text-gray-600 space-x-2">
+      <label
+        class="flex items-center text-sm text-light-page-text-light space-x-2"
+      >
         <input type="checkbox" v-model="compareChecked" />
         <span>Add to comparison</span>
       </label>

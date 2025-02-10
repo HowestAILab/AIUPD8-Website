@@ -15,11 +15,11 @@ const props = defineProps({
 
 const customClasses = computed(() => {
   if (props.variant === "primary") {
-    return "bg-blueBrand text-white px-4 py-2 rounded-full hover:bg-darkBlueBrand";
+    return "bg-main text-light-page-text-dark px-4 py-2 rounded-full hover:bg-light-page-accent";
   } else if (props.variant === "secondary") {
-    return "bg-white text-black border border-black px-4 py-2 rounded-full hover:bg-gray-100";
+    return "bg-light-page-text-dark text-light-page-background border border-light-page-text-dark px-4 py-2 rounded-full hover:bg-main";
   } else if (props.variant === "neutral") {
-    return "bg-black text-white border border-black px-4 py-2 rounded-full hover:bg-blueBrand";
+    return "bg-light-page-text-dark text-light-page-background border border-light-page-text-dark px-4 py-2 rounded-full hover:bg-main";
   }
   return "";
 });

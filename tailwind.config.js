@@ -2,6 +2,9 @@
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  colorMode: {
+    preference: "light",
+  },
   content: [
     "./app.vue",
     "./layouts/**/*.vue",
@@ -11,20 +14,21 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // Example custom colors for branding (remove or modify as needed)
       colors: {
-        primary: {
-          light: "#3291ff",
-          DEFAULT: "#0070f3",
-          dark: "#0366d6",
+        main: "#4285F4",
+        highlight: "#C6DAFB",
+        accent: "#FC7509",
+        "accent-extra": "#FFDADB",
+        "light-page": {
+          "text-dark": "#000000",
+          "text-light": "#535353",
+          background: "#FFFFFF",
         },
-        neutral: {
-          light: "#f1f1f1",
-          DEFAULT: "#d1d1d1",
-          dark: "#1a1a1a",
+        "dark-page": {
+          "text-dark": "#FFFFFF",
+          "text-light": "#A9A9A9",
+          background: "#000000",
         },
-        blueBrand: "#3178F2",
-        darkBlueBrand: "#1E50A2",
       },
       fontFamily: {
         sans: ['"Space Grotesk"', "sans-serif"],
@@ -50,5 +54,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-primeui")],
 };

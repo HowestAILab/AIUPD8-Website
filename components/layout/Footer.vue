@@ -1,6 +1,6 @@
 <!-- components/Footer.vue -->
 <template>
-  <footer class="w-full bg-black text-white">
+  <footer class="w-full bg-dark-page-background text-dark-page-text-dark">
     <!-- Outer container -->
     <div class="max-w-7xl mx-auto px-4 py-10">
       <!-- Top row: “Find us here on LinkedIn” + Address | “Or send us a mail” + Button -->
@@ -11,7 +11,9 @@
         <div class="mb-8 md:mb-0">
           <h2 class="text-2xl font-semibold mb-4">Find us here on LinkedIn</h2>
           <!-- Placeholder LinkedIn icon -->
-          <div class="w-10 h-10 bg-white rounded-full mb-4"></div>
+          <div
+            class="w-10 h-10 bg-light-page-background rounded-full mb-4"
+          ></div>
           <p class="leading-relaxed">
             Howest<br />
             Marksesteenweg 58<br />
@@ -30,10 +32,10 @@
       <!-- Bottom row: partner logos -->
       <div class="flex flex-wrap items-center justify-center gap-8">
         <!-- Replace with actual images/logos or keep as placeholders -->
-        <div class="w-24 h-10 bg-white"></div>
-        <div class="w-24 h-10 bg-white"></div>
-        <div class="w-24 h-10 bg-white"></div>
-        <div class="w-24 h-10 bg-white"></div>
+        <div class="w-24 h-10 bg-light-page-background"></div>
+        <div class="w-24 h-10 bg-light-page-background"></div>
+        <div class="w-24 h-10 bg-light-page-background"></div>
+        <div class="w-24 h-10 bg-light-page-background"></div>
       </div>
     </div>
   </footer>

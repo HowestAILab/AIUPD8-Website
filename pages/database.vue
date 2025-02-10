@@ -3,7 +3,7 @@
     <HeaderBar variant="white" />
 
     <!-- main content area -->
-    <div class="pt-16 min-h-screen bg-gray-50 flex">
+    <div class="pt-16 min-h-screen bg-light-page-background flex">
       <!-- Left column: advanced filter -->
       <aside class="hidden md:block w-full md:w-1/4 p-4">
         <AdvancedFilter />

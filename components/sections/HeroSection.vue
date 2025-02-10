@@ -3,8 +3,13 @@
   <section
     class="w-full min-h-screen flex flex-col items-center justify-center text-center p-10"
   >
-    <h1 class="text-8xl font-bold mb-4" v-html="heading"></h1>
-    <p class="max-w-3xl text-l mb-6">{{ subheading }}</p>
+    <h1
+      class="text-8xl font-bold mb-4 text-light-page-text-dark"
+      v-html="heading"
+    ></h1>
+    <p class="max-w-3xl text-l mb-6 text-light-page-text-light">
+      {{ subheading }}
+    </p>
     <NuxtLink to="/database" class="hover:underline">
       <RecurringButton variant="neutral" class="mt-4">
         Go to the database

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!-- We choose variant="transparent" so it overlays the hero -->
     <HeaderBar variant="transparent" />
 
     <div class="relative overflow-hidden">
@@ -9,7 +8,7 @@
         class="absolute top-1/2 -right-1/4 transform -translate-y-1/2 flex items-center justify-center -z-10"
       >
         <div
-          class="w-[80rem] h-[80rem] bg-blue-500 rounded-full blur-3xl opacity-75"
+          class="w-[80rem] h-[80rem] bg-main rounded-full blur-3xl opacity-75"
         ></div>
       </div>
 
@@ -56,12 +55,3 @@ const cards = ref([
   },
 ]);
 </script>
-
-<style>
-/* Responsive Card Section */
-@media (max-width: 768px) {
-  .card-section {
-    flex-direction: column;
-  }
-}
-</style>

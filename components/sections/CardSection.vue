@@ -5,11 +5,20 @@
     <div
       v-for="(item, idx) in cards"
       :key="idx"
-      class="bg-white shadow-xl rounded-lg p-6 w-full sm:w-1/2 lg:w-1/4 flex flex-col items-start h-[50vh]"
+      class="bg-light-page-background shadow-xl rounded-lg p-6 w-full sm:w-1/2 lg:w-1/4 flex flex-col items-start h-[50vh]"
     >
-      <div class="text-6xl mb-4 text-left">{{ item.icon }}</div>
-      <h3 class="text-4xl font-semibold mb-4 text-left">{{ item.title }}</h3>
-      <p class="text-left" v-html="item.description"></p>
+      <div class="text-6xl mb-4 text-left text-light-page-text-dark">
+        {{ item.icon }}
+      </div>
+      <h3
+        class="text-4xl font-semibold mb-4 text-left text-light-page-text-dark"
+      >
+        {{ item.title }}
+      </h3>
+      <p
+        class="text-left text-light-page-text-dark"
+        v-html="item.description"
+      ></p>
     </div>
   </section>
 </template>
