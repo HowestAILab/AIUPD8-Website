@@ -18,7 +18,7 @@
         <div class="mb-6">
           <FilterBar />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
           <DatabaseItem v-for="item in items" :key="item.id" :item="item" />
         </div>
       </main>
@@ -38,7 +38,7 @@ const items = ref([
   {
     id: 1,
     title: "Midjourney",
-    image: "/images/midjourney.jpg", // put your actual image path
+    image: "../images/midjourney.jpeg", // Placeholder
     isFavorite: true,
     use: "no-code",
     setup: "no-code",
@@ -47,7 +47,7 @@ const items = ref([
   {
     id: 2,
     title: "Stable Diffusion",
-    image: "/images/stablediff.jpg", // placeholder
+    image: "/images/stablediff.jpg", // Placeholder
     use: "code",
     setup: "low-code",
     pricing: "free",
@@ -55,7 +55,7 @@ const items = ref([
   {
     id: 3,
     title: "DALL·E",
-    image: "/images/dalle.jpg",
+    image: "/images/dalle.jpg", // Placeholder
     use: "no-code",
     setup: "no-code",
     pricing: "credits",
