@@ -38,11 +38,13 @@ const items = ref([
   {
     id: 1,
     title: "Midjourney",
-    image: "../images/midjourney.jpeg", // Placeholder
+    image: "/images/midjourney.jpg", // Placeholder
     isFavorite: true,
     use: "no-code",
     setup: "no-code",
     pricing: "subscription",
+    license: "commercial", // Assuming "commercial" is a valid license type
+    averageTimeToGenerate: "seconds" // Assuming "seconds" is a valid time unit
   },
   {
     id: 2,
@@ -51,6 +53,8 @@ const items = ref([
     use: "code",
     setup: "low-code",
     pricing: "free",
+    license: "personal", // Assuming "personal" is a valid license type
+    averageTimeToGenerate: "minutes" // Assuming "minutes" is a valid time unit
   },
   {
     id: 3,
@@ -59,6 +63,8 @@ const items = ref([
     use: "no-code",
     setup: "no-code",
     pricing: "credits",
+    license: "commercial", // Assuming "commercial" is a valid license type
+    averageTimeToGenerate: "minutes" // Assuming "minutes" is a valid time unit
   },
 ]);
 </script>

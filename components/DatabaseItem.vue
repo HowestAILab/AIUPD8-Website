@@ -23,7 +23,7 @@
       <div class="flex justify-between">
         <h3 class="text-xl font-semibold">{{ item.title }}</h3>
         <button
-          @click="seeMore(item)"
+          @click="openModal"
           class="bg-black text-white text-sm font-semibold rounded-full px-4 py-1"
         >
           see more
@@ -34,11 +34,11 @@
       <div class="flex flex-col gap-4 text-sm text-light-page-text-light">
         <div v-for="(options, key) in selections" :key="key">
           <span class="font-bold">{{ key }}</span>
-          <div class="flex bg-gray-100 rounded-full w-fit mt-1 border border-gray-200">
+          <div class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200">
             <span
               v-for="option in options"
               :key="option"
-              class="px-4 py-1 rounded-full transition-all"
+              class="flex-1 text-center px-4 py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   selected[key] === option && selected[key] !== null,
@@ -62,11 +62,13 @@
       </div>
     </template>
   </Card>
+  <ToolModal ref="modalRef" />
 </template>
 
 <script setup lang="ts">
 import { ref, PropType, onMounted, watch } from "vue";
 import Card from "primevue/card";
+import ToolModal from './ToolModal.vue';
 
 // Just a placeholder image if item.image is not given:
 const placeholder = "https://via.placeholder.com/600x400?text=No+Image";
@@ -92,6 +94,8 @@ interface DBItem {
   use?: string;
   setup?: string;
   pricing?: string;
+  license?: string;
+  averageTimeToGenerate?: string;
 }
 
 const props = defineProps<{
@@ -100,10 +104,16 @@ const props = defineProps<{
 
 const compareChecked = ref(false);
 
-function seeMore(item: DBItem) {
-  // Simple stub
-  alert(`See more about ${item.title}`);
+const modalRef = ref();
+
+function openModal() {
+  modalRef.value.open(props.item);
 }
+
+// Remove or comment out the old seeMore function
+// function seeMore(item: DBItem) {
+//   alert(`See more about ${item.title}`);
+// }
 
 // Initialize selected values based on item prop
 onMounted(() => {
