@@ -27,44 +27,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted } from "vue";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import AdvancedFilter from "~/components/AdvancedFilter.vue";
 import FilterBar from "~/components/FilterBar.vue";
 import DatabaseItem from "~/components/DatabaseItem.vue";
 
-// Example items
-const items = ref([
-  {
-    id: 1,
-    title: "Midjourney",
-    image: "/images/midjourney.jpg", // Placeholder
-    isFavorite: true,
-    use: "no-code",
-    setup: "no-code",
-    pricing: "subscription",
-    license: "commercial", // Assuming "commercial" is a valid license type
-    averageTimeToGenerate: "seconds" // Assuming "seconds" is a valid time unit
-  },
-  {
-    id: 2,
-    title: "Stable Diffusion",
-    image: "/images/stablediff.jpg", // Placeholder
-    use: "code",
-    setup: "low-code",
-    pricing: "free",
-    license: "personal", // Assuming "personal" is a valid license type
-    averageTimeToGenerate: "minutes" // Assuming "minutes" is a valid time unit
-  },
-  {
-    id: 3,
-    title: "DALL·E",
-    image: "/images/dalle.jpg", // Placeholder
-    use: "no-code",
-    setup: "no-code",
-    pricing: "credits",
-    license: "commercial", // Assuming "commercial" is a valid license type
-    averageTimeToGenerate: "minutes" // Assuming "minutes" is a valid time unit
-  },
-]);
+const { items, loading, error, fetchDatabaseItems } = useDatabase()
+
+onMounted(() => {
+  fetchDatabaseItems()
+})
 </script>

@@ -2,12 +2,17 @@
   <header :class="computedClasses">
     <nav class="flex items-center justify-between w-full max-w-6xl mx-auto">
       <!-- Left side: Logo or brand -->
-      <NuxtLink
-        to="/"
-        class="font-bold text-xl px-2 py-1 hover:underline text-light-page-text-dark"
-      >
-        AIUPD8
-      </NuxtLink>
+      <div class="relative">
+        <NuxtLink
+          to="/"
+          class="font-bold text-xl px-2 py-1 hover:underline text-light-page-text-dark relative z-10"
+        >
+          AIUPD8
+        </NuxtLink>
+        <div
+          class="absolute -bottom-1 -left-2 w-[2.5rem] h-[2.5rem] bg-main rounded-full blur-sm opacity-75 -z-10"
+        ></div>
+      </div>
 
       <!-- Right side: Nav links -->
       <div class="flex items-center space-x-4">

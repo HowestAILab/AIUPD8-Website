@@ -4,8 +4,8 @@
       <div class="pt-5 px-5">
         <div class="relative">
           <img
-            :src="item.image || placeholder"
-            alt=""
+            :src="getImageUrl(item.Image)"
+            :alt=""
             class="w-full object-cover h-48 rounded-md"
           />
           <div class="">
@@ -70,9 +70,6 @@ import { ref, PropType, onMounted, watch } from "vue";
 import Card from "primevue/card";
 import ToolModal from './ToolModal.vue';
 
-// Just a placeholder image if item.image is not given:
-const placeholder = "https://via.placeholder.com/600x400?text=No+Image";
-
 const selections = ref({
   use: ["no-code", "low-code", "code"],
   setup: ["no-code", "low-code", "code"],
@@ -88,8 +85,16 @@ const selected = ref({
 // Props
 interface DBItem {
   id: number;
+  documentId: string;
   title: string;
-  image?: string;
+  Image: {
+    formats: {
+      medium?: { url: string };
+      small?: { url: string };
+      thumbnail?: { url: string };
+    };
+    url: string;
+  };
   isFavorite?: boolean;
   use?: string;
   setup?: string;
@@ -108,6 +113,22 @@ const modalRef = ref();
 
 function openModal() {
   modalRef.value.open(props.item);
+}
+
+const getImageUrl = (image: any) => {
+  if (!image) {
+    return ''
+  }
+  
+  // Try to get medium format first, then small, then original
+  const imageUrl = image.formats?.medium?.url || 
+                  image.formats?.small?.url || 
+                  image.url
+  
+  // Otherwise, construct the full URL using the correct Strapi backend URL
+  const fullUrl = `https://aiupd8-backend-production.up.railway.app${imageUrl}`
+  console.log('Final constructed URL:', fullUrl)
+  return fullUrl
 }
 
 // Remove or comment out the old seeMore function
