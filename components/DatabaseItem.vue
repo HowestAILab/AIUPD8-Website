@@ -10,7 +10,7 @@
           />
           <div class="">
             <div
-              v-if="item.isFavorite"
+              v-if="item.isFavourite"
               class="absolute top-2 right-2 bg-accent-extra text-light-page-text-dark text-xs px-4 py-1 rounded-full"
             >
               our favourite

@@ -49,6 +49,7 @@ interface DatabaseItem {
   pricing: string
   license: string
   averageTimeToGenerate: string
+  isFavourite: boolean
   createdAt: string
   updatedAt: string
   publishedAt: string
