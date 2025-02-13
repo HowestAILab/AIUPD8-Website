@@ -5,7 +5,7 @@
         <div class="relative">
           <img
             :src="getImageUrl(item.Image)"
-            :alt=""
+            alt=""
             class="w-full object-cover h-48 rounded-md"
           />
           <div class="">
