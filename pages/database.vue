@@ -18,7 +18,7 @@
             - Filter bar (some top filters or search bar)
             - Cards grid
         -->
-      <main class="w-full md:w-3/4 p-4">
+      <main class="w-full md:w-3/4 p-4 max-w-7xl mx-auto">
         <div class="mb-6">
           <FilterBar @toggle-filters="toggleFilters" />
         </div>
@@ -38,6 +38,13 @@ import FilterBar from "~/components/FilterBar.vue";
 import DatabaseItem from "~/components/DatabaseItem.vue";
 
 const { items, loading, error, fetchDatabaseItems } = useDatabase()
+
+// Show/hide advanced filter sidebar
+const showFilters = ref(false);
+
+const toggleFilters = () => {
+  showFilters.value = !showFilters.value;
+};
 
 onMounted(() => {
   fetchDatabaseItems()
