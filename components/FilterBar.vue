@@ -18,6 +18,7 @@
       placeholder="Profile..."
       :itemTemplate="itemTemplate"
     />
+    <Button label="more filters" @click="toggleFilters" />
   </div>
 </template>
 
@@ -54,4 +55,11 @@ function itemTemplate(option: string) {
       : "red";
   return `<span style="color: ${color};">${option}</span>`;
 }
+
+const emits = defineEmits(['toggle-filters'])
+
+const toggleFilters = () => {
+  emits('toggle-filters')
+}
+
 </script>
