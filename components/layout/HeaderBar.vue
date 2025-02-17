@@ -10,6 +10,7 @@
           AIUPD8
         </NuxtLink>
         <div
+          v-if="!isHomePage"
           class="absolute -bottom-1 -left-2 w-[2.5rem] h-[2.5rem] bg-main rounded-full blur-sm opacity-75 -z-10"
         ></div>
       </div>
@@ -33,7 +34,11 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
+import { useRoute } from 'vue-router';
 import RecurringButton from "~/components/ui/RecurringButton.vue";
+
+const route = useRoute();
+const isHomePage = computed(() => route.path === '/');
 
 const props = defineProps({
   variant: {
