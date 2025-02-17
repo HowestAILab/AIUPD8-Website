@@ -35,11 +35,9 @@
 
       <!-- Bottom row: partner logos -->
       <div class="flex flex-wrap items-center justify-center gap-8">
-        <!-- Replace with actual images/logos or keep as placeholders -->
-        <div class="w-24 h-10 bg-light-page-background"></div>
-        <div class="w-24 h-10 bg-light-page-background"></div>
-        <div class="w-24 h-10 bg-light-page-background"></div>
-        <div class="w-24 h-10 bg-light-page-background"></div>
+        <img src="/images/dnc_logo.png" alt="DNC" class="h-200 object-contain" />
+        <img src="/images/howest_logo.png" alt="Howest" class="h-110 object-contain" />
+        <img src="/images/vlaio_logo.svg" alt="VLAIO" class="h-85 object-contain" />
       </div>
     </div>
   </footer>

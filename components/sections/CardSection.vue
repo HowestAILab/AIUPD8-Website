@@ -5,18 +5,18 @@
     <div
       v-for="(item, idx) in cards"
       :key="idx"
-      class="bg-light-page-background shadow-xl rounded-lg p-6 w-full sm:w-1/2 lg:w-1/4 flex flex-col items-start h-[50vh]"
+      class="bg-light-page-background shadow-xl rounded-lg p-6 w-full sm:w-1/2 lg:w-1/4 flex flex-col items-start min-h-[60vh] overflow-hidden"
     >
       <div class="text-6xl mb-4 text-left text-light-page-text-dark">
         {{ item.icon }}
       </div>
       <h3
-        class="text-4xl font-semibold mb-4 text-left text-light-page-text-dark"
+        class="text-4xl font-semibold mb-4 text-left text-light-page-text-dark break-words w-full"
       >
         {{ item.title }}
       </h3>
       <p
-        class="text-left text-light-page-text-dark"
+        class="text-left text-light-page-text-dark break-words w-full overflow-y-auto"
         v-html="item.description"
       ></p>
     </div>
