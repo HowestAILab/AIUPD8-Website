@@ -88,10 +88,27 @@ export function useDatabase() {
     }
   }
 
+  async function fetchToolById(id: string) {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await axios.get<{ data: DatabaseItem }>(`https://aiupd8-backend-production.up.railway.app/api/tools/${id}?populate=*`)
+      return response.data.data
+    } catch (e) {
+      error.value = e instanceof Error ? e.message : 'Failed to fetch tool'
+      console.error('Error fetching tool:', e)
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     items,
     loading,
     error,
-    fetchDatabaseItems
+    fetchDatabaseItems,
+    fetchToolById
   }
 }
