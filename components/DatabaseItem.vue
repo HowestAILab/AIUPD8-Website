@@ -34,7 +34,9 @@
       <div class="flex flex-col gap-4 text-sm text-light-page-text-light">
         <div v-for="(options, key) in selections" :key="key">
           <span class="font-bold">{{ key }}</span>
-          <div class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200">
+          <div
+            class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+          >
             <span
               v-for="option in options"
               :key="option"
@@ -42,7 +44,8 @@
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   selected[key] === option && selected[key] !== null,
-                'text-gray-500': selected[key] !== option || selected[key] === null,
+                'text-gray-500':
+                  selected[key] !== option || selected[key] === null,
               }"
             >
               {{ option }}
@@ -68,7 +71,7 @@
 <script setup lang="ts">
 import { ref, PropType, onMounted, watch } from "vue";
 import Card from "primevue/card";
-import ToolModal from './ToolModal.vue';
+import ToolModal from "./ToolModal.vue";
 
 const selections = ref({
   use: ["no-code", "low-code", "code"],
@@ -117,19 +120,17 @@ function openModal() {
 
 const getImageUrl = (image: any) => {
   if (!image) {
-    return ''
+    return "";
   }
-  
+
   // Try to get medium format first, then small, then original
-  const imageUrl = image.formats?.medium?.url || 
-                  image.formats?.small?.url || 
-                  image.url
-  
+  const imageUrl =
+    image.formats?.medium?.url || image.formats?.small?.url || image.url;
+
   // Otherwise, construct the full URL using the correct Strapi backend URL
-  const fullUrl = `https://aiupd8-backend-production.up.railway.app${imageUrl}`
-  console.log('Final constructed URL:', fullUrl)
-  return fullUrl
-}
+  const fullUrl = `https://aiupd8-backend-production.up.railway.app${imageUrl}`;
+  return fullUrl;
+};
 
 // Remove or comment out the old seeMore function
 // function seeMore(item: DBItem) {

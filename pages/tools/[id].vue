@@ -22,14 +22,16 @@
                 alt=""
                 class="mb-4 w-full object-cover h-80 rounded-xl"
               />
-              <h2 class="text-5xl font-semibold text-black pb-6">
-                {{ item.title }}
-              </h2>
-              <div
-                v-if="item.isFavorite"
-                class="absolute top-2 right-2 bg-accent-extra text-light-page-text-dark text-sm px-4 py-1 rounded-full"
-              >
-                our favourite
+              <div class="flex items-center pb-4">
+                <h2 class="text-5xl font-semibold text-black mr-5">
+                  {{ item.title }}
+                </h2>
+                <div
+                  v-if="item.isFavourite"
+                  class="bg-accent-extra text-light-page-text-dark text-md px-6 py-1 rounded-full cursor-default"
+                >
+                  our favourite
+                </div>
               </div>
               <p class="w-full break-words">
                 <!-- Placeholder text -->
@@ -109,14 +111,13 @@ const item = ref(null);
 
 const getImageUrl = (image: any) => {
   if (!image) {
-    return '';
+    return "";
   }
-  
+
   // Try to get medium format first, then small, then original
-  const imageUrl = image.formats?.medium?.url || 
-                  image.formats?.small?.url || 
-                  image.url;
-  
+  const imageUrl =
+    image.formats?.medium?.url || image.formats?.small?.url || image.url;
+
   return `https://aiupd8-backend-production.up.railway.app${imageUrl}`;
 };
 
