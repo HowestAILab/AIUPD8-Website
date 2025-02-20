@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useRuntimeConfig } from '#app';
 
 interface ImageFormat {
   name: string;
@@ -72,6 +73,7 @@ export function useDatabase() {
   const items: Ref<DatabaseItem[]> = ref([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const runtimeConfig = useRuntimeConfig();
 
   async function fetchDatabaseItems() {
     loading.value = true;
@@ -79,7 +81,12 @@ export function useDatabase() {
 
     try {
       const response = await axios.get<ApiResponse>(
-        "https://aiupd8-backend-production.up.railway.app/api/tools?populate=*"
+        "https://aiupd8-backend-production.up.railway.app/api/tools?populate=*",
+        {
+          headers: {
+            Authorization: `Bearer ${runtimeConfig.public.apiToken}`
+          }
+        }
       );
       items.value = response.data.data;
     } catch (e) {
@@ -97,7 +104,12 @@ export function useDatabase() {
 
     try {
       const response = await axios.get<{ data: DatabaseItem }>(
-        `https://aiupd8-backend-production.up.railway.app/api/tools/${id}?populate=*`
+        `https://aiupd8-backend-production.up.railway.app/api/tools/${id}?populate=*`,
+        {
+          headers: {
+            Authorization: `Bearer ${runtimeConfig.public.apiToken}`
+          }
+        }
       );
       return response.data.data;
     } catch (e) {

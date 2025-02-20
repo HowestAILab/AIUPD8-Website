@@ -668,6 +668,12 @@ export default defineNuxtConfig({
   // compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
 
+  runtimeConfig: {
+    public: {
+      apiToken: process.env.API_TOKEN
+    }
+  },
+
   modules: ["@nuxtjs/strapi", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts", '@primevue/nuxt-module'],
 
   // Basic Strapi config:

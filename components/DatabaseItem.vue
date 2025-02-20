@@ -69,7 +69,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, PropType, onMounted, watch } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Card from "primevue/card";
 import ToolModal from "./ToolModal.vue";
 
