@@ -128,7 +128,7 @@ const getImageUrl = (image: any) => {
     image.formats?.medium?.url || image.formats?.small?.url || image.url;
 
   // Otherwise, construct the full URL using the correct Strapi backend URL
-  const fullUrl = `https://aiupd8-backend-production.up.railway.app${imageUrl}`;
+  const fullUrl = `https://aiupd8-backend-production-ca6f.up.railway.app${imageUrl}`;
   return fullUrl;
 };
 
