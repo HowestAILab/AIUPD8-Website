@@ -55,6 +55,7 @@ interface DatabaseItem {
   updatedAt: string;
   publishedAt: string;
   Image: Image;
+  showcaseImages: Image[];
 }
 
 interface ApiResponse {
