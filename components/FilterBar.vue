@@ -1,24 +1,39 @@
 <template>
-  <div class="flex flex-wrap items-center gap-4">
-    <MultiSelect
-      v-model="filters.input"
-      :options="inputOptions"
-      placeholder="Input..."
-      :itemTemplate="itemTemplate"
-    />
-    <MultiSelect
-      v-model="filters.output"
-      :options="outputOptions"
-      placeholder="Output..."
-      :itemTemplate="itemTemplate"
-    />
-    <MultiSelect
-      v-model="filters.profile"
-      :options="profileOptions"
-      placeholder="Profile..."
-      :itemTemplate="itemTemplate"
-    />
-    <Button label="more filters" @click="toggleFilters" />
+  <div class="flex flex-wrap items-center justify-center gap-4">
+    <div class="w-full sm:w-48">
+      <h3 class="font-semibold">input</h3>
+      <MultiSelect
+        v-model="filters.input"
+        :options="inputOptions"
+        placeholder="search"
+        :itemTemplate="itemTemplate"
+        class="w-full"
+      />
+    </div>
+    <div class="w-full sm:w-48">
+      <h3 class="font-semibold">output</h3>
+      <MultiSelect
+        v-model="filters.output"
+        :options="outputOptions"
+        placeholder="search"
+        :itemTemplate="itemTemplate"
+        class="w-full"
+      />
+    </div>
+    <div class="w-full sm:w-48">
+      <h3 class="font-semibold">profile</h3>
+      <MultiSelect
+        v-model="filters.profile"
+        :options="profileOptions"
+        placeholder="search"
+        :itemTemplate="itemTemplate"
+        class="w-full"
+      />
+    </div>
+    <div class="w-full sm:w-48">
+      <h3 class="font-semibold opacity-0 cursor-default">&nbsp;</h3>
+      <Button label="more filters" @click="toggleFilters" />
+    </div>
   </div>
 </template>
 
@@ -56,10 +71,9 @@ function itemTemplate(option: string) {
   return `<span style="color: ${color};">${option}</span>`;
 }
 
-const emits = defineEmits(['toggle-filters'])
+const emits = defineEmits(["toggle-filters"]);
 
 const toggleFilters = () => {
-  emits('toggle-filters')
-}
-
+  emits("toggle-filters");
+};
 </script>

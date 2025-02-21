@@ -18,11 +18,11 @@
             - Filter bar (some top filters or search bar)
             - Cards grid
         -->
-      <main class="w-full md:w-3/4 p-4">
+      <main class="w-full md:w-3/4 p-4 max-w-7xl mx-auto">
         <div class="mb-6">
           <FilterBar @toggle-filters="toggleFilters" />
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6">
           <DatabaseItem v-for="item in items" :key="item.id" :item="item" />
         </div>
       </main>
@@ -31,40 +31,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { onMounted } from "vue";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import AdvancedFilter from "~/components/AdvancedFilter.vue";
 import FilterBar from "~/components/FilterBar.vue";
 import DatabaseItem from "~/components/DatabaseItem.vue";
 
-// Example items
-const items = ref([
-  {
-    id: 1,
-    title: "Midjourney",
-    image: "/images/midjourney.jpg", // put your actual image path
-    isFavorite: true,
-    use: "no-code",
-    setup: "no-code",
-    pricing: "subscription",
-  },
-  {
-    id: 2,
-    title: "Stable Diffusion",
-    image: "/images/stablediff.jpg", // placeholder
-    use: "code",
-    setup: "low-code",
-    pricing: "free",
-  },
-  {
-    id: 3,
-    title: "DALL·E",
-    image: "/images/dalle.jpg",
-    use: "no-code",
-    setup: "no-code",
-    pricing: "credits",
-  },
-]);
+const { items, loading, error, fetchDatabaseItems } = useDatabase()
 
 // Show/hide advanced filter sidebar
 const showFilters = ref(false);
@@ -72,4 +45,8 @@ const showFilters = ref(false);
 const toggleFilters = () => {
   showFilters.value = !showFilters.value;
 };
+
+onMounted(() => {
+  fetchDatabaseItems()
+})
 </script>
