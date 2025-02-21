@@ -5,17 +5,20 @@
     header="Review"
     class="w-full max-w-3xl"
   >
+    <template #header>
+      <div class="flex justify-between items-center w-full">
+        <h2 class="font-semibold text-xl">Review</h2>
+        <NuxtLink 
+          v-if="item" 
+          :to="`/tools/${item.documentId}`" 
+          class="bg-black text-white text-sm font-semibold rounded-full px-4 py-2 mr-2 hover:bg-gray-800"
+        >
+          Open in Full Page
+        </NuxtLink>
+      </div>
+    </template>
     <div v-if="item">
       <div class="rounded-3xl bg-blue-200 p-8">
-        <!-- <div class="relative pb-8">
-          <h3 class="font-semibold text-lg text-black">Review</h3>
-          <div
-            v-if="item.isFavorite"
-            class="absolute top-2 right-2 bg-accent-extra text-light-page-text-dark text-sm px-4 py-1 rounded-full"
-          >
-            our favourite
-          </div>
-        </div> -->
         <div class="pb-6 relative">
           <h2 class="text-5xl font-semibold text-black pb-6">
             {{ item.title }}

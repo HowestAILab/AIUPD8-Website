@@ -30,6 +30,10 @@
         class="w-full"
       />
     </div>
+    <div class="w-full sm:w-48">
+      <h3 class="font-semibold opacity-0 cursor-default">&nbsp;</h3>
+      <Button label="more filters" @click="toggleFilters" />
+    </div>
   </div>
 </template>
 
@@ -66,4 +70,10 @@ function itemTemplate(option: string) {
       : "red";
   return `<span style="color: ${color};">${option}</span>`;
 }
+
+const emits = defineEmits(["toggle-filters"]);
+
+const toggleFilters = () => {
+  emits("toggle-filters");
+};
 </script>
