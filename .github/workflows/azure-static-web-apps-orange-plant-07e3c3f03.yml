@@ -34,6 +34,7 @@ jobs:
           ###### End of Repository/Build Configurations ######
         env:
           API_TOKEN: ${{secrets.API_TOKEN}}
+          STRAPI_URL: ${{vars.STRAPI_URL}}
 
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'

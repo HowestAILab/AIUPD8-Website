@@ -72,6 +72,7 @@
 import { ref, onMounted, watch } from "vue";
 import Card from "primevue/card";
 import ToolModal from "./ToolModal.vue";
+import { useRuntimeConfig } from "#app";
 
 const selections = ref({
   use: ["no-code", "low-code", "code"],
@@ -118,18 +119,17 @@ function openModal() {
   modalRef.value.open(props.item);
 }
 
+const config = useRuntimeConfig();
+
 const getImageUrl = (image: any) => {
   if (!image) {
     return "";
   }
 
-  // Try to get medium format first, then small, then original
   const imageUrl =
     image.formats?.medium?.url || image.formats?.small?.url || image.url;
 
-  // Otherwise, construct the full URL using the correct Strapi backend URL
-  const fullUrl = `https://aiupd8-backend-production-ca6f.up.railway.app${imageUrl}`;
-  return fullUrl;
+  return `${config.public.dbUrl}${imageUrl}`;
 };
 
 // Remove or comment out the old seeMore function

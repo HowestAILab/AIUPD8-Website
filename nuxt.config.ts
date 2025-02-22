@@ -670,7 +670,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiToken: process.env.API_TOKEN
+      apiToken: process.env.API_TOKEN,
+      dbUrl: process.env.STRAPI_URL || "https://aiupd8backend.azurewebsites.net"
     }
   },
 
@@ -679,7 +680,7 @@ export default defineNuxtConfig({
   // Basic Strapi config:
   strapi: {
     // If your Strapi is running at, e.g., http://localhost:1337
-    url: process.env.STRAPI_URL || "http://localhost:1337",
+    url: process.env.STRAPI_URL || "https://aiupd8backend.azurewebsites.net" ,
     // You can adjust options here if needed
   },
   primevue: {

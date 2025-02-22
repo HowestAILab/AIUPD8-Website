@@ -105,9 +105,11 @@ import { useRoute } from "vue-router";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
 import Divider from "primevue/divider";
+import { useRuntimeConfig } from "#app";
 
 const route = useRoute();
 const item = ref(null);
+const config = useRuntimeConfig();
 
 const getImageUrl = (image: any) => {
   if (!image) {
@@ -118,7 +120,7 @@ const getImageUrl = (image: any) => {
   const imageUrl =
     image.formats?.medium?.url || image.formats?.small?.url || image.url;
 
-  return `https://aiupd8-backend-production.up.railway.app${imageUrl}`;
+  return `${config.public.dbUrl}${imageUrl}`;
 };
 
 const specifications = {

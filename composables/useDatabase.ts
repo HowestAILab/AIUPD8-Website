@@ -81,7 +81,7 @@ export function useDatabase() {
 
     try {
       const response = await axios.get<ApiResponse>(
-        "https://aiupd8-backend-production-ca6f.up.railway.app/api/tools?populate=*",
+        `${runtimeConfig.public.dbUrl}/api/tools?populate=*`,
         {
           headers: {
             Authorization: `Bearer ${runtimeConfig.public.apiToken}`
@@ -104,7 +104,7 @@ export function useDatabase() {
 
     try {
       const response = await axios.get<{ data: DatabaseItem }>(
-        `https://aiupd8-backend-production-ca6f.up.railway.app/api/tools/${id}?populate=*`,
+        `${runtimeConfig.public.dbUrl}/api/tools/${id}?populate=*`,
         {
           headers: {
             Authorization: `Bearer ${runtimeConfig.public.apiToken}`
