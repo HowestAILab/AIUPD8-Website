@@ -84,7 +84,7 @@
       </div>
       <div class="py-8">
         <Galleria
-          :value="item.images"
+          :value="item.showcaseImages"
           :showThumbnails="false"
           :showIndicators="true"
           class="w-full rounded-3xl overflow-hidden"
@@ -191,11 +191,6 @@ const item = ref<DBItem | null>(null);
 
 // Method to open the modal
 const open = (toolItem: DBItem) => {
-  toolItem.images = [
-    "/images/midjourney.jpeg",
-    "/images/midi.jpeg",
-    "/images/midjourney2.jpeg",
-  ];
   item.value = toolItem;
   visible.value = true;
 };
