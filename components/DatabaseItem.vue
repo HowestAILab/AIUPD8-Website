@@ -91,6 +91,7 @@ interface DBItem {
   id: number;
   documentId: string;
   title: string;
+  description: string;
   Image: {
     formats: {
       medium?: { url: string };

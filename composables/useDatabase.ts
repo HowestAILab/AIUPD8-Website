@@ -45,6 +45,7 @@ interface DatabaseItem {
   id: number;
   documentId: string;
   title: string;
+  description: string; 
   use: string;
   setup: string;
   pricing: string;
@@ -99,20 +100,20 @@ export function useDatabase() {
     }
   }
 
-  async function fetchToolById(id: string) {
+  async function fetchToolById(title: string) {
     loading.value = true;
     error.value = null;
-
     try {
-      const response = await axios.get<{ data: DatabaseItem }>(
-        `${runtimeConfig.public.dbUrl}/api/tools/${id}?populate=*`,
+      const response = await axios.get<{ data: DatabaseItem[] }>(
+        `${runtimeConfig.public.dbUrl}/api/tools?filters[title][$eq]=${encodeURIComponent(title)}&populate=*`,
         {
           headers: {
             Authorization: `Bearer ${runtimeConfig.public.apiToken}`
           }
         }
       );
-      return response.data.data;
+      // Return the first matching tool
+      return response.data.data[0] || null;
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Failed to fetch tool";
       console.error("Error fetching tool:", e);

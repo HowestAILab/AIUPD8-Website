@@ -10,7 +10,7 @@
         <h2 class="font-semibold text-xl">Review</h2>
         <NuxtLink
           v-if="item"
-          :to="`/tools/${item.documentId}`"
+          :to="`/tools/${item.title}`"
           class="bg-black text-white text-sm font-semibold rounded-full px-4 py-2 mr-2 hover:bg-gray-800"
         >
           Open in Full Page
@@ -30,7 +30,7 @@
             our favourite
           </div>
           <p class="w-full break-words">
-            gsjlfhgiwefhkbsfhfjkskfjehfebwuhgjebrschgsjlfhgiwefhkbsfhfjkskfjehfebwuhgjebrschgsjlfhgiwefhkbsfhfjkskfjehfebwuhgjebrschgsjlfhgiwefhkbsfhfjkskfjehfebwuhgjebrschgsjlfhgiwefhkbsfhfjkskfjehfebwuhgjebrsch
+            {{ item.description }}
           </p>
         </div>
         <div class="border-b border-gray-900 my-4"></div>

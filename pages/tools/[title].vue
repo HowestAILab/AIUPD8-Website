@@ -1,7 +1,6 @@
 <template>
   <div>
     <HeaderBar variant="white" />
-
     <div class="pt-16 min-h-screen bg-light-page-background">
       <div class="max-w-6xl mx-auto px-4">
         <div class="py-4">
@@ -13,7 +12,6 @@
             ← Back to List
           </NuxtLink>
         </div>
-
         <div v-if="item" class="py-2">
           <div class="rounded-3xl bg-blue-200 p-8">
             <div class="pb-6 relative">
@@ -34,14 +32,7 @@
                 </div>
               </div>
               <p class="w-full break-words">
-                <!-- Placeholder text -->
-                sfgusfsfhieo unfeyfhfyifh8y3ufhb jhgfh feyifehfysufhbjshfs
-                sfgusfsfhieo unfeyfhfyifh8y3ufhb jhgfh feyifehfysufhbjshfs
-                sfgusfsfhieo unfeyfhfyifh8y3ufhb jhgfh feyifehfysufhbjshfs
-                sfgusfsfhieo unfeyfhfyifh8y3ufhb jhgfh feyifehfysufhbjshfs
-                sfgusfsfhieo unfeyfhfyifh8y3ufhb jhgfh feyifehfysufhbjshfs
-                sfgusfsfhieo unfeyfhfyifh8y3ufhb jhgfh feyifehfysufhbjshfs
-                sfgusfsfhieo unfeyfhfyifh8y3ufhb jhgfh feyifehfysufhbjshfs
+                {{ item.description }}
               </p>
             </div>
           </div>
@@ -106,20 +97,16 @@ import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
 import Divider from "primevue/divider";
 import { useRuntimeConfig } from "#app";
+import { useDatabase } from "~/composables/useDatabase";
 
 const route = useRoute();
 const item = ref(null);
 const config = useRuntimeConfig();
 
 const getImageUrl = (image: any) => {
-  if (!image) {
-    return "";
-  }
-
-  // Try to get medium format first, then small, then original
+  if (!image) return "";
   const imageUrl =
     image.formats?.medium?.url || image.formats?.small?.url || image.url;
-
   return `${config.public.dbUrl}${imageUrl}`;
 };
 
@@ -138,8 +125,9 @@ const specifications = {
 };
 
 onMounted(async () => {
+  // Use title as parameter instead of id
   const { fetchToolById } = useDatabase();
-  item.value = await fetchToolById(route.params.id);
+  item.value = await fetchToolById(route.params.title);
 });
 </script>
 
