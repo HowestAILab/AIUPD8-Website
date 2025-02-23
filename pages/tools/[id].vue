@@ -49,14 +49,14 @@
           <!-- Gallery -->
           <div class="py-8">
             <Galleria
-              :value="item.images"
+              :value="item.showcaseImages"
               :showThumbnails="false"
               :showIndicators="true"
               class="w-full rounded-3xl overflow-hidden"
             >
               <template #item="slotProps">
                 <img
-                  :src="slotProps.item"
+                  :src="getImageUrl(slotProps.item)"
                   :alt="item.title"
                   class="w-full h-[416px] object-cover"
                 />
@@ -140,15 +140,6 @@ const specifications = {
 onMounted(async () => {
   const { fetchToolById } = useDatabase();
   item.value = await fetchToolById(route.params.id);
-
-  // Placeholder images
-  if (item.value) {
-    item.value.images = [
-      "/images/midjourney.jpeg",
-      "/images/midi.jpeg",
-      "/images/midjourney2.jpeg",
-    ];
-  }
 });
 </script>
 

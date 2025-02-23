@@ -8,9 +8,9 @@
     <template #header>
       <div class="flex justify-between items-center w-full">
         <h2 class="font-semibold text-xl">Review</h2>
-        <NuxtLink 
-          v-if="item" 
-          :to="`/tools/${item.documentId}`" 
+        <NuxtLink
+          v-if="item"
+          :to="`/tools/${item.documentId}`"
           class="bg-black text-white text-sm font-semibold rounded-full px-4 py-2 mr-2 hover:bg-gray-800"
         >
           Open in Full Page
@@ -91,7 +91,7 @@
         >
           <template #item="slotProps">
             <img
-              :src="slotProps.item"
+              :src="getImageUrl(slotProps.item)"
               :alt="item.title"
               class="w-full h-[416px] object-cover"
             />
@@ -100,78 +100,115 @@
       </div>
       <div class="p-8 bg-gray-100 rounded-3xl">
         <div>
-            <h2 class="text-lg font-semibold">Specifications</h2>
+          <h2 class="text-lg font-semibold">Specifications</h2>
         </div>
         <Divider />
         <div class="flex flex-col gap-4 pt-4">
           <div>
-            <div class="font-bold text-sm rounded-lg text-light-page-text-light">use</div>
-            <div class="flex w-full bg-gray-100 rounded-full mt-1 border border-gray-200">
-              <span 
-                v-for="option in ['no-code', 'low-code', 'code']" 
+            <div
+              class="font-bold text-sm rounded-lg text-light-page-text-light"
+            >
+              use
+            </div>
+            <div
+              class="flex w-full bg-gray-100 rounded-full mt-1 border border-gray-200"
+            >
+              <span
+                v-for="option in ['no-code', 'low-code', 'code']"
                 :key="option"
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
-                  'bg-blue-200 text-blue-500 font-semibold': item.use === option,
-                  'text-gray-500': item.use !== option
+                  'bg-blue-200 text-blue-500 font-semibold':
+                    item.use === option,
+                  'text-gray-500': item.use !== option,
                 }"
-              >{{ option }}</span>
+                >{{ option }}</span
+              >
             </div>
           </div>
           <div>
-            <div class="font-bold text-sm text-light-page-text-light">setup</div>
-            <div class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200">
-              <span 
-                v-for="option in ['no-code', 'low-code', 'code']" 
+            <div class="font-bold text-sm text-light-page-text-light">
+              setup
+            </div>
+            <div
+              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            >
+              <span
+                v-for="option in ['no-code', 'low-code', 'code']"
                 :key="option"
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
-                  'bg-blue-200 text-blue-500 font-semibold': item.setup === option,
-                  'text-gray-500': item.setup !== option
+                  'bg-blue-200 text-blue-500 font-semibold':
+                    item.setup === option,
+                  'text-gray-500': item.setup !== option,
                 }"
-              >{{ option }}</span>
+                >{{ option }}</span
+              >
             </div>
           </div>
           <div>
-            <div class="font-bold text-sm text-light-page-text-light">pricing</div>
-            <div class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200">
-              <span 
-                v-for="option in ['free', 'freemium', 'subscription', 'credits']" 
+            <div class="font-bold text-sm text-light-page-text-light">
+              pricing
+            </div>
+            <div
+              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            >
+              <span
+                v-for="option in [
+                  'free',
+                  'freemium',
+                  'subscription',
+                  'credits',
+                ]"
                 :key="option"
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
-                  'bg-blue-200 text-blue-500 font-semibold': item.pricing === option,
-                  'text-gray-500': item.pricing !== option
+                  'bg-blue-200 text-blue-500 font-semibold':
+                    item.pricing === option,
+                  'text-gray-500': item.pricing !== option,
                 }"
-              >{{ option }}</span>
+                >{{ option }}</span
+              >
             </div>
           </div>
           <div>
-            <div class="font-bold text-sm text-light-page-text-light">license</div>
-            <div class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200">
-              <span 
-                v-for="option in ['personal', 'commercial']" 
+            <div class="font-bold text-sm text-light-page-text-light">
+              license
+            </div>
+            <div
+              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            >
+              <span
+                v-for="option in ['personal', 'commercial']"
                 :key="option"
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
-                  'bg-blue-200 text-blue-500 font-semibold': item.license === option,
-                  'text-gray-500': item.license !== option
+                  'bg-blue-200 text-blue-500 font-semibold':
+                    item.license === option,
+                  'text-gray-500': item.license !== option,
                 }"
-              >{{ option }}</span>
+                >{{ option }}</span
+              >
             </div>
           </div>
           <div>
-            <div class="font-bold text-sm text-light-page-text-light">average time </div>
-            <div class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200">
-              <span 
-                v-for="option in ['seconds', 'minutes', 'hours', 'days']" 
+            <div class="font-bold text-sm text-light-page-text-light">
+              average time
+            </div>
+            <div
+              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            >
+              <span
+                v-for="option in ['seconds', 'minutes', 'hours', 'days']"
                 :key="option"
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
-                  'bg-blue-200 text-blue-500 font-semibold': item.averageTimeToGenerate === option,
-                  'text-gray-500': item.averageTimeToGenerate !== option
+                  'bg-blue-200 text-blue-500 font-semibold':
+                    item.averageTimeToGenerate === option,
+                  'text-gray-500': item.averageTimeToGenerate !== option,
                 }"
-              >{{ option }}</span>
+                >{{ option }}</span
+              >
             </div>
           </div>
         </div>
@@ -184,7 +221,17 @@
 import Dialog from "primevue/dialog";
 import Galleria from "primevue/galleria";
 import { ref } from "vue";
+import { useRuntimeConfig } from "#app";
 import type { DBItem } from "./DatabaseItem.vue";
+
+const config = useRuntimeConfig();
+
+const getImageUrl = (image: any) => {
+  if (!image) return "";
+  const imageUrl =
+    image.formats?.medium?.url || image.formats?.small?.url || image.url;
+  return `${config.public.dbUrl}${imageUrl}`;
+};
 
 const visible = ref(false);
 const item = ref<DBItem | null>(null);
