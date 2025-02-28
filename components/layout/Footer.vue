@@ -33,9 +33,9 @@
         <!-- Right side -->
         <div class="text-left md:text-right">
           <h2 class="text-2xl font-semibold mb-4">Or send us a mail</h2>
-          <NuxtLink to="/contact" class="inline-block hover:underline">
+          <a href="mailto:laura.willems@howest.be" class="hover:underline">
             <RecurringButton variant="primary"> contact us </RecurringButton>
-          </NuxtLink>
+          </a>
         </div>
       </div>
 

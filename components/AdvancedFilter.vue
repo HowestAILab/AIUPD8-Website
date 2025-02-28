@@ -1,11 +1,9 @@
 <template>
-  <!-- Wrap filters in a ScrollAreaRoot for scrolling -->
   <ScrollAreaRoot
     class="w-full h-full relative overflow-hidden"
     style="--scrollbar-size: 8px"
   >
     <ScrollAreaViewport class="w-full h-full px-4 py-6">
-      <!-- ADVANCED FILTER HEADLINE -->
       <h2 class="text-2xl font-bold mb-4">Advanced Filters</h2>
 
       <Divider />
@@ -15,14 +13,16 @@
         <h3 class="text-lg font-bold mb-2">Use</h3>
         <div class="flex w-full overflow-x-auto">
           <SelectButton
-            v-model="use"
+            v-model="filters.uses"
             :options="useOptions"
+            optionLabel="name"
             multiple
             class="flex flex-wrap gap-2 w-full"
             :pt="{
               button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
+                style:
+                  'border rounded-full px-4 py-1 text-sm transition-colors',
+              }),
             }"
           />
         </div>
@@ -33,14 +33,16 @@
         <h3 class="text-lg font-bold mb-2">Setup</h3>
         <div class="flex w-full overflow-x-auto">
           <SelectButton
-            v-model="setup"
+            v-model="filters.setups"
             :options="setupOptions"
+            optionLabel="name"
             multiple
             class="flex flex-wrap gap-2 w-full"
             :pt="{
               button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
+                style:
+                  'border rounded-full px-4 py-1 text-sm transition-colors',
+              }),
             }"
           />
         </div>
@@ -51,17 +53,19 @@
         <h3 class="text-lg font-bold mb-2">Pricing</h3>
         <div class="flex w-full overflow-x-auto">
           <SelectButton
-            v-model="pricing"
+            v-model="filters.pricings"
             :options="pricingOptions"
+            optionLabel="name"
             multiple
             class="flex flex-wrap gap-2 w-full"
             :pt="{
               button: ({ context }) => ({
-                class: context.active ? 
-                  'bg-blue-100 text-blue-700 border-blue-300' : 
-                  'bg-white hover:bg-gray-50',
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
+                class: context.active
+                  ? 'bg-blue-100 text-blue-700 border-blue-300'
+                  : 'bg-white hover:bg-gray-50',
+                style:
+                  'border rounded-full px-4 py-1 text-sm transition-colors',
+              }),
             }"
           />
         </div>
@@ -72,14 +76,16 @@
         <h3 class="text-lg font-bold mb-2">License</h3>
         <div class="flex w-full overflow-x-auto">
           <SelectButton
-            v-model="license"
+            v-model="filters.licenses"
             :options="licenseOptions"
+            optionLabel="name"
             multiple
             class="flex flex-wrap gap-2 w-full"
             :pt="{
               button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
+                style:
+                  'border rounded-full px-4 py-1 text-sm transition-colors',
+              }),
             }"
           />
         </div>
@@ -90,14 +96,16 @@
         <h3 class="text-lg font-bold mb-2">Average time to generate</h3>
         <div class="flex w-full overflow-x-auto">
           <SelectButton
-            v-model="generationTime"
+            v-model="filters.generationTimes"
             :options="generationTimeOptions"
+            optionLabel="name"
             multiple
             class="flex flex-wrap gap-2 w-full"
             :pt="{
               button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
+                style:
+                  'border rounded-full px-4 py-1 text-sm transition-colors',
+              }),
             }"
           />
         </div>
@@ -105,77 +113,58 @@
 
       <Divider class="mb-6" />
 
-      <!-- INPUT TYPE -->
+      <!-- INPUT TYPE - Changed to MultiSelect dropdown -->
       <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">input type</h3>
-        <div class="flex w-full overflow-x-auto">
-          <SelectButton
-            v-model="inputType"
-            :options="inputTypeOptions"
-            multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
-            }"
-          />
-        </div>
+        <h3 class="text-lg font-bold mb-2">Input type</h3>
+        <MultiSelect
+          v-model="filters.inputs"
+          :options="inputOptions"
+          optionLabel="name"
+          placeholder="Select input types"
+          :loading="loading"
+          class="w-full"
+        />
       </div>
 
-      <!-- OUTPUT TYPE -->
+      <!-- OUTPUT TYPE - Changed to MultiSelect dropdown -->
       <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">output</h3>
-        <div class="flex w-full overflow-x-auto">
-          <SelectButton
-            v-model="output"
-            :options="outputOptions"
-            multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
-            }"
-          />
-        </div>
+        <h3 class="text-lg font-bold mb-2">Output</h3>
+        <MultiSelect
+          v-model="filters.outputs"
+          :options="outputOptions"
+          optionLabel="name"
+          placeholder="Select output types"
+          :loading="loading"
+          class="w-full"
+        />
       </div>
 
-      <!-- PROFILE -->
+      <!-- PROFILE - Changed to MultiSelect dropdown -->
       <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">profile</h3>
-        <div class="flex w-full overflow-x-auto">
-          <SelectButton
-            v-model="profile"
-            :options="profileOptions"
-            multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
-            }"
-          />
-        </div>
+        <h3 class="text-lg font-bold mb-2">Profile</h3>
+        <MultiSelect
+          v-model="filters.profiles"
+          :options="profileOptions"
+          optionLabel="name"
+          placeholder="Select profiles"
+          :loading="loading"
+          class="w-full"
+        />
       </div>
 
-      <!-- TASK -->
+      <!-- TASK - Changed to MultiSelect dropdown -->
       <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">specific task</h3>
-        <div class="flex w-full overflow-x-auto">
-          <SelectButton
-            v-model="task"
-            :options="taskOptions"
-            multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style: 'border rounded-full px-4 py-1 text-sm transition-colors'
-              })
-            }"
-          />
-        </div>
+        <h3 class="text-lg font-bold mb-2">Specific task</h3>
+        <MultiSelect
+          v-model="filters.tasks"
+          :options="taskOptions"
+          optionLabel="name"
+          placeholder="Select tasks"
+          :loading="loading"
+          class="w-full"
+        />
       </div>
+
       <!-- APPLY FILTERS BUTTON -->
       <RecurringButton variant="neutral" class="mt-4" @click="applyFilters">
         Apply Filters
@@ -183,7 +172,7 @@
       <!-- CLEAR FILTERS BUTTON -->
       <RecurringButton
         variant="neutral"
-        class="mt-4 maw-w-[50%] mx-auto"
+        class="mt-4 max-w-[50%] mx-auto"
         @click="clearFilters"
       >
         Clear Filters
@@ -201,67 +190,131 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import SelectButton from 'primevue/selectbutton';
+import { reactive, ref, onMounted } from "vue";
+import SelectButton from "primevue/selectbutton";
+import MultiSelect from "primevue/multiselect";
 import RecurringButton from "~/components/ui/RecurringButton.vue";
+import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
 
-// States
-const use = ref([]);
-const setup = ref([]);
-const pricing = ref([]);
-const license = ref([]);
-const generationTime = ref([]);
-const inputType = ref([]);
-const output = ref([]);
-const profile = ref([]);
-const task = ref([]);
+interface FilterState {
+  uses: TaxonomyItem[];
+  setups: TaxonomyItem[];
+  pricings: TaxonomyItem[];
+  licenses: TaxonomyItem[];
+  generationTimes: TaxonomyItem[];
+  inputs: TaxonomyItem[];
+  outputs: TaxonomyItem[];
+  profiles: TaxonomyItem[];
+  tasks: TaxonomyItem[];
+}
 
-// Options for SelectButton
-const useOptions = ["no-code", "low-code", "code"];
-const setupOptions = ["no-code", "low-code", "code"];
-const pricingOptions = ["free", "freemium", "subscription", "credits"];
-const licenseOptions = ["personal", "commercial"];
-const generationTimeOptions = ["seconds", "minutes", "hours", "days"];
-const inputTypeOptions = ["text", "text", "text", "text"];
-const outputOptions = ["text", "text", "text", "text"];
-const profileOptions = ["text", "text", "text", "text"];
-const taskOptions = ["text", "text", "text", "text"];
+// Refs for filter options
+const useOptions = ref<TaxonomyItem[]>([]);
+const setupOptions = ref<TaxonomyItem[]>([]);
+const pricingOptions = ref<TaxonomyItem[]>([]);
+const licenseOptions = ref<TaxonomyItem[]>([]);
+const generationTimeOptions = ref<TaxonomyItem[]>([]);
+const inputOptions = ref<TaxonomyItem[]>([]);
+const outputOptions = ref<TaxonomyItem[]>([]);
+const profileOptions = ref<TaxonomyItem[]>([]);
+const taskOptions = ref<TaxonomyItem[]>([]);
 
-// Debugging: Watch state changes
-watch(use, (newValue) => console.log("Updated Use:", newValue));
-watch(setup, (newValue) => console.log("Updated Setup:", newValue));
-watch(pricing, (newValue) => console.log("Updated Pricing:", newValue));
-watch(license, (newValue) => console.log("Updated License:", newValue));
-watch(generationTime, (newValue) => console.log("Updated Generation Time:", newValue));
-watch(inputType, (newValue) => console.log("Updated Input Type:", newValue));
-watch(output, (newValue) => console.log("Updated Input Type:", newValue));
-watch(profile, (newValue) => console.log("Updated Input Type:", newValue));
-watch(task, (newValue) => console.log("Updated Input Type:", newValue));
+// Initialize the taxonomy types composable
+const { loading, error, fetchTaxonomyByType } = useTaxonomyTypes();
+
+// Filter state
+const filters = reactive<FilterState>({
+  uses: [],
+  setups: [],
+  pricings: [],
+  licenses: [],
+  generationTimes: [],
+  inputs: [],
+  outputs: [],
+  profiles: [],
+  tasks: [],
+});
+
+const props = defineProps({
+  isVisible: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const emits = defineEmits(["apply-filters", "update:isVisible"]);
+
+// Fetch all filter options using the dynamic route
+async function fetchFilterOptions() {
+  try {
+    // Fetch all taxonomy types in parallel for better performance
+    const [
+      uses,
+      setups,
+      pricings,
+      licenses,
+      generationTimes,
+      inputs,
+      outputs,
+      profiles,
+      tasks,
+    ] = await Promise.all([
+      fetchTaxonomyByType("use"),
+      fetchTaxonomyByType("setup"),
+      fetchTaxonomyByType("pricing"),
+      fetchTaxonomyByType("license"),
+      fetchTaxonomyByType("generationTime"),
+      fetchTaxonomyByType("input"),
+      fetchTaxonomyByType("output"),
+      fetchTaxonomyByType("profile"),
+      fetchTaxonomyByType("task"),
+    ]);
+
+    useOptions.value = uses;
+    setupOptions.value = setups;
+    pricingOptions.value = pricings;
+    licenseOptions.value = licenses;
+    generationTimeOptions.value = generationTimes;
+    inputOptions.value = inputs;
+    outputOptions.value = outputs;
+    profileOptions.value = profiles;
+    taskOptions.value = tasks;
+  } catch (error) {
+    console.error("Error fetching filter options:", error);
+  }
+}
 
 function applyFilters() {
-  console.log("Applying filters…", {
-    use: use.value,
-    setup: setup.value,
-    pricing: pricing.value,
-    license: license.value,
-    generationTime: generationTime.value,
-    inputType: inputType.value,
-    output: output.value,
-    profile: profile.value,
-    task: task.value,
-  });
+  // Convert selected objects to name arrays for filtering
+  const filterParams = {
+    uses: filters.uses.map((item) => item.name),
+    setups: filters.setups.map((item) => item.name),
+    pricings: filters.pricings.map((item) => item.name),
+    licenses: filters.licenses.map((item) => item.name),
+    generationTimes: filters.generationTimes.map((item) => item.name),
+    inputs: filters.inputs.map((item) => item.name),
+    outputs: filters.outputs.map((item) => item.name),
+    profiles: filters.profiles.map((item) => item.name),
+    tasks: filters.tasks.map((item) => item.name),
+  };
+
+  // Emit the event with filter parameters
+  emits("apply-filters", filterParams);
 }
 
 function clearFilters() {
-  use.value = [];
-  setup.value = [];
-  pricing.value = [];
-  license.value = [];
-  generationTime.value = [];
-  inputType.value = [];
-  output.value = [];
-  profile.value = [];
-  task.value = [];
-  console.log("Filters cleared");
+  filters.uses = [];
+  filters.setups = [];
+  filters.pricings = [];
+  filters.licenses = [];
+  filters.generationTimes = [];
+  filters.inputs = [];
+  filters.outputs = [];
+  filters.profiles = [];
+  filters.tasks = [];
 }
+
+onMounted(() => {
+  fetchFilterOptions();
+});
 </script>
