@@ -35,7 +35,7 @@
         <div v-if="item.uses && item.uses.length > 0">
           <span class="font-bold">use</span>
           <div
-            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-2xl md:rounded-full w-full mt-1 border border-gray-200"
           >
             <span
               v-for="option in selections.use"
@@ -55,7 +55,7 @@
         <div v-if="item.setups && item.setups.length > 0">
           <span class="font-bold">setup</span>
           <div
-            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-2xl md:rounded-full w-full mt-1 border border-gray-200"
           >
             <span
               v-for="option in selections.setup"
@@ -75,7 +75,7 @@
         <div v-if="item.pricings && item.pricings.length > 0">
           <span class="font-bold">pricing</span>
           <div
-            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-2xl md:rounded-full w-full mt-1 border border-gray-200"
           >
             <span
               v-for="option in selections.pricing"
