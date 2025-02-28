@@ -31,9 +31,10 @@
                   our favourite
                 </div>
               </div>
-              <p class="w-full break-words">
-                {{ item.description }}
-              </p>
+              <div
+                class="w-full break-words rich-text-content"
+                v-html="parsedDescription"
+              ></div>
             </div>
           </div>
 
@@ -62,24 +63,182 @@
             </div>
             <Divider />
             <div class="flex flex-col gap-4 pt-4">
-              <div v-for="(spec, key) in specifications" :key="key">
+              <div v-if="item.uses.length > 0">
                 <div class="font-bold text-sm text-light-page-text-light">
-                  {{ key }}
+                  use
                 </div>
                 <div
                   class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
                 >
                   <span
-                    v-for="option in spec.options"
+                    v-for="option in specifications.use.options"
                     :key="option"
                     class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                     :class="{
                       'bg-blue-200 text-blue-500 font-semibold':
-                        item[spec.field] === option,
-                      'text-gray-500': item[spec.field] !== option,
+                        item.uses.includes(option),
+                      'text-gray-500': !item.uses.includes(option),
                     }"
                     >{{ option }}</span
                   >
+                </div>
+              </div>
+
+              <div v-if="item.setups.length > 0">
+                <div class="font-bold text-sm text-light-page-text-light">
+                  setup
+                </div>
+                <div
+                  class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+                >
+                  <span
+                    v-for="option in specifications.setup.options"
+                    :key="option"
+                    class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                    :class="{
+                      'bg-blue-200 text-blue-500 font-semibold':
+                        item.setups.includes(option),
+                      'text-gray-500': !item.setups.includes(option),
+                    }"
+                    >{{ option }}</span
+                  >
+                </div>
+              </div>
+
+              <div v-if="item.pricings.length > 0">
+                <div class="font-bold text-sm text-light-page-text-light">
+                  pricing
+                </div>
+                <div
+                  class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+                >
+                  <span
+                    v-for="option in specifications.pricing.options"
+                    :key="option"
+                    class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                    :class="{
+                      'bg-blue-200 text-blue-500 font-semibold':
+                        item.pricings.includes(option),
+                      'text-gray-500': !item.pricings.includes(option),
+                    }"
+                    >{{ option }}</span
+                  >
+                </div>
+              </div>
+
+              <div v-if="item.licenses.length > 0">
+                <div class="font-bold text-sm text-light-page-text-light">
+                  license
+                </div>
+                <div
+                  class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+                >
+                  <span
+                    v-for="option in specifications.license.options"
+                    :key="option"
+                    class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                    :class="{
+                      'bg-blue-200 text-blue-500 font-semibold':
+                        item.licenses.includes(option),
+                      'text-gray-500': !item.licenses.includes(option),
+                    }"
+                    >{{ option }}</span
+                  >
+                </div>
+              </div>
+
+              <div v-if="item.generationTimes.length > 0">
+                <div class="font-bold text-sm text-light-page-text-light">
+                  average time
+                </div>
+                <div
+                  class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+                >
+                  <span
+                    v-for="option in specifications.averageTime.options"
+                    :key="option"
+                    class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                    :class="{
+                      'bg-blue-200 text-blue-500 font-semibold':
+                        item.generationTimes.includes(option),
+                      'text-gray-500': !item.generationTimes.includes(option),
+                    }"
+                    >{{ option }}</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Additional specifications for inputs, outputs, tasks, and profiles -->
+            <div class="mt-8">
+              <h2 class="text-lg font-semibold mb-4">Additional Information</h2>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div v-if="item.inputs.length > 0">
+                  <div
+                    class="font-bold text-sm text-light-page-text-light mb-2"
+                  >
+                    Input Types
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      v-for="input in item.inputs"
+                      :key="input"
+                      class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
+                    >
+                      {{ input }}
+                    </span>
+                  </div>
+                </div>
+
+                <div v-if="item.outputs.length > 0">
+                  <div
+                    class="font-bold text-sm text-light-page-text-light mb-2"
+                  >
+                    Output Types
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      v-for="output in item.outputs"
+                      :key="output"
+                      class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
+                    >
+                      {{ output }}
+                    </span>
+                  </div>
+                </div>
+
+                <div v-if="item.tasks.length > 0">
+                  <div
+                    class="font-bold text-sm text-light-page-text-light mb-2"
+                  >
+                    Supported Tasks
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      v-for="task in item.tasks"
+                      :key="task"
+                      class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
+                    >
+                      {{ task }}
+                    </span>
+                  </div>
+                </div>
+
+                <div v-if="item.profiles.length > 0">
+                  <div
+                    class="font-bold text-sm text-light-page-text-light mb-2"
+                  >
+                    Suitable For
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <span
+                      v-for="profile in item.profiles"
+                      :key="profile"
+                      class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
+                    >
+                      {{ profile }}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -91,17 +250,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute } from "vue-router";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
 import Divider from "primevue/divider";
 import { useRuntimeConfig } from "#app";
 import { useDatabase } from "~/composables/useDatabase";
+import { useRichText } from "~/composables/useRichText";
 
 const route = useRoute();
 const item = ref(null);
 const config = useRuntimeConfig();
+const { parseRichText } = useRichText();
+
+const parsedDescription = computed(() => {
+  if (!item.value || !item.value.description) return "";
+  return parseRichText(item.value.description);
+});
 
 const getImageUrl = (image: any) => {
   if (!image) return "";
@@ -111,15 +277,13 @@ const getImageUrl = (image: any) => {
 };
 
 const specifications = {
-  use: { field: "use", options: ["no-code", "low-code", "code"] },
-  setup: { field: "setup", options: ["no-code", "low-code", "code"] },
+  use: { options: ["no-code", "low-code", "code"] },
+  setup: { options: ["no-code", "low-code", "code"] },
   pricing: {
-    field: "pricing",
     options: ["free", "freemium", "subscription", "credits"],
   },
-  license: { field: "license", options: ["personal", "commercial"] },
-  "average time": {
-    field: "averageTimeToGenerate",
+  license: { options: ["personal", "commercial"] },
+  averageTime: {
     options: ["seconds", "minutes", "hours", "days"],
   },
 };
@@ -148,5 +312,77 @@ onMounted(async () => {
 
 .p-galleria-item img {
   border-radius: 1.5rem !important;
+}
+
+.rich-text-content :deep(p) {
+  margin-bottom: 1rem;
+}
+
+.rich-text-content :deep(h1),
+.rich-text-content :deep(h2),
+.rich-text-content :deep(h3),
+.rich-text-content :deep(h4),
+.rich-text-content :deep(h5),
+.rich-text-content :deep(h6) {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.rich-text-content :deep(h1) {
+  font-size: 1.8rem;
+}
+
+.rich-text-content :deep(h2) {
+  font-size: 1.5rem;
+}
+
+.rich-text-content :deep(h3) {
+  font-size: 1.25rem;
+}
+
+.rich-text-content :deep(a) {
+  color: #3178f2;
+  text-decoration: underline;
+}
+
+.rich-text-content :deep(ul),
+.rich-text-content :deep(ol) {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.rich-text-content :deep(li) {
+  margin-bottom: 0.25rem;
+}
+
+.rich-text-content :deep(blockquote) {
+  border-left: 4px solid #e2e8f0;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+}
+
+.rich-text-content :deep(code) {
+  background: #f1f5f9;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.rich-text-content :deep(pre) {
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.rich-text-content :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  color: inherit;
 }
 </style>

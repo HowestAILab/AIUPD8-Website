@@ -24,55 +24,73 @@
             {{ item.title }}
           </h2>
           <div
-            v-if="item.isFavorite"
+            v-if="item.isFavourite"
             class="absolute top-2 right-2 bg-accent-extra text-light-page-text-dark text-sm px-4 py-1 rounded-full"
           >
             our favourite
           </div>
-          <p class="w-full break-words">
-            {{ item.description }}
-          </p>
+          <div
+            class="w-full break-words rich-text-content"
+            v-html="parsedDescription"
+          ></div>
         </div>
         <div class="border-b border-gray-900 my-4"></div>
+
+        <!-- Input/Output information -->
         <div class="grid grid-cols-2 pt-8">
-          <div>
+          <div v-if="item.inputs && item.inputs.length > 0">
             <div class="mb-2 font-semibold text-black">input type</div>
-            <div class="flex gap-2">
-              <span class="px-7 py-1 bg-white text-gray-600 rounded-full"
-                >text</span
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="input in item.inputs"
+                :key="input"
+                class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
-              <span class="px-7 py-1 bg-white text-gray-600 rounded-full"
-                >image</span
-              >
+                {{ input }}
+              </span>
             </div>
           </div>
-          <div>
+          <div v-if="item.tasks && item.tasks.length > 0">
             <div class="mb-2 font-semibold text-black">specific task</div>
-            <div class="flex gap-2">
-              <span class="px-7 py-1 bg-white text-gray-600 rounded-full"
-                >image</span
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="task in item.tasks"
+                :key="task"
+                class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
+                {{ task }}
+              </span>
             </div>
           </div>
         </div>
+
         <div class="grid grid-cols-2 pt-8">
-          <div>
+          <div v-if="item.outputs && item.outputs.length > 0">
             <div class="mb-2 font-semibold text-black">output type</div>
-            <div class="flex gap-2">
-              <span class="px-7 py-1 bg-white text-gray-600 rounded-full"
-                >image</span
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="output in item.outputs"
+                :key="output"
+                class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
+                {{ output }}
+              </span>
             </div>
           </div>
-          <div>
+          <div v-if="item.profiles && item.profiles.length > 0">
             <div class="mb-2 font-semibold text-black">profile</div>
-            <div class="flex gap-2">
-              <span class="px-7 py-1 bg-white text-gray-600 rounded-full"
-                >all creatives</span
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="profile in item.profiles"
+                :key="profile"
+                class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
+                {{ profile }}
+              </span>
             </div>
           </div>
         </div>
+
         <div class="pt-10 flex items-center justify-end">
           <label
             class="flex items-center text-sm text-light-page-text-light space-x-2 cursor-pointer"
@@ -104,7 +122,7 @@
         </div>
         <Divider />
         <div class="flex flex-col gap-4 pt-4">
-          <div>
+          <div v-if="item.uses && item.uses.length > 0">
             <div
               class="font-bold text-sm rounded-lg text-light-page-text-light"
             >
@@ -119,14 +137,15 @@
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
-                    item.use === option,
-                  'text-gray-500': item.use !== option,
+                    item.uses.includes(option),
+                  'text-gray-500': !item.uses.includes(option),
                 }"
                 >{{ option }}</span
               >
             </div>
           </div>
-          <div>
+
+          <div v-if="item.setups && item.setups.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
               setup
             </div>
@@ -139,14 +158,15 @@
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
-                    item.setup === option,
-                  'text-gray-500': item.setup !== option,
+                    item.setups.includes(option),
+                  'text-gray-500': !item.setups.includes(option),
                 }"
                 >{{ option }}</span
               >
             </div>
           </div>
-          <div>
+
+          <div v-if="item.pricings && item.pricings.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
               pricing
             </div>
@@ -164,14 +184,15 @@
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
-                    item.pricing === option,
-                  'text-gray-500': item.pricing !== option,
+                    item.pricings.includes(option),
+                  'text-gray-500': !item.pricings.includes(option),
                 }"
                 >{{ option }}</span
               >
             </div>
           </div>
-          <div>
+
+          <div v-if="item.licenses && item.licenses.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
               license
             </div>
@@ -184,14 +205,15 @@
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
-                    item.license === option,
-                  'text-gray-500': item.license !== option,
+                    item.licenses.includes(option),
+                  'text-gray-500': !item.licenses.includes(option),
                 }"
                 >{{ option }}</span
               >
             </div>
           </div>
-          <div>
+
+          <div v-if="item.generationTimes && item.generationTimes.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
               average time
             </div>
@@ -204,8 +226,8 @@
                 class="flex-1 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
-                    item.averageTimeToGenerate === option,
-                  'text-gray-500': item.averageTimeToGenerate !== option,
+                    item.generationTimes.includes(option),
+                  'text-gray-500': !item.generationTimes.includes(option),
                 }"
                 >{{ option }}</span
               >
@@ -220,24 +242,34 @@
 <script setup lang="ts">
 import Dialog from "primevue/dialog";
 import Galleria from "primevue/galleria";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useRuntimeConfig } from "#app";
-import type { DBItem } from "./DatabaseItem.vue";
+import Divider from "primevue/divider";
+import { useRichText } from "~/composables/useRichText";
+import type { ToolItem } from "~/composables/useDatabase";
 
 const config = useRuntimeConfig();
+const { parseRichText } = useRichText();
 
 const getImageUrl = (image: any) => {
   if (!image) return "";
   const imageUrl =
     image.formats?.medium?.url || image.formats?.small?.url || image.url;
-  return `${config.public.dbUrl}${imageUrl}`;
+  return imageUrl ? `${config.public.dbUrl}${imageUrl}` : "";
 };
 
 const visible = ref(false);
-const item = ref<DBItem | null>(null);
+const item = ref<ToolItem | null>(null);
+const compareChecked = ref(false);
+
+const parsedDescription = computed(() => {
+  if (!item.value || !item.value.description) return "";
+  return parseRichText(item.value.description);
+});
 
 // Method to open the modal
-const open = (toolItem: DBItem) => {
+const open = (toolItem: ToolItem) => {
+  console.log("Opening modal with item:", toolItem);
   item.value = toolItem;
   visible.value = true;
 };
@@ -268,5 +300,77 @@ defineExpose({ open });
 
 .p-galleria-item img {
   border-radius: 1.5rem !important;
+}
+
+.rich-text-content :deep(p) {
+  margin-bottom: 1rem;
+}
+
+.rich-text-content :deep(h1),
+.rich-text-content :deep(h2),
+.rich-text-content :deep(h3),
+.rich-text-content :deep(h4),
+.rich-text-content :deep(h5),
+.rich-text-content :deep(h6) {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.rich-text-content :deep(h1) {
+  font-size: 1.8rem;
+}
+
+.rich-text-content :deep(h2) {
+  font-size: 1.5rem;
+}
+
+.rich-text-content :deep(h3) {
+  font-size: 1.25rem;
+}
+
+.rich-text-content :deep(a) {
+  color: #3178f2;
+  text-decoration: underline;
+}
+
+.rich-text-content :deep(ul),
+.rich-text-content :deep(ol) {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.rich-text-content :deep(li) {
+  margin-bottom: 0.25rem;
+}
+
+.rich-text-content :deep(blockquote) {
+  border-left: 4px solid #e2e8f0;
+  padding-left: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+  font-style: italic;
+}
+
+.rich-text-content :deep(code) {
+  background: #f1f5f9;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.rich-text-content :deep(pre) {
+  background: #1e293b;
+  color: #f8fafc;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.rich-text-content :deep(pre code) {
+  background: transparent;
+  padding: 0;
+  color: inherit;
 }
 </style>

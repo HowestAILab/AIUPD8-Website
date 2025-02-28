@@ -32,20 +32,59 @@
     </template>
     <template #content>
       <div class="flex flex-col gap-4 text-sm text-light-page-text-light">
-        <div v-for="(options, key) in selections" :key="key">
-          <span class="font-bold">{{ key }}</span>
+        <div v-if="item.uses && item.uses.length > 0">
+          <span class="font-bold">use</span>
           <div
             class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
           >
             <span
-              v-for="option in options"
+              v-for="option in selections.use"
               :key="option"
               class="flex-1 text-center px-4 py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
-                  selected[key] === option && selected[key] !== null,
-                'text-gray-500':
-                  selected[key] !== option || selected[key] === null,
+                  item.uses.includes(option),
+                'text-gray-500': !item.uses.includes(option),
+              }"
+            >
+              {{ option }}
+            </span>
+          </div>
+        </div>
+
+        <div v-if="item.setups && item.setups.length > 0">
+          <span class="font-bold">setup</span>
+          <div
+            class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+          >
+            <span
+              v-for="option in selections.setup"
+              :key="option"
+              class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+              :class="{
+                'bg-blue-200 text-blue-500 font-semibold':
+                  item.setups.includes(option),
+                'text-gray-500': !item.setups.includes(option),
+              }"
+            >
+              {{ option }}
+            </span>
+          </div>
+        </div>
+
+        <div v-if="item.pricings && item.pricings.length > 0">
+          <span class="font-bold">pricing</span>
+          <div
+            class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+          >
+            <span
+              v-for="option in selections.pricing"
+              :key="option"
+              class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+              :class="{
+                'bg-blue-200 text-blue-500 font-semibold':
+                  item.pricings.includes(option),
+                'text-gray-500': !item.pricings.includes(option),
               }"
             >
               {{ option }}
@@ -69,10 +108,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "vue";
+import { ref } from "vue";
 import Card from "primevue/card";
 import ToolModal from "./ToolModal.vue";
 import { useRuntimeConfig } from "#app";
+import type { ToolItem } from "~/composables/useDatabase";
 
 const selections = ref({
   use: ["no-code", "low-code", "code"],
@@ -80,40 +120,11 @@ const selections = ref({
   pricing: ["free", "freemium", "subscription", "credits"],
 });
 
-const selected = ref({
-  use: null,
-  setup: null,
-  pricing: null,
-});
-
-// Props
-interface DBItem {
-  id: number;
-  documentId: string;
-  title: string;
-  description: string;
-  Image: {
-    formats: {
-      medium?: { url: string };
-      small?: { url: string };
-      thumbnail?: { url: string };
-    };
-    url: string;
-  };
-  isFavorite?: boolean;
-  use?: string;
-  setup?: string;
-  pricing?: string;
-  license?: string;
-  averageTimeToGenerate?: string;
-}
-
 const props = defineProps<{
-  item: DBItem;
+  item: ToolItem;
 }>();
 
 const compareChecked = ref(false);
-
 const modalRef = ref();
 
 function openModal() {
@@ -130,33 +141,6 @@ const getImageUrl = (image: any) => {
   const imageUrl =
     image.formats?.medium?.url || image.formats?.small?.url || image.url;
 
-  return `${config.public.dbUrl}${imageUrl}`;
+  return imageUrl ? `${config.public.dbUrl}${imageUrl}` : "";
 };
-
-// Remove or comment out the old seeMore function
-// function seeMore(item: DBItem) {
-//   alert(`See more about ${item.title}`);
-// }
-
-// Initialize selected values based on item prop
-onMounted(() => {
-  selected.value = {
-    use: props.item.use || "no-code",
-    setup: props.item.setup || "no-code",
-    pricing: props.item.pricing || "subscription",
-  };
-});
-
-// Watch for changes in item prop and update selected values
-watch(
-  () => props.item,
-  (newItem) => {
-    selected.value = {
-      use: newItem.use || "no-code",
-      setup: newItem.setup || "no-code",
-      pricing: newItem.pricing || "subscription",
-    };
-  },
-  { deep: true }
-);
 </script>

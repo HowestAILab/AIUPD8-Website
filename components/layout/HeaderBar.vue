@@ -24,9 +24,9 @@
           Database
         </NuxtLink>
 
-        <NuxtLink to="/contact" class="hover:underline">
+        <a href="mailto:laura.willems@howest.be" class="hover:underline">
           <RecurringButton variant="neutral">Contact</RecurringButton>
-        </NuxtLink>
+        </a>
       </div>
     </nav>
   </header>
@@ -34,11 +34,11 @@
 
 <script setup lang="ts">
 import { defineProps, computed } from "vue";
-import { useRoute } from 'vue-router';
+import { useRoute } from "vue-router";
 import RecurringButton from "~/components/ui/RecurringButton.vue";
 
 const route = useRoute();
-const isHomePage = computed(() => route.path === '/');
+const isHomePage = computed(() => route.path === "/");
 
 const props = defineProps({
   variant: {

@@ -3,13 +3,9 @@
   <section
     class="w-full min-h-screen flex flex-col items-center justify-center text-center p-10"
   >
-    <img 
-      src="/images/aiupd8-partners.png" 
-      alt="AIUPD8 Partners"
-      class="mb-8"
-    />
+    <img src="/images/aiupd8-partners.png" alt="AIUPD8 Partners" class="mb-8" />
     <h1
-      class="text-8xl font-bold mb-4 text-light-page-text-dark"
+      class="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 text-light-page-text-dark"
       v-html="heading"
     ></h1>
     <p class="max-w-3xl text-l mb-6 text-light-page-text-light">
