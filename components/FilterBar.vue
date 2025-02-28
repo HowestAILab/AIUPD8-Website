@@ -8,6 +8,7 @@
         optionLabel="name"
         placeholder="search"
         :loading="loading"
+        filter
         class="w-full"
       />
     </div>
@@ -19,6 +20,7 @@
         optionLabel="name"
         placeholder="search"
         :loading="loading"
+        filter
         class="w-full"
       />
     </div>
@@ -30,6 +32,7 @@
         optionLabel="name"
         placeholder="search"
         :loading="loading"
+        filter
         class="w-full"
       />
     </div>
@@ -158,5 +161,22 @@ onMounted(() => {
 .p-button-outlined:hover {
   background-color: var(--primary-color);
   color: white;
+}
+
+/* Add styles to ensure filter input is visible */
+:deep(.p-multiselect-filter-container) {
+  width: 100%;
+  padding: 0.5rem;
+}
+
+:deep(.p-multiselect-filter) {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--surface-200);
+  border-radius: 4px;
+}
+
+:deep(.p-multiselect-panel) {
+  min-width: 100%;
 }
 </style>

@@ -1,0 +1,31 @@
+/* MultiSelect Filter Overrides */
+.p-multiselect-panel .p-multiselect-header {
+  padding: 0.5rem;
+}
+
+.p-multiselect-filter-container {
+  width: 100%;
+}
+
+.p-multiselect-filter {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--surface-200);
+  border-radius: 4px;
+}
+
+/* Ensure the filter icon is visible */
+.p-multiselect-filter-icon {
+  color: var(--text-color);
+}
+
+/* Style for the filter input to match your design system */
+.p-multiselect-header .p-inputtext {
+  background: var(--surface-0);
+  color: var(--text-color);
+}
+
+/* Ensure dropdown panel has proper width */
+.p-multiselect-panel {
+  min-width: 100%;
+}

@@ -117,6 +117,7 @@
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Input type</h3>
         <MultiSelect
+          filter
           v-model="filters.inputs"
           :options="inputOptions"
           optionLabel="name"
@@ -130,6 +131,7 @@
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Output</h3>
         <MultiSelect
+          filter
           v-model="filters.outputs"
           :options="outputOptions"
           optionLabel="name"
@@ -143,6 +145,7 @@
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Profile</h3>
         <MultiSelect
+          filter
           v-model="filters.profiles"
           :options="profileOptions"
           optionLabel="name"
@@ -156,6 +159,7 @@
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Specific task</h3>
         <MultiSelect
+          filter
           v-model="filters.tasks"
           :options="taskOptions"
           optionLabel="name"

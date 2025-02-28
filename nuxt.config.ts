@@ -707,6 +707,11 @@ export default defineNuxtConfig({
   },
 
   compatibilityDate: "2025-01-30",
+
+  css: [
+    '~/assets/css/primevue-overrides.css',
+    // Other CSS files you might have
+  ],
 });
 
 
