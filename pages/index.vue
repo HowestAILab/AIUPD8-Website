@@ -42,13 +42,13 @@ const heroContent = ref({
 
 const cards = ref([
   {
-    icon: "🌟",
+    iconSrc: "/images/curation.svg",
     title: "Curation",
     description:
       "The AI-UPD8 database goes beyond a simple listing of AI tools. Every tool in our database has been thoroughly tested and evaluated by our team of experts, ensuring you get reliable, hands-on insights. <br><br> Think of it as your trusted guide, where each entry represents not just information, but validated knowledge from professionals who understand the creative industry's needs.",
   },
   {
-    icon: "💡",
+    iconSrc: "/images/inspiration.svg",
     title: "Inspiration",
     description:
       "Get inspired by real-world AI proven workflows that match your needs. Our database lets you filter examples by professional profile, industry, project scale, or specific creative tasks. <br> <br> Whether you're a game developer looking for character animation solutions, a marketer seeking content creation tools, or a video editor exploring post-production automation you'll quickly find relevant examples that spark ideas for your own workflow.",
