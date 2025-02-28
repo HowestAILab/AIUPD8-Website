@@ -3,7 +3,22 @@
   <section
     class="w-full min-h-screen flex flex-col items-center justify-center text-center p-10"
   >
-    <img src="/images/aiupd8-partners.png" alt="AIUPD8 Partners" class="mb-8" />
+    <div
+      class="flex flex-row justify-center items-center gap-4 mb-8 w-4/6 h-4 mt-10"
+    >
+      <img src="/images/DAE.png" alt="DAE" class="h-full object-contain" />
+      <img src="/images/VLAIO.png" alt="VLAIO" class="h-full object-contain" />
+      <img
+        src="/images/bm_cluster.png"
+        alt="BM Cluster"
+        class="h-full object-contain"
+      />
+      <img
+        src="/images/AI-Lab.png"
+        alt="AI Lab"
+        class="h-full object-contain"
+      />
+    </div>
     <h1
       class="text-4xl sm:text-6xl md:text-8xl font-bold mb-4 text-light-page-text-dark"
       v-html="heading"

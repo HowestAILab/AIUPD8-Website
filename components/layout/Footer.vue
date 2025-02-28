@@ -42,19 +42,24 @@
       <!-- Bottom row: partner logos -->
       <div class="flex flex-wrap items-center justify-center gap-8">
         <img
-          src="/images/dnc_logo.png"
-          alt="DNC"
-          class="h-200 object-contain"
+          src="/images/DAE_dark.png"
+          alt="DAE"
+          class="max-h-[10vh] object-contain"
         />
         <img
-          src="/images/howest_logo.png"
-          alt="Howest"
-          class="h-110 object-contain"
-        />
-        <img
-          src="/images/vlaio_logo.svg"
+          src="/images/VLAIO.png"
           alt="VLAIO"
-          class="h-85 object-contain"
+          class="max-h-[10vh] object-contain"
+        />
+        <img
+          src="/images/bm_cluster_white.png"
+          alt="BM Cluster"
+          class="max-h-[10vh] object-contain"
+        />
+        <img
+          src="/images/AI-Lab.png"
+          alt="AI Lab"
+          class="max-h-[10vh] object-contain"
         />
       </div>
     </div>
