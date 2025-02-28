@@ -34,7 +34,7 @@
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col justify-end mt-[24px]">
-      <div class="flex gap-2">
+      <div class="flex gap-2 w-full justify-center sm:justify-start">
         <Button
           label="Search"
           icon="pi pi-search"

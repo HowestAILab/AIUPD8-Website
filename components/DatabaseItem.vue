@@ -35,12 +35,12 @@
         <div v-if="item.uses && item.uses.length > 0">
           <span class="font-bold">use</span>
           <div
-            class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
           >
             <span
               v-for="option in selections.use"
               :key="option"
-              class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+              class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   item.uses.includes(option),
@@ -55,12 +55,12 @@
         <div v-if="item.setups && item.setups.length > 0">
           <span class="font-bold">setup</span>
           <div
-            class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
           >
             <span
               v-for="option in selections.setup"
               :key="option"
-              class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+              class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   item.setups.includes(option),
@@ -75,12 +75,12 @@
         <div v-if="item.pricings && item.pricings.length > 0">
           <span class="font-bold">pricing</span>
           <div
-            class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
           >
             <span
               v-for="option in selections.pricing"
               :key="option"
-              class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+              class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   item.pricings.includes(option),

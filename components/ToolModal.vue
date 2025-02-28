@@ -129,12 +129,12 @@
               use
             </div>
             <div
-              class="flex w-full bg-gray-100 rounded-full mt-1 border border-gray-200"
+              class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
             >
               <span
                 v-for="option in ['no-code', 'low-code', 'code']"
                 :key="option"
-                class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
                     item.uses.includes(option),
@@ -150,12 +150,12 @@
               setup
             </div>
             <div
-              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+              class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
             >
               <span
                 v-for="option in ['no-code', 'low-code', 'code']"
                 :key="option"
-                class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
                     item.setups.includes(option),
@@ -171,7 +171,7 @@
               pricing
             </div>
             <div
-              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+              class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
             >
               <span
                 v-for="option in [
@@ -181,7 +181,7 @@
                   'credits',
                 ]"
                 :key="option"
-                class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
                     item.pricings.includes(option),
@@ -197,12 +197,12 @@
               license
             </div>
             <div
-              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+              class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
             >
               <span
                 v-for="option in ['personal', 'commercial']"
                 :key="option"
-                class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
                     item.licenses.includes(option),
@@ -218,12 +218,12 @@
               average time
             </div>
             <div
-              class="flex bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
+              class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
             >
               <span
                 v-for="option in ['seconds', 'minutes', 'hours', 'days']"
                 :key="option"
-                class="flex-1 text-center px-4 py-1 rounded-full transition-all"
+                class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
                   'bg-blue-200 text-blue-500 font-semibold':
                     item.generationTimes.includes(option),
