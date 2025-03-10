@@ -95,7 +95,11 @@
           <label
             class="flex items-center text-sm text-light-page-text-light space-x-2 cursor-pointer"
           >
-            <input type="checkbox" v-model="compareChecked" />
+            <input
+              type="checkbox"
+              v-model="compareChecked"
+              @change="handleCompareChange"
+            />
             <span class="text-black font-semibold">add to comparison</span>
           </label>
         </div>
@@ -242,7 +246,7 @@
 <script setup lang="ts">
 import Dialog from "primevue/dialog";
 import Galleria from "primevue/galleria";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRuntimeConfig } from "#app";
 import Divider from "primevue/divider";
 import { useRichText } from "~/composables/useRichText";
@@ -262,15 +266,43 @@ const visible = ref(false);
 const item = ref<ToolItem | null>(null);
 const compareChecked = ref(false);
 
+const props = defineProps({
+  itemsInComparison: {
+    type: Set,
+    default: () => new Set(),
+  },
+});
+
+const emit = defineEmits(["add-to-comparison", "remove-from-comparison"]);
+
+function handleCompareChange(event) {
+  if (!item.value) return;
+
+  if (event.target.checked) {
+    emit("add-to-comparison", item.value);
+  } else {
+    emit("remove-from-comparison", item.value);
+  }
+}
+
+watch(visible, (newValue) => {
+  if (!newValue) {
+    compareChecked.value = false;
+  }
+});
+
 const parsedDescription = computed(() => {
   if (!item.value || !item.value.description) return "";
   return parseRichText(item.value.description);
 });
 
-// Method to open the modal
 const open = (toolItem: ToolItem) => {
-  console.log("Opening modal with item:", toolItem);
   item.value = toolItem;
+
+  if (props.itemsInComparison && item.value) {
+    compareChecked.value = props.itemsInComparison.has(item.value.id);
+  }
+
   visible.value = true;
 };
 

@@ -50,10 +50,31 @@
             v-for="item in filteredItems"
             :key="item.id"
             :item="item"
+            :items-in-comparison="itemsInComparison"
+            @add-to-comparison="addToComparison"
+            @remove-from-comparison="removeFromComparison"
           />
         </div>
       </main>
     </div>
+
+    <button
+      class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-dark transition-colors duration-300 z-50"
+      @click="handleButtonClick"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 640 512"
+        class="w-6 h-6"
+      >
+        <path
+          fill="currentColor"
+          d="M384 32l128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L398.4 96c-5.2 25.8-22.9 47.1-46.4 57.3L352 448l160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-192 0-192 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l160 0 0-294.7c-23.5-10.3-41.2-31.6-46.4-57.3L128 96c-17.7 0-32-14.3-32-32s14.3-32 32-32l128 0c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288l144.9 0L512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C627.2 382 574.9 416 512 416zM126.8 195.8L54.4 320l144.9 0L126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C242 382 189.7 416 126.8 416S11.7 382 .9 337.1z"
+        />
+      </svg>
+    </button>
+
+    <ComparisonModal ref="comparisonModal" @item-removed="handleItemRemoved" />
   </div>
 </template>
 
@@ -63,6 +84,7 @@ import HeaderBar from "~/components/layout/HeaderBar.vue";
 import AdvancedFilter from "~/components/AdvancedFilter.vue";
 import FilterBar from "~/components/FilterBar.vue";
 import DatabaseItem from "~/components/DatabaseItem.vue";
+import ComparisonModal from "~/components/ComparisonModal.vue";
 import type { ToolItem } from "~/composables/useDatabase";
 
 const { items, loading, error, fetchDatabaseItems } = useDatabase();
@@ -71,8 +93,40 @@ const filteredItems = ref<ToolItem[]>([]);
 // Show/hide advanced filter sidebar
 const showFilters = ref(false);
 
+const comparisonModal = ref(null);
+
+const handleButtonClick = () => {
+  comparisonModal.value?.open();
+};
+
+// Create a ref to track which items are in comparison
+const itemsInComparison = ref(new Set());
+
+// Function to add item to comparison
+const addToComparison = (item: ToolItem) => {
+  comparisonModal.value?.addItem(item);
+  itemsInComparison.value.add(item.id);
+};
+
+// Function to remove item from comparison
+const removeFromComparison = (item: ToolItem) => {
+  // Just call the removeItem method directly with the item
+  comparisonModal.value?.removeItem(item);
+  itemsInComparison.value.delete(item.id);
+};
+
+// Handle when an item is removed from the comparison modal
+const handleItemRemoved = (item: ToolItem) => {
+  itemsInComparison.value.delete(item.id);
+};
+
 const toggleFilters = () => {
   showFilters.value = !showFilters.value;
+};
+
+// Open comparison modal
+const openComparisonModal = () => {
+  comparisonModal.value?.open();
 };
 
 // Filter items based on selected filters
