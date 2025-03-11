@@ -19,13 +19,23 @@
         </p>
       </div>
 
-      <div v-else class="comparison-container px-8 pb-8 bg-gray-100">
+      <div class="comparison-container px-8 pb-8 bg-gray-100 relative">
+        <!-- Mobile scroll indicators -->
+        <div class="md:hidden">
+          <div class="scroll-indicator scroll-indicator-left">
+            <i class="pi pi-chevron-left"></i>
+          </div>
+          <div class="scroll-indicator scroll-indicator-right">
+            <i class="pi pi-chevron-right"></i>
+          </div>
+        </div>
+
         <!-- Tools grid for comparison -->
         <div class="flex overflow-x-auto gap-8 snap-x pt-6">
           <div
             v-for="(item, index) in comparisonItems"
             :key="index"
-            class="flex-shrink-0 snap-start w-[450px]"
+            class="flex-shrink-0 snap-start w-[95%] md:w-[31%]"
           >
             <!-- Top section -->
             <div class="rounded-3xl bg-blue-100 overflow-hidden mb-4">
@@ -220,8 +230,14 @@
                 </div>
               </div>
 
-              <!-- Remove button -->
-              <div class="mt-6 flex justify-end">
+              <!-- Action buttons -->
+              <div class="mt-6 flex justify-between items-center">
+                <button
+                  @click="navigateToTool(item.id)"
+                  class="px-4 py-2 bg-blue-100 text-blue-500 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors"
+                >
+                  View Details
+                </button>
                 <button
                   @click="removeItem(index)"
                   class="px-4 py-2 bg-red-100 text-red-500 rounded-full text-sm font-medium hover:bg-red-200 transition-colors"
@@ -242,10 +258,12 @@ import Dialog from "primevue/dialog";
 import { ref } from "vue";
 import { useRichText } from "~/composables/useRichText";
 import type { ToolItem } from "~/composables/useDatabase";
+import { useRouter } from "vue-router";
 
 const visible = ref(false);
 const comparisonItems = ref<ToolItem[]>([]);
 const { parseRichText } = useRichText();
+const router = useRouter();
 
 const open = () => {
   console.log("Opening comparison modal");
@@ -270,6 +288,11 @@ const removeItem = (index: number) => {
 
 const clearItems = () => {
   comparisonItems.value = [];
+};
+
+const navigateToTool = (id: string) => {
+  router.push(`/tools/${id}`);
+  visible.value = false;
 };
 
 defineExpose({ open, addItem, removeItem, clearItems });
@@ -323,5 +346,34 @@ defineExpose({ open, addItem, removeItem, clearItems });
 .overflow-x-auto::-webkit-scrollbar-thumb {
   background-color: #cbd5e1;
   border-radius: 20px;
+}
+
+.scroll-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.scroll-indicator-left {
+  left: 10px;
+}
+
+.scroll-indicator-right {
+  right: 10px;
+}
+
+@media (hover: none) {
+  .scroll-indicator {
+    display: none;
+  }
 }
 </style>
