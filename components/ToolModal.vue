@@ -17,7 +17,7 @@
         </NuxtLink>
       </div>
     </template>
-    <div v-if="item">
+    <div v-if="item" class="p-8">
       <div class="rounded-3xl bg-blue-200 p-8">
         <div class="pb-6 relative">
           <h2 class="text-5xl font-semibold text-black pb-6">
