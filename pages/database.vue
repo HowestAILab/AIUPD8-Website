@@ -115,6 +115,7 @@ const comparisonCount = computed(() => itemsInComparison.value.size);
 const addToComparison = (item: ToolItem) => {
   comparisonModal.value?.addItem(item);
   itemsInComparison.value.add(item.id);
+  itemsInComparison.value = new Set(itemsInComparison.value); // force reactivity
 };
 
 // Function to remove item from comparison
@@ -122,11 +123,13 @@ const removeFromComparison = (item: ToolItem) => {
   // Just call the removeItem method directly with the item
   comparisonModal.value?.removeItem(item);
   itemsInComparison.value.delete(item.id);
+  itemsInComparison.value = new Set(itemsInComparison.value); // force reactivity
 };
 
 // Handle when an item is removed from the comparison modal
 const handleItemRemoved = (item: ToolItem) => {
   itemsInComparison.value.delete(item.id);
+  itemsInComparison.value = new Set(itemsInComparison.value); // force reactivity
 };
 
 const toggleFilters = () => {

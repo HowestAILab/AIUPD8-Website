@@ -233,8 +233,8 @@
               <!-- Action buttons -->
               <div class="mt-6 flex justify-between items-center">
                 <button
-                  @click="navigateToTool(item.id)"
-                  class="px-4 py-2 bg-blue-100 text-blue-500 rounded-full text-sm font-medium hover:bg-blue-200 transition-colors"
+                  @click="navigateToTool(item.title)"
+                  class="bg-black text-white text-sm font-semibold rounded-full px-4 py-1"
                 >
                   View Details
                 </button>
@@ -280,10 +280,19 @@ const addItem = (item: ToolItem) => {
 
 const emit = defineEmits(["item-removed"]);
 
-const removeItem = (index: number) => {
-  const removedItem = comparisonItems.value[index];
-  comparisonItems.value.splice(index, 1);
-  emit("item-removed", removedItem);
+// Updated removeItem to accept an item or index.
+const removeItem = (itemOrIndex: ToolItem | number) => {
+  let index: number;
+  if (typeof itemOrIndex === "number") {
+    index = itemOrIndex;
+  } else {
+    index = comparisonItems.value.findIndex((i) => i.id === itemOrIndex.id);
+  }
+  if (index > -1) {
+    const removedItem = comparisonItems.value[index];
+    comparisonItems.value.splice(index, 1);
+    emit("item-removed", removedItem);
+  }
 };
 
 const clearItems = () => {
