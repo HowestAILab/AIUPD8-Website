@@ -98,21 +98,32 @@
         <label
           class="flex items-center text-sm text-light-page-text-light space-x-2 cursor-pointer"
         >
-          <input type="checkbox" v-model="compareChecked" />
+          <input
+            type="checkbox"
+            :checked="isInComparison"
+            @change="handleCompareChange"
+          />
           <span>Add to comparison</span>
         </label>
       </div>
     </template>
   </Card>
-  <ToolModal ref="modalRef" />
+  <ToolModal
+    ref="modalRef"
+    :items-in-comparison="itemsInComparison"
+    @add-to-comparison="handleAddToComparison"
+    @remove-from-comparison="handleRemoveFromComparison"
+  />
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import Card from "primevue/card";
 import ToolModal from "./ToolModal.vue";
 import { useRuntimeConfig } from "#app";
 import type { ToolItem } from "~/composables/useDatabase";
+
+const modalRef = ref(null);
 
 const selections = ref({
   use: ["no-code", "low-code", "code"],
@@ -122,10 +133,30 @@ const selections = ref({
 
 const props = defineProps<{
   item: ToolItem;
+  itemsInComparison?: Set<number>;
 }>();
 
-const compareChecked = ref(false);
-const modalRef = ref();
+const isInComparison = computed(() => {
+  return props.itemsInComparison?.has(props.item.id) || false;
+});
+
+const emit = defineEmits(["add-to-comparison", "remove-from-comparison"]);
+
+function handleCompareChange(event) {
+  if (event.target.checked) {
+    emit("add-to-comparison", props.item);
+  } else {
+    emit("remove-from-comparison", props.item);
+  }
+}
+
+function handleAddToComparison(item) {
+  emit("add-to-comparison", item);
+}
+
+function handleRemoveFromComparison(item) {
+  emit("remove-from-comparison", item);
+}
 
 function openModal() {
   modalRef.value.open(props.item);

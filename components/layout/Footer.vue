@@ -33,33 +33,38 @@
         <!-- Right side -->
         <div class="text-left md:text-right">
           <h2 class="text-2xl font-semibold mb-4">Or send us a mail</h2>
-          <a href="mailto:laura.willems@howest.be" class="hover:underline">
-            <RecurringButton variant="primary"> contact us </RecurringButton>
+          <a href="mailto:laura.willems@howest.be" class="inline-block">
+            <RecurringButton variant="primary" class="font-semibold text-lg">
+              Contact Us
+            </RecurringButton>
           </a>
         </div>
       </div>
 
       <!-- Bottom row: partner logos -->
-      <div class="flex flex-wrap items-center justify-center gap-8">
+
+      <div
+        class="flex flex-row justify-center items-center gap-4 w-1/4 mx-auto"
+      >
         <img
           src="/images/DAE_dark.png"
           alt="DAE"
-          class="max-h-[10vh] object-contain"
+          class="h-full object-contain"
         />
         <img
           src="/images/VLAIO.png"
           alt="VLAIO"
-          class="max-h-[10vh] object-contain"
+          class="h-full object-contain"
         />
         <img
           src="/images/bm_cluster_white.png"
           alt="BM Cluster"
-          class="max-h-[10vh] object-contain"
+          class="h-full object-contain"
         />
         <img
           src="/images/AI-Lab.png"
           alt="AI Lab"
-          class="max-h-[10vh] object-contain"
+          class="h-full object-contain"
         />
       </div>
     </div>
