@@ -717,7 +717,10 @@ export default defineNuxtConfig({
   vite: {
     build: {
       rollupOptions: {
-        external: ["@primevue/forms/form?nuxt_component=async&nuxt_component_name=Form&nuxt_component_export=default"]
+        external: [
+          "@primevue/forms/form?nuxt_component=async&nuxt_component_name=Form&nuxt_component_export=default",
+          "@primevue/forms/formfield?nuxt_component=async&nuxt_component_name=FormField&nuxt_component_export=default"
+        ]
       }
     }
   }
