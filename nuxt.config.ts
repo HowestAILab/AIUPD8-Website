@@ -712,6 +712,15 @@ export default defineNuxtConfig({
     '~/assets/css/primevue-overrides.css',
     // Other CSS files you might have
   ],
+
+  // Added build configuration to fix build error github
+  vite: {
+    build: {
+      rollupOptions: {
+        external: ["@primevue/forms/form?nuxt_component=async&nuxt_component_name=Form&nuxt_component_export=default"]
+      }
+    }
+  }
 });
 
 
