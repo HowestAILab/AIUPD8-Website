@@ -88,7 +88,6 @@ export interface ToolItem {
   title: string;
   description: any;
   isFavourite: boolean;
-  // Extract first item's name or null if empty
   uses: string[];
   setups: string[];
   pricings: string[];
@@ -98,9 +97,10 @@ export interface ToolItem {
   outputs: string[];
   tasks: string[];
   profiles: string[];
-  // Media
   Image: any;
   showcaseImages: any[];
+  link: string;
+  youtubeLinks: string;
   // For backward compatibility
   use?: string;
   setup?: string;
@@ -220,7 +220,10 @@ export function useDatabase() {
       averageTimeToGenerate: generationTimes[0] || null,
       // Media fields
       Image: getImage(attributes.Image),
-      showcaseImages: getImages(attributes.showcaseImages) || []
+      showcaseImages: getImages(attributes.showcaseImages) || [],
+      // New schema fields
+      link: attributes.link || "",
+      youtubeLinks: attributes.youtubeLinks || ""
     };
   };
 

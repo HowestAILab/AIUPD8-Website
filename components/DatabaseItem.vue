@@ -4,7 +4,7 @@
       <div class="pt-5 px-5">
         <div class="relative">
           <img
-            :src="getImageUrl(item.Image)"
+            :src="getMediaUrl(item.Image)"
             alt=""
             class="w-full object-cover h-48 rounded-md"
           />
@@ -20,14 +20,24 @@
       </div>
     </template>
     <template #title>
-      <div class="flex justify-between">
+      <div class="flex justify-between items-center">
         <h3 class="text-xl font-semibold">{{ item.title }}</h3>
-        <button
-          @click="openModal"
-          class="bg-black text-white text-sm font-semibold rounded-full px-4 py-1"
-        >
-          see more
-        </button>
+        <div class="flex space-x-2">
+          <!-- <NuxtLink
+            v-if="item.link"
+            :href="item.link"
+            target="_blank"
+            class="flex items-center justify-center bg-blue-500 text-white text-sm font-semibold rounded-full px-6 py-1 hover:bg-blue-600 text-center w-full max-w-xs sm:w-auto mx-2"
+          >
+            Go to Tool Website
+          </NuxtLink> -->
+          <button
+            @click="openModal"
+            class="bg-black text-white text-sm font-semibold rounded-full px-4 py-1"
+          >
+            see more
+          </button>
+        </div>
       </div>
     </template>
     <template #content>
@@ -120,9 +130,10 @@
 import { ref, computed } from "vue";
 import Card from "primevue/card";
 import ToolModal from "./ToolModal.vue";
-import { useRuntimeConfig } from "#app";
+import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 
+const { getMediaUrl } = useMedia();
 const modalRef = ref(null);
 
 const selections = ref({
@@ -161,17 +172,4 @@ function handleRemoveFromComparison(item) {
 function openModal() {
   modalRef.value.open(props.item);
 }
-
-const config = useRuntimeConfig();
-
-const getImageUrl = (image: any) => {
-  if (!image) {
-    return "";
-  }
-
-  const imageUrl =
-    image.formats?.medium?.url || image.formats?.small?.url || image.url;
-
-  return imageUrl ? `${config.public.dbUrl}${imageUrl}` : "";
-};
 </script>

@@ -33,6 +33,26 @@
             class="w-full break-words rich-text-content"
             v-html="parsedDescription"
           ></div>
+          <!-- New website button -->
+          <div v-if="item.link" class="mt-4">
+            <NuxtLink
+              :href="item.link"
+              target="_blank"
+              class="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
+            >
+              Go to Tool Website
+            </NuxtLink>
+          </div>
+          <!-- New YouTube button -->
+          <div v-if="item.youtubeLinks" class="mt-4">
+            <NuxtLink
+              :href="getYoutubeEmbedUrl(item.youtubeLinks)"
+              target="_blank"
+              class="inline-flex items-center bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+            >
+              Watch on YouTube
+            </NuxtLink>
+          </div>
         </div>
         <div class="border-b border-gray-900 my-4"></div>
 
@@ -104,19 +124,29 @@
           </label>
         </div>
       </div>
-      <div class="py-8">
+      <div class="py-8" v-if="carouselItems.length > 0">
         <Galleria
-          :value="item.showcaseImages"
+          :value="carouselItems"
           :showThumbnails="false"
           :showIndicators="true"
           class="w-full rounded-3xl overflow-hidden"
         >
           <template #item="slotProps">
-            <img
-              :src="getImageUrl(slotProps.item)"
-              :alt="item.title"
-              class="w-full h-[416px] object-cover"
-            />
+            <div v-if="slotProps.item.type === 'youtube'">
+              <iframe
+                :src="getYoutubeEmbedUrl(slotProps.item.url)"
+                frameborder="0"
+                allowfullscreen
+                class="w-full h-[416px]"
+              ></iframe>
+            </div>
+            <div v-else>
+              <img
+                :src="getMediaUrl(slotProps.item)"
+                :alt="item.title"
+                class="w-full h-[416px] object-cover"
+              />
+            </div>
           </template>
         </Galleria>
       </div>
@@ -250,17 +280,11 @@ import { ref, computed, watch } from "vue";
 import { useRuntimeConfig } from "#app";
 import Divider from "primevue/divider";
 import { useRichText } from "~/composables/useRichText";
+import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 
-const config = useRuntimeConfig();
 const { parseRichText } = useRichText();
-
-const getImageUrl = (image: any) => {
-  if (!image) return "";
-  const imageUrl =
-    image.formats?.medium?.url || image.formats?.small?.url || image.url;
-  return imageUrl ? `${config.public.dbUrl}${imageUrl}` : "";
-};
+const { getMediaUrl, getCarouselImageUrl, getYoutubeEmbedUrl } = useMedia();
 
 const visible = ref(false);
 const item = ref<ToolItem | null>(null);
@@ -298,6 +322,10 @@ const parsedDescription = computed(() => {
 
 const open = (toolItem: ToolItem) => {
   item.value = toolItem;
+  console.log("Opening modal with item:", toolItem);
+  if (toolItem.showcaseImages) {
+    console.log("Showcase images in modal:", toolItem.showcaseImages);
+  }
 
   if (props.itemsInComparison && item.value) {
     compareChecked.value = props.itemsInComparison.has(item.value.id);
@@ -305,6 +333,16 @@ const open = (toolItem: ToolItem) => {
 
   visible.value = true;
 };
+
+// New computed property for modal carousel items
+const carouselItems = computed(() => {
+  if (!item.value) return [];
+  let slides = item.value.showcaseImages || [];
+  if (item.value.youtubeLinks) {
+    slides.push({ type: "youtube", url: item.value.youtubeLinks });
+  }
+  return slides;
+});
 
 defineExpose({ open });
 </script>

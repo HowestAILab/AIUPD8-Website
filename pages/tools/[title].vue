@@ -16,7 +16,7 @@
           <div class="rounded-3xl bg-blue-200 p-8">
             <div class="pb-6 relative">
               <img
-                :src="getImageUrl(item.Image)"
+                :src="getMediaUrl(item.Image)"
                 alt=""
                 class="mb-4 w-full object-cover h-80 rounded-xl"
               />
@@ -35,23 +35,53 @@
                 class="w-full break-words rich-text-content"
                 v-html="parsedDescription"
               ></div>
+              <!-- New website button -->
+              <div v-if="item.link" class="mt-4">
+                <NuxtLink
+                  :href="item.link"
+                  target="_blank"
+                  class="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
+                >
+                  Go to Tool Website
+                </NuxtLink>
+              </div>
+              <!-- New YouTube button -->
+              <div v-if="item.youtubeLinks" class="mt-4">
+                <NuxtLink
+                  :href="getYoutubeEmbedUrl(item.youtubeLinks)"
+                  target="_blank"
+                  class="inline-flex items-center bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
+                >
+                  Watch on YouTube
+                </NuxtLink>
+              </div>
             </div>
           </div>
 
           <!-- Gallery -->
-          <div class="py-8">
+          <div class="py-8" v-if="carouselItems.length > 0">
             <Galleria
-              :value="item.showcaseImages"
+              :value="carouselItems"
               :showThumbnails="false"
               :showIndicators="true"
               class="w-full rounded-3xl overflow-hidden"
             >
               <template #item="slotProps">
-                <img
-                  :src="getImageUrl(slotProps.item)"
-                  :alt="item.title"
-                  class="w-full h-[416px] object-cover"
-                />
+                <div v-if="slotProps.item.type === 'youtube'">
+                  <iframe
+                    :src="getYoutubeEmbedUrl(slotProps.item.url)"
+                    frameborder="0"
+                    allowfullscreen
+                    class="w-full h-[416px]"
+                  ></iframe>
+                </div>
+                <div v-else>
+                  <img
+                    :src="getMediaUrl(slotProps.item)"
+                    :alt="item.title"
+                    class="w-full h-[416px] object-cover"
+                  />
+                </div>
               </template>
             </Galleria>
           </div>
@@ -70,17 +100,17 @@
                 <div
                   class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
                 >
-                  <span
-                    v-for="option in specifications.use.options"
-                    :key="option"
-                    class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
-                    :class="{
-                      'bg-blue-200 text-blue-500 font-semibold':
-                        item.uses.includes(option),
-                      'text-gray-500': !item.uses.includes(option),
-                    }"
-                    >{{ option }}</span
-                  >
+                  <!-- <span
+                      v-for="option in specifications.use.options"
+                      :key="option"
+                      class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
+                      :class="{
+                        'bg-blue-200 text-blue-500 font-semibold':
+                          item.uses.includes(option),
+                        'text-gray-500': !item.uses.includes(option),
+                      }"
+                      >{{ option }}</span
+                    > -->
                 </div>
               </div>
 
@@ -255,43 +285,47 @@ import { useRoute } from "vue-router";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
 import Divider from "primevue/divider";
-import { useRuntimeConfig } from "#app";
 import { useDatabase } from "~/composables/useDatabase";
 import { useRichText } from "~/composables/useRichText";
+import { useMedia } from "~/composables/useMedia";
 
 const route = useRoute();
 const item = ref(null);
-const config = useRuntimeConfig();
 const { parseRichText } = useRichText();
+const { getMediaUrl, getYoutubeEmbedUrl } = useMedia();
+
+// Update computed property for carousel items using normal media loader
+const carouselItems = computed(() => {
+  if (!item.value) return [];
+  // Use the showcase images directly.
+  let slides = item.value.showcaseImages || [];
+  // Add a youtube slide if present with a new property "type"
+  if (item.value.youtubeLinks) {
+    slides.push({ type: "youtube", url: item.value.youtubeLinks });
+  }
+  return slides;
+});
 
 const parsedDescription = computed(() => {
   if (!item.value || !item.value.description) return "";
   return parseRichText(item.value.description);
 });
 
-const getImageUrl = (image: any) => {
-  if (!image) return "";
-  const imageUrl =
-    image.formats?.medium?.url || image.formats?.small?.url || image.url;
-  return `${config.public.dbUrl}${imageUrl}`;
-};
-
 const specifications = {
   use: { options: ["no-code", "low-code", "code"] },
   setup: { options: ["no-code", "low-code", "code"] },
-  pricing: {
-    options: ["free", "freemium", "subscription", "credits"],
-  },
+  pricing: { options: ["free", "freemium", "subscription", "credits"] },
   license: { options: ["personal", "commercial"] },
-  averageTime: {
-    options: ["seconds", "minutes", "hours", "days"],
-  },
+  averageTime: { options: ["seconds", "minutes", "hours", "days"] },
 };
 
 onMounted(async () => {
-  // Use title as parameter instead of id
   const { fetchToolById } = useDatabase();
   item.value = await fetchToolById(route.params.title);
+  console.log("Tool data:", item.value);
+  if (item.value && item.value.showcaseImages) {
+    console.log("Showcase images:", item.value.showcaseImages);
+  }
 });
 </script>
 
