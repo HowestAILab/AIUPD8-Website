@@ -100,7 +100,7 @@ export interface ToolItem {
   Image: any;
   showcaseImages: any[];
   link: string;
-  youtubeLinks: string;
+  youtubeLink: string;
   // For backward compatibility
   use?: string;
   setup?: string;
@@ -223,7 +223,7 @@ export function useDatabase() {
       showcaseImages: getImages(attributes.showcaseImages) || [],
       // New schema fields
       link: attributes.link || "",
-      youtubeLinks: attributes.youtubeLinks || ""
+      youtubeLink: attributes.youtubeLink || ""
     };
   };
 

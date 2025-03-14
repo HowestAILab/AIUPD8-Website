@@ -290,8 +290,8 @@ const carouselItems = computed(() => {
   // Use the showcase images directly.
   let slides = item.value.showcaseImages || [];
   // Add a youtube slide if present with a new property "type"
-  if (item.value.youtubeLinks) {
-    slides.push({ type: "youtube", url: item.value.youtubeLinks });
+  if (item.value.youtubeLink) {
+    slides.push({ type: "youtube", url: item.value.youtubeLink });
   }
   return slides;
 });

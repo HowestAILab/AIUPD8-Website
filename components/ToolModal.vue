@@ -43,7 +43,6 @@
               Go to Tool Website
             </NuxtLink>
           </div>
-         
         </div>
         <div class="border-b border-gray-900 my-4"></div>
 
@@ -329,8 +328,8 @@ const open = (toolItem: ToolItem) => {
 const carouselItems = computed(() => {
   if (!item.value) return [];
   let slides = item.value.showcaseImages || [];
-  if (item.value.youtubeLinks) {
-    slides.push({ type: "youtube", url: item.value.youtubeLinks });
+  if (item.value.youtubeLink) {
+    slides.push({ type: "youtube", url: item.value.youtubeLink });
   }
   return slides;
 });
