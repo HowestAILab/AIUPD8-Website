@@ -713,17 +713,6 @@ export default defineNuxtConfig({
     // Other CSS files you might have
   ],
 
-  // Added build configuration to fix build error github
-  vite: {
-    build: {
-      rollupOptions: {
-        external: [
-          "@primevue/forms/form?nuxt_component=async&nuxt_component_name=Form&nuxt_component_export=default",
-          "@primevue/forms/formfield?nuxt_component=async&nuxt_component_name=FormField&nuxt_component_export=default"
-        ]
-      }
-    }
-  }
 });
 
 
