@@ -45,16 +45,6 @@
                   Go to Tool Website
                 </NuxtLink>
               </div>
-              <!-- New YouTube button -->
-              <div v-if="item.youtubeLinks" class="mt-4">
-                <NuxtLink
-                  :href="getYoutubeEmbedUrl(item.youtubeLinks)"
-                  target="_blank"
-                  class="inline-flex items-center bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600"
-                >
-                  Watch on YouTube
-                </NuxtLink>
-              </div>
             </div>
           </div>
 
