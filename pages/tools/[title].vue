@@ -62,13 +62,18 @@
               class="w-full rounded-3xl overflow-hidden"
             >
               <template #item="slotProps">
-                <div v-if="slotProps.item.type === 'youtube'">
-                  <iframe
-                    :src="getYoutubeEmbedUrl(slotProps.item.url)"
-                    frameborder="0"
-                    allowfullscreen
-                    class="w-full h-[416px]"
-                  ></iframe>
+                <div
+                  v-if="slotProps.item.type === 'youtube'"
+                  class="video-container w-full"
+                >
+                  <div class="relative pt-[56.25%]">
+                    <iframe
+                      :src="getYoutubeEmbedUrl(slotProps.item.url)"
+                      frameborder="0"
+                      allowfullscreen
+                      class="absolute top-0 left-0 w-full h-full"
+                    ></iframe>
+                  </div>
                 </div>
                 <div v-else>
                   <img
@@ -413,5 +418,15 @@ onMounted(async () => {
   background: transparent;
   padding: 0;
   color: inherit;
+}
+
+.video-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* pt-[56.25%] gives us a 16:9 aspect ratio (9/16 = 0.5625 or 56.25%) */
+.video-container .relative {
+  background-color: #000;
 }
 </style>
