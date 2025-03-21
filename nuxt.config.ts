@@ -692,8 +692,8 @@ export default defineNuxtConfig({
     dataset: process.env.SANITY_DATASET || 'production',
     apiVersion: '2023-05-03',
     useCdn: process.env.NODE_ENV === 'production',
-    // Remove token from this config section to avoid leaking to client
-    // token: process.env.SANITY_TOKEN, 
+    // Using server-side token for authenticated requests
+    token: process.env.SANITY_TOKEN,
     // Add CORS config to handle cross-origin requests
     cors: {
       allowOrigins: ['http://localhost:3000']
