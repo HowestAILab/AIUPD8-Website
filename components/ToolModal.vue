@@ -29,10 +29,12 @@
           >
             our favourite
           </div>
-          <div
-            class="w-full break-words rich-text-content"
-            v-html="parsedDescription"
-          ></div>
+          <div class="description mb-6" v-if="Array.isArray(item?.description)">
+            <SanityPortableText :blocks="item.description" />
+          </div>
+          <div class="description mb-6" v-else-if="item?.description">
+            <p>{{ item.description }}</p>
+          </div>
           <!-- New website button -->
           <div v-if="item.link" class="mt-4">
             <NuxtLink
@@ -272,6 +274,7 @@ import Divider from "primevue/divider";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
+import SanityPortableText from "./SanityPortableText.vue";
 
 const { parseRichText } = useRichText();
 const { getMediaUrl, getCarouselImageUrl, getYoutubeEmbedUrl } = useMedia();

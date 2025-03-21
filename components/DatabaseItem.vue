@@ -42,6 +42,10 @@
     </template>
     <template #content>
       <div class="flex flex-col gap-4 text-sm text-light-page-text-light">
+        <div v-if="showDescription && Array.isArray(item.description)" class="mb-4">
+          <SanityPortableText :blocks="item.description" />
+        </div>
+        
         <div v-if="item.uses && item.uses.length > 0">
           <span class="font-bold">use</span>
           <div
@@ -130,6 +134,7 @@
 import { ref, computed } from "vue";
 import Card from "primevue/card";
 import ToolModal from "./ToolModal.vue";
+import SanityPortableText from "./SanityPortableText.vue";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 
@@ -172,4 +177,7 @@ function handleRemoveFromComparison(item) {
 function openModal() {
   modalRef.value.open(props.item);
 }
+
+// Control whether to show description in card (optional)
+const showDescription = ref(false);
 </script>

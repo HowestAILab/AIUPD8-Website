@@ -32,9 +32,14 @@
                 </div>
               </div>
               <div
-                class="w-full break-words rich-text-content"
-                v-html="parsedDescription"
-              ></div>
+                class="description mb-6"
+                v-if="Array.isArray(item?.description)"
+              >
+                <SanityPortableText :blocks="item.description" />
+              </div>
+              <div class="description mb-6" v-else-if="item?.description">
+                <p>{{ item.description }}</p>
+              </div>
               <!-- New website button -->
               <div v-if="item.link" class="mt-4">
                 <NuxtLink

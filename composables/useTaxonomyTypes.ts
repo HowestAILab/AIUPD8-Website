@@ -1,18 +1,16 @@
 import axios from "axios";
-import { useRuntimeConfig } from '#app';
 import { ref } from "vue";
 
 export interface TaxonomyItem {
-  id: number;
+  id: string | number;
   name: string;
 }
 
 export function useTaxonomyTypes() {
   const loading = ref(false);
   const error = ref<string | null>(null);
-  const runtimeConfig = useRuntimeConfig();
 
-  // Map of type names to their corresponding API endpoint paths
+  // Map of type names to their corresponding API endpoint paths (same as before)
   const typeToEndpoint: Record<string, string> = {
     'use': 'use-types',
     'setup': 'setup-types',
@@ -26,7 +24,7 @@ export function useTaxonomyTypes() {
   };
 
   /**
-   * Fetches taxonomy items by their type
+   * Fetches taxonomy items by their type using server-side API
    * @param type The taxonomy type (use, setup, pricing, license, etc.)
    * @returns A promise that resolves to an array of taxonomy items
    */
@@ -41,19 +39,14 @@ export function useTaxonomyTypes() {
         throw new Error(`Unknown taxonomy type: ${type}`);
       }
       
-      const response = await axios.get(
-        `${runtimeConfig.public.dbUrl}/api/${endpoint}`,
-        {
-          headers: {
-            Authorization: `Bearer ${runtimeConfig.public.apiToken}`
-          }
-        }
-      );
+      const response = await axios.get(`/api/taxonomy/${endpoint}`);
+      
+      console.log(`Taxonomy data for ${type}:`, response.data);
       
       if (response.data && response.data.data) {
         return response.data.data.map((item: any) => ({
           id: item.id,
-          name: item.attributes?.name || item.name,
+          name: item.attributes?.name || '',
         }));
       }
       

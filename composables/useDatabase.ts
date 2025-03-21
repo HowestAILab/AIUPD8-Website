@@ -1,92 +1,11 @@
-import axios from "axios";
-import { useRuntimeConfig } from '#app';
+import { ref } from 'vue';
+import axios from 'axios';
 
-interface ImageFormat {
-  name: string;
-  hash: string;
-  ext: string;
-  mime: string;
-  path: null;
-  width: number;
-  height: number;
-  size: number;
-  url: string;
-}
-
-interface Image {
-  id: number;
-  name: string;
-  alternativeText: string | null;
-  caption: string | null;
-  width: number;
-  height: number;
-  formats: {
-    thumbnail: ImageFormat;
-    medium?: ImageFormat;
-    small?: ImageFormat;
-    large?: ImageFormat;
-  };
-  hash: string;
-  ext: string;
-  mime: string;
-  size: number;
-  url: string;
-  previewUrl: string | null;
-  provider: string;
-  provider_metadata: null;
-}
-
-interface RelationItem {
-  id: number;
-  attributes: {
-    name: string;
-  };
-}
-
-interface RelationData {
-  data: RelationItem[];
-}
-
-export interface DatabaseItem {
-  id: number;
-  attributes: {
-    title: string;
-    description: any; // Rich text can be complex
-    isFavourite: boolean;
-    createdAt: string;
-    updatedAt: string;
-    publishedAt: string;
-    // Relations
-    uses: RelationData;
-    setups: RelationData;
-    pricings: RelationData;
-    licenses: RelationData;
-    generationTimes: RelationData;
-    inputs: RelationData;
-    outputs: RelationData;
-    tasks: RelationData;
-    profiles: RelationData;
-    // Media
-    Image: {
-      data: {
-        id: number;
-        attributes: Image;
-      } | null;
-    };
-    showcaseImages: {
-      data: {
-        id: number;
-        attributes: Image;
-      }[];
-    };
-  };
-}
-
-// Simplified interface for components
+// Keep the interfaces similar to maintain compatibility
 export interface ToolItem {
-  id: number;
+  id: string;
   title: string;
-  description: any;
+  description: any[]; // Updated to array for Portable Text
   isFavourite: boolean;
   uses: string[];
   setups: string[];
@@ -109,122 +28,77 @@ export interface ToolItem {
   averageTimeToGenerate?: string;
 }
 
-interface ApiResponse {
-  data: DatabaseItem[];
-  meta: {
-    pagination: {
-      page: number;
-      pageSize: number;
-      pageCount: number;
-      total: number;
-    };
-  };
-}
-
 export function useDatabase() {
   const items = ref<ToolItem[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
-  const runtimeConfig = useRuntimeConfig();
+  const connected = ref(true);
 
+  // Updated helper to extract relation names:
+  const extractRelationNames = (relation: any): string[] => {
+    if (!relation) return [];
+    
+    let arr = [];
+    if (relation.data) {
+      arr = Array.isArray(relation.data) ? relation.data : [relation.data];
+    } else if (Array.isArray(relation)) {
+      arr = relation;
+    }
+    
+    return arr
+      .map((r: any) => {
+        // First try to get name from attributes
+        if (r.attributes && (r.attributes.name || r.attributes.title)) {
+          return r.attributes.name || r.attributes.title;
+        }
+        // Then try direct properties
+        return r.name || r.title || '';
+      })
+      .filter((val: string) => val.trim() !== '');
+  };
+
+  // Reworked mapping function for better compatibility
   const mapDatabaseItemToToolItem = (item: any): ToolItem => {
-    // Debug the actual structure if needed
-    console.log("Raw item:", JSON.stringify(item, null, 2));
+    const attrs = item.attributes || item;
     
-    // Handle different response formats (direct item or item in attributes)
-    const attributes = item.attributes || item;
-    
-    // Extract relation arrays with defensive coding for both formats
-    const extractRelationNames = (relation: any): string[] => {
-      // Case 1: Direct array of objects with name property
-      if (Array.isArray(relation)) {
-        return relation
-          .filter(rel => rel && rel.name)
-          .map(rel => rel.name);
-      }
-      
-      // Case 2: Nested data structure from Strapi
-      if (relation && relation.data) {
-        const dataArray = Array.isArray(relation.data) ? relation.data : [relation.data].filter(Boolean);
-        return dataArray
-          .filter(rel => rel && rel.attributes && rel.attributes.name)
-          .map(rel => rel.attributes.name);
-      }
-      
-      return [];
-    };
-    
-    // Extract image data safely
-    const getImage = (imageData: any) => {
-      // Case 1: Direct image object
-      if (imageData && !imageData.data) {
-        return imageData;
-      }
-      
-      // Case 2: Nested data structure
-      if (imageData && imageData.data) {
-        return imageData.data.attributes || null;
-      }
-      
-      return null;
-    };
-    
-    const getImages = (imagesData: any): any[] => {
-      // Case 1: Direct array of image objects
-      if (Array.isArray(imagesData)) {
-        return imagesData;
-      }
-      
-      // Case 2: Nested data structure
-      if (imagesData && imagesData.data) {
-        if (!Array.isArray(imagesData.data)) return [];
-        return imagesData.data
-          .filter(img => img && img.attributes)
-          .map(img => img.attributes);
-      }
-      
-      return [];
-    };
-    
-    // Get relation arrays (supports both formats)
-    const uses = extractRelationNames(attributes.uses);
-    const setups = extractRelationNames(attributes.setups);
-    const pricings = extractRelationNames(attributes.pricings);
-    const licenses = extractRelationNames(attributes.licenses);
-    const generationTimes = extractRelationNames(attributes.generationTimes);
-    const inputs = extractRelationNames(attributes.inputs);
-    const outputs = extractRelationNames(attributes.outputs);
-    const tasks = extractRelationNames(attributes.tasks);
-    const profiles = extractRelationNames(attributes.profiles);
-    
-    // Map to simplified format
-    return {
-      id: item.id,
-      title: attributes.title || "Untitled",
-      description: attributes.description || "",
-      isFavourite: !!attributes.isFavourite,
-      uses,
-      setups,
-      pricings,
-      licenses,
-      generationTimes,
-      inputs,
-      outputs,
-      tasks,
-      profiles,
+    const result: ToolItem = {
+      id: item.id || item._id || '',
+      title: attrs.title || "Untitled",
+      description: Array.isArray(attrs.description) ? attrs.description : [],
+      isFavourite: !!attrs.isFavourite,
+      uses: extractRelationNames(attrs.uses),
+      setups: extractRelationNames(attrs.setups),
+      pricings: extractRelationNames(attrs.pricings),
+      licenses: extractRelationNames(attrs.licenses),
+      generationTimes: extractRelationNames(attrs.generationTimes),
+      inputs: extractRelationNames(attrs.inputs),
+      outputs: extractRelationNames(attrs.outputs),
+      tasks: extractRelationNames(attrs.tasks),
+      profiles: extractRelationNames(attrs.profiles),
       // For backward compatibility
-      use: uses[0] || null,
-      setup: setups[0] || null,
-      pricing: pricings[0] || null,
-      license: licenses[0] || null,
-      averageTimeToGenerate: generationTimes[0] || null,
+      use: null,
+      setup: null,
+      pricing: null,
+      license: null,
+      averageTimeToGenerate: null,
       // Media fields
-      Image: getImage(attributes.Image),
-      showcaseImages: getImages(attributes.showcaseImages) || [],
-      // New schema fields
-      link: attributes.link || "",
-      youtubeLink: attributes.youtubeLink || ""
+      Image: attrs.Image?.data?.attributes || null,
+      showcaseImages: attrs.showcaseImages?.data
+        ? attrs.showcaseImages.data.map((img: any) => img.attributes)
+        : [],
+      // Simple fields
+      link: attrs.link || "",
+      youtubeLink: attrs.youtubeLink || ""
     };
+    
+    // Set the backward compatibility fields after extraction
+    result.use = result.uses[0] || null;
+    result.setup = result.setups[0] || null;
+    result.pricing = result.pricings[0] || null;
+    result.license = result.licenses[0] || null;
+    result.averageTimeToGenerate = result.generationTimes[0] || null;
+    
+    return result;
   };
 
   async function fetchDatabaseItems() {
@@ -232,30 +106,20 @@ export function useDatabase() {
     error.value = null;
 
     try {
-      const response = await axios.get(
-        `${runtimeConfig.public.dbUrl}/api/tools?populate=*`,
-        {
-          headers: {
-            Authorization: `Bearer ${runtimeConfig.public.apiToken}`
-          }
-        }
-      );
-      
-      // Transform data to simpler format
+      const response = await axios.get('/api/tools');
       if (response.data.data) {
-        // Standard Strapi format
+        // Log raw data for debugging if needed
+        console.log("Raw tools data received:", response.data.data);
         items.value = response.data.data.map(mapDatabaseItemToToolItem);
-      } else if (Array.isArray(response.data)) {
-        // Direct array format
-        items.value = response.data.map(mapDatabaseItemToToolItem);
       } else {
-        // Single item format
-        items.value = [mapDatabaseItemToToolItem(response.data)];
+        items.value = [];
       }
+      connected.value = true;
     } catch (e) {
-      error.value =
-        e instanceof Error ? e.message : "Failed to fetch database items";
+      error.value = e instanceof Error ? e.message : "Failed to fetch database items";
       console.error("Error fetching database items:", e);
+      connected.value = false;
+      items.value = [];
     } finally {
       loading.value = false;
     }
@@ -264,31 +128,17 @@ export function useDatabase() {
   async function fetchToolById(title: string): Promise<ToolItem | null> {
     loading.value = true;
     error.value = null;
+    
     try {
-      const response = await axios.get(
-        `${runtimeConfig.public.dbUrl}/api/tools?filters[title][$eq]=${encodeURIComponent(title)}&populate=*`,
-        {
-          headers: {
-            Authorization: `Bearer ${runtimeConfig.public.apiToken}`
-          }
-        }
-      );
-      
-      // Handle different response formats
-      if (response.data.data && response.data.data.length > 0) {
-        // Standard Strapi format
-        return mapDatabaseItemToToolItem(response.data.data[0]);
-      } else if (Array.isArray(response.data) && response.data.length > 0) {
-        // Direct array format
-        return mapDatabaseItemToToolItem(response.data[0]);
-      } else if (response.data && response.data.title === title) {
-        // Single item format
-        return mapDatabaseItemToToolItem(response.data);
+      const response = await axios.get(`/api/tools/${encodeURIComponent(title)}`);
+      if (response.data.data) {
+        return mapDatabaseItemToToolItem(response.data.data);
       }
       return null;
     } catch (e) {
       error.value = e instanceof Error ? e.message : "Failed to fetch tool";
       console.error("Error fetching tool:", e);
+      connected.value = false;
       return null;
     } finally {
       loading.value = false;
@@ -299,6 +149,7 @@ export function useDatabase() {
     items,
     loading,
     error,
+    connected,
     fetchDatabaseItems,
     fetchToolById,
   };

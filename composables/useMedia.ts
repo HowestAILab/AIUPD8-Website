@@ -1,7 +1,55 @@
 import { useRuntimeConfig } from '#app';
+import imageUrlBuilder from '@sanity/image-url';
 
 export function useMedia() {
   const config = useRuntimeConfig();
+  
+  // Create a Sanity image URL builder
+  const createImageUrlBuilder = () => {
+    return imageUrlBuilder({
+      projectId: config.public.sanity.projectId,
+      dataset: config.public.sanity.dataset
+    });
+  };
+  
+  /**
+   * Get a properly formatted URL for a Sanity image
+   */
+  const getSanityImageUrl = (image: any, width = 800): string => {
+    if (!image) return '';
+    
+    try {
+      // Check if this is a Sanity asset
+      if (image._sanityAsset) {
+        image = image._sanityAsset;
+      }
+      
+      const builder = createImageUrlBuilder();
+      
+      // If it's already a URL string, return it
+      if (typeof image === 'string') return image;
+      
+      // Handle Sanity image reference
+      if (image.asset) {
+        return builder.image(image).width(width).url();
+      }
+      
+      // Handle direct asset reference
+      if (image._ref || image._id) {
+        return builder.image(image).width(width).url();
+      }
+      
+      // If we have a URL directly, use it
+      if (image.url) {
+        return image.url;
+      }
+      
+      return '';
+    } catch (e) {
+      console.error('Error formatting Sanity image URL:', e);
+      return '';
+    }
+  };
   
   /**
    * Formats a Strapi media URL by prepending the DB URL if needed
@@ -13,7 +61,7 @@ export function useMedia() {
   };
 
   /**
-   * Extract image URL from any Strapi media object structure
+   * Extract image URL from any media object structure
    */
   const getMediaUrl = (media: any): string => {
     if (!media) return '';
@@ -21,11 +69,16 @@ export function useMedia() {
     // Handle null or undefined case
     if (media === null || media === undefined) return '';
     
-    // Handle direct URL string
-    if (typeof media === 'string') return formatStrapiUrl(media);
+    // Check if this is a Sanity asset
+    if (media._sanityAsset || media.asset || media._ref || media._id) {
+      return getSanityImageUrl(media);
+    }
     
-    // Handle standard Strapi media object
-    if (media.url) return formatStrapiUrl(media.url);
+    // Handle direct URL string
+    if (typeof media === 'string') return media;
+    
+    // Handle standard URL object
+    if (media.url) return media.url;
     
     // Handle formats with preference for medium size
     if (media.formats) {
@@ -50,100 +103,25 @@ export function useMedia() {
   };
 
   /**
-   * Extract image from carousel.image component
+   * Extract image from carousel item
    */
   const getCarouselImageUrl = (item: any): string => {
     if (!item) return '';
-    console.log('Processing carousel item:', item);
-  
-    // Handle dynamiczone carousel.image component
-    if (item.__component === 'carousel.image' || item.component === 'carousel.image') {
-      console.log('Found carousel.image component');
-      
-      // Access the nested image field inside the component
-      let imageField = item.image || {};
-      console.log('Raw image field:', imageField);
-      
-      // If we get a direct image object (with formats/url)
-      if (imageField.formats || imageField.url) {
-        const url = imageField.formats?.medium?.url || 
-                  imageField.formats?.small?.url || 
-                  imageField.url;
-        console.log('Direct image URL:', url);
-        return formatStrapiUrl(url || '');
-      }
-      
-      // Handle nested data structure (data.attributes format)
-      if (imageField.data && imageField.data.attributes) {
-        const attributes = imageField.data.attributes;
-        const url = attributes.formats?.medium?.url || 
-                  attributes.formats?.small?.url || 
-                  attributes.url;
-        console.log('Nested image URL from data.attributes:', url);
-        return formatStrapiUrl(url || '');
-      }
-      
-      // Handle when image field itself has a data wrapper
-      if (imageField.data && !imageField.data.attributes) {
-        imageField = imageField.data;
-        console.log('Unwrapped from data layer:', imageField);
-      }
-      
-      // Handle direct attributes
-      if (imageField.attributes) {
-        const attributes = imageField.attributes;
-        const url = attributes.formats?.medium?.url || 
-                  attributes.formats?.small?.url || 
-                  attributes.url;
-        console.log('Image URL from attributes:', url);
-        return formatStrapiUrl(url || '');
-      }
+    
+    // Handle Sanity image
+    if (item._sanityAsset || item.asset || item._ref || item._id) {
+      return getSanityImageUrl(item);
     }
     
-    // Last resort - try to find any URL-like property at any level
-    const findImageUrl = (obj: any): string => {
-      if (!obj || typeof obj !== 'object') return '';
-      
-      // Check for common image URL patterns
-      if (obj.url && typeof obj.url === 'string') {
-        return formatStrapiUrl(obj.url);
-      }
-      
-      if (obj.formats && obj.formats.medium?.url) {
-        return formatStrapiUrl(obj.formats.medium.url);
-      }
-      
-      if (obj.formats && obj.formats.small?.url) {
-        return formatStrapiUrl(obj.formats.small.url);
-      }
-      
-      // Recursively search in nested objects
-      for (const key in obj) {
-        if (key === 'image' && obj[key]) {
-          const imgUrl = findImageUrl(obj[key]);
-          if (imgUrl) return imgUrl;
-        }
-        
-        if (typeof obj[key] === 'object') {
-          const imgUrl = findImageUrl(obj[key]);
-          if (imgUrl) return imgUrl;
-        }
-      }
-      
-      return '';
-    };
-    
-    const url = findImageUrl(item);
-    if (url) {
-      console.log('Found image URL through deep search:', url);
-      return url;
+    // If the item itself has an image property
+    if (item.image) {
+      return getSanityImageUrl(item.image);
     }
     
     // Fallback to standard media handling
-    console.log('Falling back to standard media handling');
     return getMediaUrl(item);
   };
-
+  
   /**
    * Parse YouTube URL to get embed URL
    */
@@ -168,11 +146,12 @@ export function useMedia() {
     // If URL is already an embed or doesn't match patterns, return as is
     return url;
   };
-
+  
   return {
     formatStrapiUrl,
     getMediaUrl,
     getCarouselImageUrl,
-    getYoutubeEmbedUrl
+    getYoutubeEmbedUrl,
+    getSanityImageUrl
   };
 }

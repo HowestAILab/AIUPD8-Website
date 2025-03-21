@@ -665,40 +665,51 @@ const AIUPD8 = definePreset(Aura, {
 
 export default defineNuxtConfig({
   // Optional date or versioning
-  // compatibilityDate: '2024-11-01',
   devtools: { enabled: true },
 
   runtimeConfig: {
+    // Server-side private config
+    sanityToken: process.env.SANITY_TOKEN, // Store token on server side for security
     public: {
-      apiToken: process.env.API_TOKEN,
-      dbUrl: process.env.STRAPI_URL || "https://aiupd8backend.azurewebsites.net"
+      // Public config exposed to the client
+      sanity: {
+        projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
+        dataset: process.env.SANITY_DATASET || 'production',
+        apiVersion: '2023-05-03',
+        useCdn: process.env.NODE_ENV === 'production',
+      }
     }
   },
 
-  modules: ["@nuxtjs/strapi", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts", '@primevue/nuxt-module'],
+  // Optional date or versioning
+  compatibilityDate: '2025-01-30',
 
-  // Basic Strapi config:
-  strapi: {
-    // If your Strapi is running at, e.g., http://localhost:1337
-    url: process.env.STRAPI_URL || "https://aiupd8backend.azurewebsites.net" ,
-    // You can adjust options here if needed
+  modules: ["@nuxtjs/sanity", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts", '@primevue/nuxt-module'],
+
+  sanity: {
+    projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
+    dataset: process.env.SANITY_DATASET || 'production',
+    apiVersion: '2023-05-03',
+    useCdn: process.env.NODE_ENV === 'production',
+    token: process.env.SANITY_TOKEN, // Add token here if needed for authenticated requests
+    // Add CORS config to handle cross-origin requests
+    cors: {
+      allowOrigins: ['http://localhost:3000']
+    },
+    // Prevent auto-generated studio if using external studio
+    disableStudioToolbar: true,
   },
+
   primevue: {
     options: {
         theme: {
             preset: AIUPD8,
             options: {
                 darkModeSelector: '.my-app-dark',
-                
-                // cssLayer: {
-                //     name: 'primevue',
-                //     order: 'tailwind-base, primevue, tailwind-utilities'
-                // },
             }
-            
         }
     }
-    },
+  },
 
   googleFonts: {
     families: {
@@ -706,13 +717,9 @@ export default defineNuxtConfig({
     },
   },
 
-  compatibilityDate: "2025-01-30",
-
   css: [
     '~/assets/css/primevue-overrides.css',
     // Other CSS files you might have
   ],
 
 });
-
-
