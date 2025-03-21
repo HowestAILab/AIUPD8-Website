@@ -7,6 +7,7 @@
   SANITY_PROJECT_ID = ""
   SANITY_DATASET = ""
   # Don't include SANITY_TOKEN here (set in Netlify UI)
+  SECRETS_SCAN_OMIT_KEYS = "SANITY_TOKEN"
 
 # Configure secrets scanning
 [secrets_scanning]
