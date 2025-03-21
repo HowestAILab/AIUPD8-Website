@@ -673,7 +673,7 @@ export default defineNuxtConfig({
     public: {
       // Public config exposed to the client
       sanity: {
-        projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
+        projectId: process.env.SANITY_PROJECT_ID || 't6eu00c4',
         dataset: process.env.SANITY_DATASET || 'production',
         apiVersion: '2023-05-03',
         useCdn: process.env.NODE_ENV === 'production',
@@ -689,7 +689,7 @@ export default defineNuxtConfig({
 
   // Remove duplicate sanity config if present
   sanity: {
-    projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
+    projectId: process.env.SANITY_PROJECT_ID || 't6eu00c4',
     dataset: process.env.SANITY_DATASET || 'production',
     apiVersion: '2023-05-03',
     useCdn: process.env.NODE_ENV === 'production',
