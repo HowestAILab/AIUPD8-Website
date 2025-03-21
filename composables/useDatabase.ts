@@ -1,5 +1,6 @@
 import { ref } from 'vue';
 import axios from 'axios';
+import { useRuntimeConfig } from '#app';
 
 // Keep the interfaces similar to maintain compatibility
 export interface ToolItem {
@@ -29,6 +30,13 @@ export interface ToolItem {
 }
 
 export function useDatabase() {
+  const config = useRuntimeConfig();
+  
+  // Create an axios instance with the baseURL
+  const api = axios.create({
+    baseURL: config.public.apiBaseUrl
+  });
+  
   const items = ref<ToolItem[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -106,7 +114,7 @@ export function useDatabase() {
     error.value = null;
 
     try {
-      const response = await axios.get('/api/tools');
+      const response = await api.get('/api/tools');
       if (response.data.data) {
         // Log raw data for debugging if needed
         console.log("Raw tools data received:", response.data.data);
@@ -130,7 +138,7 @@ export function useDatabase() {
     error.value = null;
     
     try {
-      const response = await axios.get(`/api/tools/${encodeURIComponent(title)}`);
+      const response = await api.get(`/api/tools/${encodeURIComponent(title)}`);
       if (response.data.data) {
         return mapDatabaseItemToToolItem(response.data.data);
       }

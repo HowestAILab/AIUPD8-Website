@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ref } from "vue";
+import { useRuntimeConfig } from '#app';
 
 export interface TaxonomyItem {
   id: string | number;
@@ -7,6 +8,13 @@ export interface TaxonomyItem {
 }
 
 export function useTaxonomyTypes() {
+  const config = useRuntimeConfig();
+  
+  // Create an axios instance with the baseURL
+  const api = axios.create({
+    baseURL: config.public.apiBaseUrl
+  });
+  
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -39,7 +47,7 @@ export function useTaxonomyTypes() {
         throw new Error(`Unknown taxonomy type: ${type}`);
       }
       
-      const response = await axios.get(`/api/taxonomy/${endpoint}`);
+      const response = await api.get(`/api/taxonomy/${endpoint}`);
       
       console.log(`Taxonomy data for ${type}:`, response.data);
       

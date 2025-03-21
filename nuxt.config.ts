@@ -677,7 +677,8 @@ export default defineNuxtConfig({
         dataset: process.env.SANITY_DATASET || 'production',
         apiVersion: '2023-05-03',
         useCdn: process.env.NODE_ENV === 'production',
-      }
+      },
+      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3000'
     }
   },
 
@@ -694,12 +695,6 @@ export default defineNuxtConfig({
     useCdn: process.env.NODE_ENV === 'production',
     // Using server-side token for authenticated requests
     token: process.env.SANITY_TOKEN,
-    // Add CORS config to handle cross-origin requests
-    cors: {
-      allowOrigins: ['http://localhost:3000']
-    },
-    // Prevent auto-generated studio if using external studio
-    disableStudioToolbar: true,
   },
 
   primevue: {
