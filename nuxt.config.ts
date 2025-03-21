@@ -678,7 +678,7 @@ export default defineNuxtConfig({
         apiVersion: '2023-05-03',
         useCdn: process.env.NODE_ENV === 'production',
       },
-      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3000'
+      apiBaseUrl: process.env.API_BASE_URL || 'https://aiupd8frontend.netlify.app'
     }
   },
 
