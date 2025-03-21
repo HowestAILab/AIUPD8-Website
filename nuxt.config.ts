@@ -668,8 +668,8 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   runtimeConfig: {
-    // Server-side private config
-    sanityToken: process.env.SANITY_TOKEN, // Store token on server side for security
+    // Server-side private config (not exposed to client)
+    sanityToken: process.env.SANITY_TOKEN,
     public: {
       // Public config exposed to the client
       sanity: {
@@ -686,12 +686,14 @@ export default defineNuxtConfig({
 
   modules: ["@nuxtjs/sanity", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts", '@primevue/nuxt-module'],
 
+  // Remove duplicate sanity config if present
   sanity: {
     projectId: process.env.SANITY_PROJECT_ID || 'your-project-id',
     dataset: process.env.SANITY_DATASET || 'production',
     apiVersion: '2023-05-03',
     useCdn: process.env.NODE_ENV === 'production',
-    token: process.env.SANITY_TOKEN, // Add token here if needed for authenticated requests
+    // Remove token from this config section to avoid leaking to client
+    // token: process.env.SANITY_TOKEN, 
     // Add CORS config to handle cross-origin requests
     cors: {
       allowOrigins: ['http://localhost:3000']
