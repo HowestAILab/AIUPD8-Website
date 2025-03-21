@@ -2,7 +2,8 @@ import { createClient } from '@sanity/client'
 
 export default defineEventHandler(async (event) => {
   try {
-    const title = getRouterParam(event, 'title')
+    // Get and decode the title parameter
+    const title = decodeURIComponent(getRouterParam(event, 'title'))
     
     // Initialize Sanity client server-side
     const config = useRuntimeConfig()
@@ -22,15 +23,15 @@ export default defineEventHandler(async (event) => {
       isFavourite,
       link,
       youtubeLink,
-      "uses": uses[]->{ _id, title },
-      "setups": setups[]->{ _id, title },
-      "pricings": pricings[]->{ _id, title },
-      "licenses": licenses[]->{ _id, title },
-      "generationTimes": generationTimes[]->{ _id, title },
-      "inputs": inputs[]->{ _id, title },
-      "outputs": outputs[]->{ _id, title },
-      "tasks": tasks[]->{ _id, title },
-      "profiles": profiles[]->{ _id, title },
+      uses[]->{ _id, title },
+      setups[]->{ _id, title },
+      pricings[]->{ _id, title },
+      licenses[]->{ _id, title },
+      generationTimes[]->{ _id, title },
+      inputs[]->{ _id, title },
+      outputs[]->{ _id, title },
+      tasks[]->{ _id, title },
+      profiles[]->{ _id, title },
       image,
       showcaseImages
     }`

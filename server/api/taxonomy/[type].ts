@@ -36,8 +36,8 @@ export default defineEventHandler(async (event) => {
       useCdn: config.public.sanity.useCdn,
     })
     
-    // Query to get taxonomy items - get the title field as that's what's being used
-    const query = `*[_type == $type] | order(title asc) {
+    // Query to get published taxonomy items - get the title field as that's what's being used
+    const query = `*[_type == $type && !(_id in path("drafts.**"))] | order(title asc) {
       _id,
       title
     }`

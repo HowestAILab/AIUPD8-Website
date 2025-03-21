@@ -12,8 +12,8 @@ export default defineEventHandler(async (event) => {
       useCdn: config.public.sanity.useCdn,
     })
 
-    // Query to get all tools with their related data
-    const query = `*[_type == "tool"]{
+    // Query to get all published tools with their related data
+    const query = `*[_type == "tool" && !(_id in path("drafts.**"))]{
       _id,
       title,
       description,
