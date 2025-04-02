@@ -1,15 +1,22 @@
-import { defineEventHandler, setResponseHeader } from 'h3';
+import { defineEventHandler, getRequestHeader, setResponseHeader } from 'h3';
+
+const allowedOrigins = ['https://aiupdate.be', 'https://localhost:3000','https://aiupd8frontend.netlify.app'];
 
 export default defineEventHandler((event) => {
-  setResponseHeader(event, 'Access-Control-Allow-Origin', 'https://aiupd8frontend.netlify.app');
-  setResponseHeader(event, 'Access-Control-Allow-Origin', 'https://aiupdate.be');
-  setResponseHeader(event, 'Access-Control-Allow-Origin', 'https://aiupdate.howest.be');
-  setResponseHeader(event, 'Access-Control-Allow-Origin', 'https://localhost:3000');
-  setResponseHeader(event, 'Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  // Get the origin header from the request
+  const origin = getRequestHeader(event, 'origin') || '';
+
+  // If the request origin is in our whitelist, use it; otherwise, fall back to the first allowed origin
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+  setResponseHeader(event, 'Access-Control-Allow-Origin', allowedOrigin);
+
+  // Set additional CORS headers
+  setResponseHeader(event, 'Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE');
   setResponseHeader(event, 'Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  if (event.req.method?.toUpperCase() === 'OPTIONS') {
-    event.res.statusCode = 200;
-    event.res.end();
+  // Handle preflight OPTIONS requests
+  if (event.node.req.method === 'OPTIONS') {
+    event.node.res.statusCode = 204;
+    event.node.res.end();
   }
 });
