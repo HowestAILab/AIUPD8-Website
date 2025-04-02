@@ -42,28 +42,11 @@
     </template>
     <template #content>
       <div class="flex flex-col gap-4 text-sm text-light-page-text-light">
-        <div v-if="showDescription && Array.isArray(item.description)" class="mb-4">
+        <div
+          v-if="showDescription && Array.isArray(item.description)"
+          class="mb-4"
+        >
           <SanityPortableText :blocks="item.description" />
-        </div>
-        
-        <div v-if="item.uses && item.uses.length > 0">
-          <span class="font-bold">use</span>
-          <div
-            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-2xl md:rounded-full w-full mt-1 border border-gray-200"
-          >
-            <span
-              v-for="option in selections.use"
-              :key="option"
-              class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
-              :class="{
-                'bg-blue-200 text-blue-500 font-semibold':
-                  item.uses.includes(option),
-                'text-gray-500': !item.uses.includes(option),
-              }"
-            >
-              {{ option }}
-            </span>
-          </div>
         </div>
 
         <div v-if="item.setups && item.setups.length > 0">
@@ -79,6 +62,26 @@
                 'bg-blue-200 text-blue-500 font-semibold':
                   item.setups.includes(option),
                 'text-gray-500': !item.setups.includes(option),
+              }"
+            >
+              {{ option }}
+            </span>
+          </div>
+        </div>
+
+        <div v-if="item.uses && item.uses.length > 0">
+          <span class="font-bold">use</span>
+          <div
+            class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-2xl md:rounded-full w-full mt-1 border border-gray-200"
+          >
+            <span
+              v-for="option in selections.use"
+              :key="option"
+              class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
+              :class="{
+                'bg-blue-200 text-blue-500 font-semibold':
+                  item.uses.includes(option),
+                'text-gray-500': !item.uses.includes(option),
               }"
             >
               {{ option }}
@@ -137,14 +140,16 @@ import ToolModal from "./ToolModal.vue";
 import SanityPortableText from "./SanityPortableText.vue";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
+import { defaultSelectionOrder } from "~/config/selectionOrder";
 
 const { getMediaUrl } = useMedia();
 const modalRef = ref(null);
 
+// Use config from selectionOrder to allow easy reordering
 const selections = ref({
-  use: ["no-code", "low-code", "code"],
-  setup: ["no-code", "low-code", "code"],
-  pricing: ["free", "freemium", "subscription", "credits"],
+  use: defaultSelectionOrder.use,
+  setup: defaultSelectionOrder.setup,
+  pricing: defaultSelectionOrder.pricing,
 });
 
 const props = defineProps<{

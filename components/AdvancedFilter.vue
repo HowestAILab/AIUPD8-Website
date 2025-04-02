@@ -199,6 +199,7 @@ import SelectButton from "primevue/selectbutton";
 import MultiSelect from "primevue/multiselect";
 import RecurringButton from "~/components/ui/RecurringButton.vue";
 import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
+import { defaultSelectionOrder } from "~/config/selectionOrder"; // added import
 
 interface FilterState {
   uses: TaxonomyItem[];
@@ -248,6 +249,21 @@ const props = defineProps({
 
 const emits = defineEmits(["apply-filters", "update:isVisible"]);
 
+// Helper function to reorder taxonomy options based on provided order
+function reorderOptions(
+  options: TaxonomyItem[],
+  order: string[]
+): TaxonomyItem[] {
+  return options.sort((a, b) => {
+    const idxA = order.indexOf(a.name.toLowerCase());
+    const idxB = order.indexOf(b.name.toLowerCase());
+    if (idxA === -1 && idxB === -1) return b.name.localeCompare(a.name); // fallback: reversed alphabetical
+    if (idxA === -1) return 1;
+    if (idxB === -1) return -1;
+    return idxA - idxB;
+  });
+}
+
 // Fetch all filter options using the dynamic route
 async function fetchFilterOptions() {
   try {
@@ -274,9 +290,15 @@ async function fetchFilterOptions() {
       fetchTaxonomyByType("task"),
     ]);
 
-    useOptions.value = uses;
-    setupOptions.value = setups;
-    pricingOptions.value = pricings;
+    // Reorder options for use, setup and pricing using defaultSelectionOrder
+    useOptions.value = reorderOptions(uses, defaultSelectionOrder.use);
+    setupOptions.value = reorderOptions(setups, defaultSelectionOrder.setup);
+    pricingOptions.value = reorderOptions(
+      pricings,
+      defaultSelectionOrder.pricing
+    );
+
+    // Other options remain unchanged
     licenseOptions.value = licenses;
     generationTimeOptions.value = generationTimes;
     inputOptions.value = inputs;
