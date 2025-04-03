@@ -122,6 +122,24 @@
           />
           <span>Add to comparison</span>
         </label>
+
+        <!-- Add favorite button -->
+        <button
+          @click="toggleFavorite"
+          class="flex items-center text-sm space-x-1 px-2 py-1 rounded-full transition-all"
+          :class="
+            isFavorited
+              ? 'text-yellow-600'
+              : 'text-light-page-text-light hover:text-yellow-600'
+          "
+          aria-label="Toggle favorite"
+        >
+          <i
+            :class="isFavorited ? 'pi pi-star-fill' : 'pi pi-star'"
+            class="text-lg"
+          ></i>
+          <span>{{ isFavorited ? "Favorited" : "Favorite" }}</span>
+        </button>
       </div>
     </template>
   </Card>
@@ -141,9 +159,11 @@ import SanityPortableText from "./SanityPortableText.vue";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
+import { useFavorites } from "~/composables/useFavorites";
 
 const { getMediaUrl } = useMedia();
 const modalRef = ref(null);
+const { isFavorite, toggleFavorite: toggleFavoriteFn } = useFavorites();
 
 // Use config from selectionOrder to allow easy reordering
 const selections = ref({
@@ -160,6 +180,16 @@ const props = defineProps<{
 const isInComparison = computed(() => {
   return props.itemsInComparison?.has(props.item.id) || false;
 });
+
+// Check if the current item is favorited
+const isFavorited = computed(() => {
+  return isFavorite(props.item.id);
+});
+
+// Toggle favorite status
+function toggleFavorite() {
+  toggleFavoriteFn(props.item.id);
+}
 
 const emit = defineEmits(["add-to-comparison", "remove-from-comparison"]);
 

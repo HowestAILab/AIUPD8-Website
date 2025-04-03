@@ -52,6 +52,34 @@
         />
       </div>
     </div>
+
+    <!-- Add favorites toggle -->
+    <div class="w-full flex justify-center mt-2">
+      <div
+        @click="toggleShowFavoritesOnly"
+        class="flex items-center gap-2 cursor-pointer px-4 py-2 rounded-full"
+        :class="
+          showFavoritesOnly
+            ? 'bg-yellow-100 text-yellow-700'
+            : 'hover:bg-gray-100'
+        "
+      >
+        <i
+          :class="
+            showFavoritesOnly ? 'pi pi-star-fill text-yellow-500' : 'pi pi-star'
+          "
+        ></i>
+        <span>{{
+          showFavoritesOnly ? "Showing favorites only" : "Show favorites only"
+        }}</span>
+        <span
+          v-if="favoriteCount > 0"
+          class="bg-gray-200 text-gray-700 rounded-full px-2 text-xs"
+        >
+          {{ favoriteCount }}
+        </span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -60,6 +88,7 @@ import { reactive, ref, onMounted } from "vue";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
 import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
+import { useFavorites } from "~/composables/useFavorites";
 
 interface FilterState {
   inputs: TaxonomyItem[];
@@ -104,13 +133,29 @@ const toggleFilters = () => {
   emits("toggle-filters");
 };
 
+// Add favorites functionality
+const { favoriteCount } = useFavorites();
+const showFavoritesOnly = ref(false);
+
+function toggleShowFavoritesOnly() {
+  showFavoritesOnly.value = !showFavoritesOnly.value;
+  console.log("Toggled favorites only:", showFavoritesOnly.value);
+  // Apply filters immediately when toggling favorites
+  applyFilters();
+}
+
 const applyFilters = () => {
   // Convert selected objects to name arrays for filtering
   const filterParams = {
     inputs: filters.inputs.map((item) => item.name),
     outputs: filters.outputs.map((item) => item.name),
     profiles: filters.profiles.map((item) => item.name),
+    showFavoritesOnly: showFavoritesOnly.value,
   };
+
+  // Clear log for debugging
+  console.clear();
+  console.log("Applying filters:", filterParams);
 
   // Emit the event with filter parameters
   emits("apply-filters", filterParams);
