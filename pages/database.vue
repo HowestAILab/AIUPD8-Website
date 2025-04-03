@@ -147,6 +147,12 @@ function filterItems(filters: any) {
 
   let result = [...items.value];
 
+  // New filter: tool name
+  if (filters.name && filters.name.trim() !== "") {
+    const search = filters.name.toLowerCase();
+    result = result.filter((item) => item.title.toLowerCase().includes(search));
+  }
+
   // Filter by uses if selected
   if (filters.uses && filters.uses.length > 0) {
     result = result.filter((item) =>

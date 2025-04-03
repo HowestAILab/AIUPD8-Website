@@ -1,5 +1,15 @@
 <template>
   <div class="flex flex-wrap items-center justify-center gap-4">
+    <!-- New filter for tool name -->
+    <div class="w-full sm:w-48 flex flex-col">
+      <h3 class="font-semibold">Name</h3>
+      <input
+        v-model="filters.name"
+        type="text"
+        placeholder="Search by name"
+        class="w-full p-2 border rounded"
+      />
+    </div>
     <div class="w-full sm:w-48 flex flex-col">
       <h3 class="font-semibold">input</h3>
       <MultiSelect
@@ -61,13 +71,16 @@ import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
 import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
 
+// Updated FilterState to include 'name'
 interface FilterState {
+  name: string;
   inputs: TaxonomyItem[];
   outputs: TaxonomyItem[];
   profiles: TaxonomyItem[];
 }
 
 const filters = reactive<FilterState>({
+  name: "",
   inputs: [],
   outputs: [],
   profiles: [],
@@ -105,8 +118,9 @@ const toggleFilters = () => {
 };
 
 const applyFilters = () => {
-  // Convert selected objects to name arrays for filtering
+  // Include name filter along with others
   const filterParams = {
+    name: filters.name,
     inputs: filters.inputs.map((item) => item.name),
     outputs: filters.outputs.map((item) => item.name),
     profiles: filters.profiles.map((item) => item.name),
