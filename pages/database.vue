@@ -26,8 +26,10 @@
         <div class="mb-6">
           <FilterBar
             :toolOptions="toolOptions"
+            :comparisonCount="comparisonCount"
             @toggle-filters="toggleFilters"
             @apply-filters="handleFiltersApplied"
+            @open-comparison="openComparisonModal"
           />
         </div>
 
