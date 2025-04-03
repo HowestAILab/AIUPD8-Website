@@ -57,7 +57,7 @@
             <span
               v-for="option in selections.setup"
               :key="option"
-              class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
+              class="sm:flex-1 basis-1/3 text-center px-4 py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   item.setups.includes(option),
@@ -77,7 +77,7 @@
             <span
               v-for="option in selections.use"
               :key="option"
-              class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
+              class="sm:flex-1 basis-1/3 text-center px-4 py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   item.uses.includes(option),
