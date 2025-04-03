@@ -7,43 +7,28 @@
       <h2 class="text-2xl font-bold mb-4">Advanced Filters</h2>
 
       <Divider />
+      <!-- SETUP -->
+      <div class="mb-6">
+        <h3 class="text-lg font-bold mb-2">Setup</h3>
+        <div class="flex w-full overflow-x-auto">
+          <ButtonGroup
+            v-model="filters.setups"
+            :options="setupOptions"
+            optionLabel="name"
+            multiple
+          />
+        </div>
+      </div>
 
       <!-- USE -->
       <div class="mt-8 mb-6">
         <h3 class="text-lg font-bold mb-2">Use</h3>
         <div class="flex w-full overflow-x-auto">
-          <SelectButton
+          <ButtonGroup
             v-model="filters.uses"
             :options="useOptions"
             optionLabel="name"
             multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style:
-                  'border rounded-full px-4 py-1 text-sm transition-colors',
-              }),
-            }"
-          />
-        </div>
-      </div>
-
-      <!-- SETUP -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">Setup</h3>
-        <div class="flex w-full overflow-x-auto">
-          <SelectButton
-            v-model="filters.setups"
-            :options="setupOptions"
-            optionLabel="name"
-            multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style:
-                  'border rounded-full px-4 py-1 text-sm transition-colors',
-              }),
-            }"
           />
         </div>
       </div>
@@ -52,21 +37,11 @@
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Pricing</h3>
         <div class="flex w-full overflow-x-auto">
-          <SelectButton
+          <ButtonGroup
             v-model="filters.pricings"
             :options="pricingOptions"
             optionLabel="name"
             multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                class: context.active
-                  ? 'bg-blue-100 text-blue-700 border-blue-300'
-                  : 'bg-white hover:bg-gray-50',
-                style:
-                  'border rounded-full px-4 py-1 text-sm transition-colors',
-              }),
-            }"
           />
         </div>
       </div>
@@ -75,18 +50,11 @@
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">License</h3>
         <div class="flex w-full overflow-x-auto">
-          <SelectButton
+          <ButtonGroup
             v-model="filters.licenses"
             :options="licenseOptions"
             optionLabel="name"
             multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style:
-                  'border rounded-full px-4 py-1 text-sm transition-colors',
-              }),
-            }"
           />
         </div>
       </div>
@@ -95,18 +63,11 @@
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Average time to generate</h3>
         <div class="flex w-full overflow-x-auto">
-          <SelectButton
+          <ButtonGroup
             v-model="filters.generationTimes"
             :options="generationTimeOptions"
             optionLabel="name"
             multiple
-            class="flex flex-wrap gap-2 w-full"
-            :pt="{
-              button: ({ context }) => ({
-                style:
-                  'border rounded-full px-4 py-1 text-sm transition-colors',
-              }),
-            }"
           />
         </div>
       </div>
@@ -195,11 +156,11 @@
 
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue";
-import SelectButton from "primevue/selectbutton";
 import MultiSelect from "primevue/multiselect";
 import RecurringButton from "~/components/ui/RecurringButton.vue";
+import ButtonGroup from "~/components/ui/ButtonGroup.vue";
 import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
-import { defaultSelectionOrder } from "~/config/selectionOrder"; // added import
+import { defaultSelectionOrder } from "~/config/selectionOrder";
 
 interface FilterState {
   uses: TaxonomyItem[];
