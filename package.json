@@ -18,6 +18,7 @@
         "isomorphic-dompurify": "^2.22.0",
         "marked": "^15.0.7",
         "nuxt": "^3.15.2",
+        "primeicons": "^7.0.0",
         "primevue": "^4.3.2",
         "reka-ui": "^1.0.0-alpha.8",
         "tailwind-merge": "^3.0.2",
