@@ -254,6 +254,7 @@
 </template>
 
 <script setup lang="ts">
+import "primeicons/primeicons.css";
 import Dialog from "primevue/dialog";
 import { ref } from "vue";
 import { useRichText } from "~/composables/useRichText";
