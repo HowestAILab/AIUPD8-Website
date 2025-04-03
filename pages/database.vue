@@ -25,6 +25,7 @@
       <main class="w-full md:w-3/4 p-4 max-w-7xl mx-auto">
         <div class="mb-6">
           <FilterBar
+            :toolOptions="toolOptions"
             @toggle-filters="toggleFilters"
             @apply-filters="handleFiltersApplied"
           />
@@ -92,6 +93,7 @@ import FilterBar from "~/components/FilterBar.vue";
 import DatabaseItem from "~/components/DatabaseItem.vue";
 import ComparisonModal from "~/components/ComparisonModal.vue";
 import type { ToolItem } from "~/composables/useDatabase";
+// import { useDatabase } from "~/composables/useDatabase";
 
 const { items, loading, error, fetchDatabaseItems } = useDatabase();
 const filteredItems = ref<ToolItem[]>([]);
@@ -140,6 +142,18 @@ const toggleFilters = () => {
 const openComparisonModal = () => {
   comparisonModal.value?.open();
 };
+
+// Compute distinct tool options from database items
+const toolOptions = computed(() => {
+  const seen = new Set();
+  return items.value.reduce((acc, item) => {
+    if (!seen.has(item.title)) {
+      seen.add(item.title);
+      acc.push({ name: item.title });
+    }
+    return acc;
+  }, [] as { name: string }[]);
+});
 
 // Filter items based on selected filters
 function filterItems(filters: any) {

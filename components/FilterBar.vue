@@ -1,13 +1,15 @@
 <template>
   <div class="flex flex-wrap items-center justify-center gap-4">
-    <!-- New filter for tool name -->
+    <!-- Modified filter for tool name as dropdown -->
     <div class="w-full sm:w-48 flex flex-col">
-      <h3 class="font-semibold">Name</h3>
-      <input
+      <h3 class="font-semibold">Tool Name</h3>
+      <Dropdown
         v-model="filters.name"
-        type="text"
-        placeholder="Search by name"
-        class="w-full p-2 border rounded"
+        :options="toolOptions"
+        optionLabel="name"
+        placeholder="Select tool"
+        class="w-full"
+        filter
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col">
@@ -69,18 +71,22 @@
 import { reactive, ref, onMounted } from "vue";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
+import Dropdown from "primevue/dropdown";
 import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
 
-// Updated FilterState to include 'name'
+// Accept toolOptions from parent
+const props = defineProps<{ toolOptions: TaxonomyItem[] }>();
+
+// Updated FilterState: change type of 'name'
 interface FilterState {
-  name: string;
+  name: TaxonomyItem | null;
   inputs: TaxonomyItem[];
   outputs: TaxonomyItem[];
   profiles: TaxonomyItem[];
 }
 
 const filters = reactive<FilterState>({
-  name: "",
+  name: null,
   inputs: [],
   outputs: [],
   profiles: [],
@@ -93,16 +99,14 @@ const profileOptions = ref<TaxonomyItem[]>([]);
 // Initialize the taxonomy types composable
 const { loading, error, fetchTaxonomyByType } = useTaxonomyTypes();
 
-// Fetch filter options using the dynamic route
+// Fetch filter options for non-tool taxonomies
 async function fetchFilterOptions() {
   try {
-    // Fetch all taxonomy types in parallel for better performance
     const [inputs, outputs, profiles] = await Promise.all([
       fetchTaxonomyByType("input"),
       fetchTaxonomyByType("output"),
       fetchTaxonomyByType("profile"),
     ]);
-
     inputOptions.value = inputs;
     outputOptions.value = outputs;
     profileOptions.value = profiles;
@@ -118,15 +122,12 @@ const toggleFilters = () => {
 };
 
 const applyFilters = () => {
-  // Include name filter along with others
   const filterParams = {
-    name: filters.name,
+    name: filters.name ? filters.name.name : "",
     inputs: filters.inputs.map((item) => item.name),
     outputs: filters.outputs.map((item) => item.name),
     profiles: filters.profiles.map((item) => item.name),
   };
-
-  // Emit the event with filter parameters
   emits("apply-filters", filterParams);
 };
 
@@ -164,6 +165,7 @@ onMounted(() => {
 .more-filters-button {
   min-width: 140px;
   text-align: center;
+  white-space: nowrap;
 }
 
 .p-button-outlined {
