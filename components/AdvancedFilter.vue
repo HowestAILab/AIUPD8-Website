@@ -131,17 +131,27 @@
       </div>
 
       <!-- APPLY FILTERS BUTTON -->
-      <RecurringButton variant="neutral" class="mt-4" @click="applyFilters">
+      <!-- <button
+        class="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors duration-300 mt-4"
+        @click="applyFilters"
+      >
         Apply Filters
-      </RecurringButton>
+      </button> -->
+      <div class="w-full mb-2 sm:mb-0">
+        <Button
+          label="Apply Filters"
+          icon="pi pi-search"
+          @click="applyFilters"
+          class="w-full search-button"
+        />
+      </div>
       <!-- CLEAR FILTERS BUTTON -->
-      <RecurringButton
-        variant="neutral"
-        class="mt-4 max-w-[50%] mx-auto"
+      <button
+        class="w-full px-4 py-2 bg-red-100 text-red-500 rounded-md text-sm font-medium hover:bg-red-200 transition-colors mt-4"
         @click="clearFilters"
       >
         Clear Filters
-      </RecurringButton>
+      </button>
     </ScrollAreaViewport>
 
     <!-- Optional Reka scrollbars -->
