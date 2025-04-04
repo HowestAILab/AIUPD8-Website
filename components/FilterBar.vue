@@ -10,6 +10,7 @@
         placeholder="Select tool"
         class="w-full"
         filter
+        showClear
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col">
@@ -22,6 +23,7 @@
         :loading="loading"
         filter
         class="w-full"
+        showClear
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col">
@@ -34,6 +36,7 @@
         :loading="loading"
         filter
         class="w-full"
+        showClear
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col">
@@ -46,6 +49,7 @@
         :loading="loading"
         filter
         class="w-full"
+        showClear
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col justify-end mt-[24px]">
@@ -60,7 +64,7 @@
           />
         </div>
 
-        <!-- Filter button -->
+        <!-- Filter and Clear buttons -->
         <div class="flex gap-2 w-full justify-center sm:justify-start">
           <Button
             label="more filters"
@@ -68,6 +72,12 @@
             @click="toggleFilters"
             class="p-button-outlined more-filters-button flex-grow"
           />
+          <!-- <Button
+            label="clear all"
+            icon="pi pi-times"
+            @click="clearAllFilters"
+            class="p-button-outlined p-button-danger clear-filters-button"
+          /> -->
         </div>
       </div>
     </div>
@@ -81,7 +91,7 @@ import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
 
-// Accept toolOptions from parent (removed comparisonCount prop)
+// Accept toolOptions from parent and rename input props
 const props = defineProps<{
   toolOptions: TaxonomyItem[];
 }>();

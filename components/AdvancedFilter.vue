@@ -74,7 +74,7 @@
 
       <Divider class="mb-6" />
 
-      <!-- INPUT TYPE - Changed to MultiSelect dropdown -->
+      <!-- INPUT TYPE -->
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Input type</h3>
         <MultiSelect
@@ -88,7 +88,7 @@
         />
       </div>
 
-      <!-- OUTPUT TYPE - Changed to MultiSelect dropdown -->
+      <!-- OUTPUT TYPE -->
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Output</h3>
         <MultiSelect
@@ -102,7 +102,7 @@
         />
       </div>
 
-      <!-- PROFILE - Changed to MultiSelect dropdown -->
+      <!-- PROFILE -->
       <div class="mb-6">
         <h3 class="text-lg font-bold mb-2">Profile</h3>
         <MultiSelect
@@ -127,31 +127,33 @@
           placeholder="Select tasks"
           :loading="loading"
           class="w-full"
+          showClear
         />
       </div>
 
       <!-- APPLY FILTERS BUTTON -->
-      <!-- <button
-        class="w-full px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors duration-300 mt-4"
-        @click="applyFilters"
-      >
-        Apply Filters
-      </button> -->
-      <div class="w-full mb-2 sm:mb-0">
+      <div class="w-full mb-2 sm:mb-0 flex flex-col gap-2">
         <Button
           label="Apply Filters"
           icon="pi pi-search"
           @click="applyFilters"
           class="w-full search-button"
         />
+
+        <Button
+          label="Clear Filters"
+          icon="pi pi-trash"
+          class="p-button-outlined p-button-danger w-full pd-2"
+          @click="clearFilters"
+        />
       </div>
       <!-- CLEAR FILTERS BUTTON -->
-      <button
+      <!-- <button
         class="w-full px-4 py-2 bg-red-100 text-red-500 rounded-full text-sm font-medium hover:bg-red-200 transition-colors mt-4"
         @click="clearFilters"
       >
         Clear Filters
-      </button>
+      </button> -->
     </ScrollAreaViewport>
 
     <!-- Optional Reka scrollbars -->

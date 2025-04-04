@@ -35,6 +35,7 @@
             placeholder="Select tool"
             class="w-full"
             filter
+            showClear
           />
         </div>
 
@@ -48,6 +49,7 @@
             placeholder="Select inputs"
             class="w-full"
             filter
+            showClear
           />
         </div>
 
@@ -61,6 +63,7 @@
             placeholder="Select outputs"
             class="w-full"
             filter
+            showClear
           />
         </div>
 
@@ -74,6 +77,7 @@
             placeholder="Select profiles"
             class="w-full"
             filter
+            showClear
           />
         </div>
       </div>
@@ -159,6 +163,7 @@
             optionLabel="name"
             placeholder="Select tasks"
             class="w-full"
+            showClear
           />
         </div>
       </div>
