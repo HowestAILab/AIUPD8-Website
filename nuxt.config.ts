@@ -1,18 +1,18 @@
 // nuxt.config.ts
 import { defineNuxtConfig } from "nuxt/config";
 import Material from '@primevue/themes/material';
-import Aura from '@primevue/themes/aura';
+// import Aura from '@primevue/themes/aura';
 import { definePreset } from "@primevue/themes";
 
-const AIUPD8 = definePreset(Aura, {
+const AIUPD8 = definePreset(Material, {
     primitive: {
         borderRadius: {
             none: "0",
-            xs: "2px",
-            sm: "4px",
-            md: "6px",
-            lg: "8px",
-            xl: "12px"
+            xs: "4px",
+            sm: "8px",
+            md: "8px", 
+            lg: "9999px", // Changed to fully rounded
+            xl: "9999px"  // Changed to fully rounded
         },
         emerald: {
             50: "#ecfdf5",
@@ -304,11 +304,11 @@ const AIUPD8 = definePreset(Aura, {
     semantic: {
         transitionDuration: "0.2s",
         focusRing: {
-            width: "1px",
+            width: "2px", // Increased width for more visible outline
             style: "solid",
             color: "{primary.color}",
             offset: "2px",
-            shadow: "none"
+            shadow: "0 0 0 2px rgba(66, 133, 244, 0.2)" // Added subtle shadow
         },
         disabledOpacity: "0.6",
         iconSize: "1rem",
@@ -339,13 +339,13 @@ const AIUPD8 = definePreset(Aura, {
                 paddingX: "0.875rem",
                 paddingY: "0.625rem"
             },
-            borderRadius: "{border.radius.md}",
+            borderRadius: "9999px", // Changed to fully rounded
             focusRing: {
-                width: "0",
-                style: "none",
-                color: "transparent",
+                width: "2px", // Changed from 0 to visible outline
+                style: "solid", // Changed from none to solid
+                color: "{primary.color}", // Use primary color
                 offset: "0",
-                shadow: "none"
+                shadow: "0 0 0 1px rgba(66, 133, 244, 0.2)" // Added subtle shadow
             },
             transitionDuration: "{transition.duration}"
         },
@@ -357,7 +357,7 @@ const AIUPD8 = definePreset(Aura, {
             },
             option: {
                 padding: "0.5rem 0.75rem",
-                borderRadius: "{border.radius.sm}"
+                borderRadius: "9999px" // Changed to fully rounded
             },
             optionGroup: {
                 padding: "0.5rem 0.75rem",
@@ -377,7 +377,7 @@ const AIUPD8 = definePreset(Aura, {
             },
             item: {
                 padding: "0.5rem 0.75rem",
-                borderRadius: "{border.radius.sm}",
+                borderRadius: "9999px", // Changed to fully rounded
                 gap: "0.5rem"
             },
             submenuLabel: {
@@ -390,7 +390,7 @@ const AIUPD8 = definePreset(Aura, {
         },
         overlay: {
             select: {
-                borderRadius: "{border.radius.md}",
+                borderRadius: "16px", // Keep this slightly less rounded for dropdowns
                 shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1)"
             },
             popover: {
@@ -446,7 +446,7 @@ const AIUPD8 = definePreset(Aura, {
                     filledHoverBackground: "{surface.50}",
                     filledFocusBackground: "{surface.50}",
                     borderColor: "{surface.300}",
-                    hoverBorderColor: "{surface.400}",
+                    hoverBorderColor: "{primary.color}", // Changed to primary color for hover state
                     focusBorderColor: "{primary.color}",
                     invalidBorderColor: "{red.400}",
                     color: "{surface.700}",
@@ -571,7 +571,7 @@ const AIUPD8 = definePreset(Aura, {
                     filledHoverBackground: "{surface.800}",
                     filledFocusBackground: "{surface.800}",
                     borderColor: "{surface.600}",
-                    hoverBorderColor: "{surface.500}",
+                    hoverBorderColor: "{primary.color}", // Changed to primary color for hover state
                     focusBorderColor: "{primary.color}",
                     invalidBorderColor: "{red.300}",
                     color: "{surface.0}",
@@ -704,7 +704,8 @@ export default defineNuxtConfig({
             options: {
                 darkModeSelector: '.my-app-dark',
             }
-        }
+        },
+        ripple: true // Added ripple effect for better interactions
     }
   },
 

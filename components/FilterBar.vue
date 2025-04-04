@@ -2,7 +2,7 @@
   <div class="flex flex-wrap items-center justify-center gap-4">
     <!-- Modified filter for tool name as dropdown -->
     <div class="w-full sm:w-48 flex flex-col">
-      <h3 class="font-semibold">Tool Name</h3>
+      <h3 class="font-semibold">tool name</h3>
       <Dropdown
         v-model="filters.name"
         :options="toolOptions"

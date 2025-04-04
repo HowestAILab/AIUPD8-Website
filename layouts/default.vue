@@ -3,7 +3,7 @@
     <!-- No Header here. Let each page decide its own Header. -->
 
     <!-- Main content area -->
-    <main class="flex-grow">
+    <main class="flex-grow pb-12">
       <NuxtPage />
     </main>
 

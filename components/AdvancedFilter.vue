@@ -147,7 +147,7 @@
       </div>
       <!-- CLEAR FILTERS BUTTON -->
       <button
-        class="w-full px-4 py-2 bg-red-100 text-red-500 rounded-md text-sm font-medium hover:bg-red-200 transition-colors mt-4"
+        class="w-full px-4 py-2 bg-red-100 text-red-500 rounded-full text-sm font-medium hover:bg-red-200 transition-colors mt-4"
         @click="clearFilters"
       >
         Clear Filters
