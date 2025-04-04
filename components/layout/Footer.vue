@@ -9,8 +9,19 @@
       >
         <!-- Left side -->
         <div class="mb-8 md:mb-0">
-          <h2 class="text-2xl font-semibold mb-4">Find us here on LinkedIn</h2>
+          <!-- <h2 class="text-2xl font-semibold mb-4">Find us here on LinkedIn</h2> -->
           <!-- Replaced LinkedIn icon with correct footer image -->
+
+          <p class="leading-relaxed">
+            Howest<br />
+            Marksesteenweg 58<br />
+            8500 Kortrijk
+          </p>
+        </div>
+        <!-- Right side -->
+        <div
+          class="flex flex-row items-center justify-center md:justify-end gap-4"
+        >
           <a
             href="https://www.linkedin.com/groups/13097690/"
             target="_blank"
@@ -19,30 +30,15 @@
             <img
               src="/images/footer/linkedin.png"
               alt="LinkedIn Logo"
-              class="w-10 h-10 mb-4"
+              class="w-10 h-10"
             />
           </a>
-          <p class="leading-relaxed">
-            Howest<br />
-            Marksesteenweg 58<br />
-            8500 Kortrijk
-          </p>
-        </div>
-        <!-- Right side -->
-        <div class="text-left md:text-right">
-          <!-- Added email logo along with header -->
-          <div class="flex items-center justify-center md:justify-end mb-4">
+          <a href="mailto:laura.willems@howest.be" class="inline-block">
             <img
               src="/images/footer/mail.png"
               alt="Email Logo"
-              class="w-10 h-10 mr-2"
+              class="w-10 h-10"
             />
-            <h2 class="text-2xl font-semibold">Or send us a mail</h2>
-          </div>
-          <a href="mailto:laura.willems@howest.be" class="inline-block">
-            <RecurringButton variant="primary" class="font-semibold text-lg">
-              Contact Us
-            </RecurringButton>
           </a>
         </div>
       </div>
@@ -50,7 +46,7 @@
       <!-- Bottom row: partner logos -->
 
       <div
-        class="flex flex-row justify-center items-center gap-4 w-1/4 mx-auto"
+        class="flex flex-row justify-center items-center gap-4 w-[10%] mx-auto"
       >
         <img
           src="/images/footer/DAE.png"
