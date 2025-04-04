@@ -33,6 +33,37 @@
           />
         </div>
 
+        <!-- New Comparison Bar - only shows when items are selected -->
+        <div
+          v-if="comparisonCount > 0"
+          class="comparison-bar mb-6 p-4 bg-white shadow-md rounded-lg flex justify-between items-center"
+        >
+          <div class="flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 640 512"
+              class="w-5 h-5 mr-2 text-primary"
+            >
+              <path
+                fill="currentColor"
+                d="M384 32l128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L398.4 96c-5.2 25.8-22.9 47.1-46.4 57.3L352 448l160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-192 0-192 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l160 0 0-294.7c-23.5-10.3-41.2-31.6-46.4-57.3L128 96c-17.7 0-32-14.3-32-32s14.3-32 32-32l128 0c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288l144.9 0L512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C627.2 382 574.9 416 512 416zM126.8 195.8L54.4 320l144.9 0L126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C242 382 189.7 416 126.8 416S11.7 382 .9 337.1z"
+              />
+            </svg>
+            <span class="font-medium"
+              >{{ comparisonCount }} tool{{
+                comparisonCount !== 1 ? "s" : ""
+              }}
+              selected for comparison</span
+            >
+          </div>
+          <button
+            @click="openComparisonModal"
+            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors duration-300 flex items-center"
+          >
+            Compare Tools
+          </button>
+        </div>
+
         <div v-if="loading" class="text-center py-8">
           <p class="mb-2">Loading tools...</p>
         </div>
@@ -255,3 +286,21 @@ onMounted(async () => {
   filteredItems.value = items.value;
 });
 </script>
+
+<style scoped>
+.comparison-bar {
+  animation: fadeIn 0.3s ease-in-out;
+  border: 1px solid var(--surface-200);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>

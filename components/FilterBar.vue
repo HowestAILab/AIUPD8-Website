@@ -60,38 +60,14 @@
           />
         </div>
 
-        <!-- Filter and Compare buttons in a separate container -->
+        <!-- Filter button -->
         <div class="flex gap-2 w-full justify-center sm:justify-start">
           <Button
             label="More Filters"
             icon="pi pi-filter"
             @click="toggleFilters"
-            class="p-button-outlined more-filters-button flex-grow sm:flex-grow-0"
+            class="p-button-outlined more-filters-button flex-grow"
           />
-          <div class="compare-button-container flex-grow sm:flex-grow-0">
-            <Button
-              label="Compare"
-              class="p-button-outlined compare-button w-full"
-              @click="openComparisonModal"
-            >
-              <span class="flex items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 512"
-                  class="w-4 h-4 mr-1"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M384 32l128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L398.4 96c-5.2 25.8-22.9 47.1-46.4 57.3L352 448l160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-192 0-192 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l160 0 0-294.7c-23.5-10.3-41.2-31.6-46.4-57.3L128 96c-17.7 0-32-14.3-32-32s14.3-32 32-32l128 0c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288l144.9 0L512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C627.2 382 574.9 416 512 416zM126.8 195.8L54.4 320l144.9 0L126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C242 382 189.7 416 126.8 416S11.7 382 .9 337.1z"
-                  />
-                </svg>
-                Compare
-              </span>
-            </Button>
-            <span v-if="comparisonCount > 0" class="comparison-badge">
-              {{ comparisonCount }}
-            </span>
-          </div>
         </div>
       </div>
     </div>
@@ -105,10 +81,9 @@ import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
 
-// Accept toolOptions from parent and add comparisonCount prop
+// Accept toolOptions from parent (removed comparisonCount prop)
 const props = defineProps<{
   toolOptions: TaxonomyItem[];
-  comparisonCount: number;
 }>();
 
 // Updated FilterState: change type of 'name'
@@ -149,11 +124,7 @@ async function fetchFilterOptions() {
   }
 }
 
-const emits = defineEmits([
-  "toggle-filters",
-  "apply-filters",
-  "open-comparison",
-]);
+const emits = defineEmits(["toggle-filters", "apply-filters"]);
 
 const toggleFilters = () => {
   emits("toggle-filters");
@@ -167,11 +138,6 @@ const applyFilters = () => {
     profiles: filters.profiles.map((item) => item.name),
   };
   emits("apply-filters", filterParams);
-};
-
-// Add method to open the comparison modal
-const openComparisonModal = () => {
-  emits("open-comparison");
 };
 
 onMounted(() => {
@@ -219,50 +185,16 @@ onMounted(() => {
 
 /* Mobile adjustments */
 @media (max-width: 640px) {
-  .more-filters-button,
-  .compare-button {
+  .more-filters-button {
     width: 100%;
   }
 }
 
-.compare-button-container {
-  position: relative;
-  display: inline-block;
-}
-
-.compare-button {
-  min-width: 120px;
-  text-align: center;
-  white-space: nowrap;
-}
-
+/* Remove compare button related styles */
+.compare-button-container,
+.compare-button,
 .comparison-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  background-color: #ef4444;
-  color: white;
-  border-radius: 50%;
-  font-size: 0.75rem;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  border: 1px solid white;
-  z-index: 1000;
-}
-
-.p-button-outlined {
-  border: 1px solid var(--primary-color);
-  color: var(--primary-color);
-  background-color: transparent;
-}
-
-.p-button-outlined:hover {
-  background-color: var(--primary-color);
-  color: white;
+  display: none;
 }
 
 /* Add styles to ensure filter input is visible */
