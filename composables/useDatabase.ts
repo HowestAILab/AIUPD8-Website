@@ -120,7 +120,9 @@ export function useDatabase() {
       if (response.data.data) {
         // Log raw data for debugging if needed
         console.log("Raw tools data received:", response.data.data);
-        items.value = response.data.data.map(mapDatabaseItemToToolItem);
+        const mappedItems = response.data.data.map(mapDatabaseItemToToolItem);
+        // Sort tools alphabetically by title
+        items.value = mappedItems.sort((a, b) => a.title.localeCompare(b.title));
       } else {
         items.value = [];
       }
