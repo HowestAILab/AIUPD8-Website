@@ -33,7 +33,7 @@
             :options="toolOptions"
             optionLabel="name"
             placeholder="Select tool"
-            class="w-full"
+            class="ml-1 w-[90%]"
             filter
             showClear
           />
@@ -47,7 +47,7 @@
             :options="inputOptions"
             optionLabel="name"
             placeholder="Select inputs"
-            class="w-full"
+            class="ml-1 w-[90%]"
             filter
             showClear
           />
@@ -61,7 +61,7 @@
             :options="outputOptions"
             optionLabel="name"
             placeholder="Select outputs"
-            class="w-full"
+            class="ml-1 w-[90%]"
             filter
             showClear
           />
@@ -75,7 +75,7 @@
             :options="profileOptions"
             optionLabel="name"
             placeholder="Select profiles"
-            class="w-full"
+            class="ml-1 w-[90%]"
             filter
             showClear
           />
@@ -91,7 +91,7 @@
         <!-- SETUP -->
         <div class="mb-4">
           <h4 class="font-medium mb-1">Setup</h4>
-          <div class="w-full">
+          <div class="ml-1 w-[90%]">
             <ButtonGroup
               v-model="filters.setups"
               :options="setupOptions"
@@ -104,7 +104,7 @@
         <!-- USE -->
         <div class="mb-4">
           <h4 class="font-medium mb-1">Use</h4>
-          <div class="w-full">
+          <div class="ml-1 w-[90%]">
             <ButtonGroup
               v-model="filters.uses"
               :options="useOptions"
@@ -117,7 +117,7 @@
         <!-- PRICING -->
         <div class="mb-4">
           <h4 class="font-medium mb-1">Pricing</h4>
-          <div class="w-full">
+          <div class="ml-1 w-[90%]">
             <ButtonGroup
               v-model="filters.pricings"
               :options="pricingOptions"
@@ -130,7 +130,7 @@
         <!-- LICENSE -->
         <div class="mb-4">
           <h4 class="font-medium mb-1">License</h4>
-          <div class="w-full">
+          <div class="ml-1 w-[90%]">
             <ButtonGroup
               v-model="filters.licenses"
               :options="licenseOptions"
@@ -143,7 +143,7 @@
         <!-- GENERATION TIME -->
         <div class="mb-4">
           <h4 class="font-medium mb-1">Average Time to Generate</h4>
-          <div class="w-full">
+          <div class="ml-1 w-[90%]">
             <ButtonGroup
               v-model="filters.generationTimes"
               :options="generationTimeOptions"
@@ -162,7 +162,7 @@
             :options="taskOptions"
             optionLabel="name"
             placeholder="Select tasks"
-            class="w-full"
+            class="ml-1 w-[90%]"
             showClear
           />
         </div>
@@ -170,7 +170,7 @@
     </div>
 
     <template #footer>
-      <div class="flex flex-col w-full gap-3">
+      <div class="flex flex-col w-full gap-3 mt-4">
         <Button
           label="Apply Filters"
           icon="pi pi-search"
