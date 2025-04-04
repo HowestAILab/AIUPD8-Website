@@ -161,7 +161,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import AdvancedFilter from "~/components/AdvancedFilter.vue";
 import FilterBar from "~/components/FilterBar.vue";
@@ -169,7 +169,11 @@ import DatabaseItem from "~/components/DatabaseItem.vue";
 import ComparisonModal from "~/components/ComparisonModal.vue";
 import MobileFilterModal from "~/components/MobileFilterModal.vue";
 import type { ToolItem } from "~/composables/useDatabase";
-// import { useDatabase } from "~/composables/useDatabase";
+import {
+  getFilterParams,
+  clearAllFilters,
+  setToolOptions,
+} from "~/config/filterHandler";
 
 const { items, loading, error, fetchDatabaseItems } = useDatabase();
 const filteredItems = ref<ToolItem[]>([]);
@@ -233,6 +237,17 @@ const toolOptions = computed(() => {
     return acc;
   }, [] as { name: string }[]);
 });
+
+// Update shared filter tool options when toolOptions changes
+watch(
+  () => toolOptions.value,
+  (newToolOptions) => {
+    if (newToolOptions && newToolOptions.length > 0) {
+      setToolOptions(newToolOptions);
+    }
+  },
+  { immediate: true }
+);
 
 // Filter items based on selected filters
 function filterItems(filters: any) {
@@ -322,15 +337,20 @@ const handleFiltersApplied = (filters) => {
 };
 
 // Apply filters from the advanced sidebar
-const handleAdvancedFilters = (advancedFilters) => {
-  console.log("Advanced filters applied:", advancedFilters);
-  filteredItems.value = filterItems(advancedFilters);
+const handleAdvancedFilters = () => {
+  console.log("Advanced filters applied:", getFilterParams());
+  filteredItems.value = filterItems(getFilterParams());
 };
 
 onMounted(async () => {
   await fetchDatabaseItems();
   // Initialize filteredItems with all items when first loading
   filteredItems.value = items.value;
+
+  // Set tool options in the filter handler
+  if (toolOptions.value.length > 0) {
+    setToolOptions(toolOptions.value);
+  }
 });
 </script>
 

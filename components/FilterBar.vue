@@ -4,8 +4,8 @@
     <div class="w-full sm:w-48 flex flex-col">
       <h3 class="font-semibold">tool name</h3>
       <Dropdown
-        v-model="filters.name"
-        :options="toolOptions"
+        v-model="filterState.name"
+        :options="filterOptions.toolOptions"
         optionLabel="name"
         placeholder="Select tool"
         class="w-full"
@@ -16,8 +16,8 @@
     <div class="w-full sm:w-48 flex flex-col">
       <h3 class="font-semibold">input</h3>
       <MultiSelect
-        v-model="filters.inputs"
-        :options="inputOptions"
+        v-model="filterState.inputs"
+        :options="filterOptions.inputOptions"
         optionLabel="name"
         placeholder="search"
         :loading="loading"
@@ -29,8 +29,8 @@
     <div class="w-full sm:w-48 flex flex-col">
       <h3 class="font-semibold">output</h3>
       <MultiSelect
-        v-model="filters.outputs"
-        :options="outputOptions"
+        v-model="filterState.outputs"
+        :options="filterOptions.outputOptions"
         optionLabel="name"
         placeholder="search"
         :loading="loading"
@@ -42,8 +42,8 @@
     <div class="w-full sm:w-48 flex flex-col">
       <h3 class="font-semibold">profile</h3>
       <MultiSelect
-        v-model="filters.profiles"
-        :options="profileOptions"
+        v-model="filterState.profiles"
+        :options="filterOptions.profileOptions"
         optionLabel="name"
         placeholder="search"
         :loading="loading"
@@ -72,12 +72,6 @@
             @click="toggleFilters"
             class="p-button-outlined more-filters-button flex-grow"
           />
-          <!-- <Button
-            label="clear all"
-            icon="pi pi-times"
-            @click="clearAllFilters"
-            class="p-button-outlined p-button-danger clear-filters-button"
-          /> -->
         </div>
       </div>
     </div>
@@ -85,52 +79,55 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
-import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
+import { useTaxonomyTypes } from "~/composables/useTaxonomyTypes";
+import {
+  filterState,
+  filterOptions,
+  loading,
+  getFilterParams,
+} from "~/config/filterHandler";
 
 // Accept toolOptions from parent and rename input props
 const props = defineProps<{
-  toolOptions: TaxonomyItem[];
+  toolOptions: any[];
 }>();
 
-// Updated FilterState: change type of 'name'
-interface FilterState {
-  name: TaxonomyItem | null;
-  inputs: TaxonomyItem[];
-  outputs: TaxonomyItem[];
-  profiles: TaxonomyItem[];
-}
-
-const filters = reactive<FilterState>({
-  name: null,
-  inputs: [],
-  outputs: [],
-  profiles: [],
+// Update toolOptions in the shared filter state
+onMounted(() => {
+  filterOptions.toolOptions = props.toolOptions;
 });
 
-const inputOptions = ref<TaxonomyItem[]>([]);
-const outputOptions = ref<TaxonomyItem[]>([]);
-const profileOptions = ref<TaxonomyItem[]>([]);
-
 // Initialize the taxonomy types composable
-const { loading, error, fetchTaxonomyByType } = useTaxonomyTypes();
+const { fetchTaxonomyByType } = useTaxonomyTypes();
 
 // Fetch filter options for non-tool taxonomies
 async function fetchFilterOptions() {
   try {
+    loading.value = true;
     const [inputs, outputs, profiles] = await Promise.all([
       fetchTaxonomyByType("input"),
       fetchTaxonomyByType("output"),
       fetchTaxonomyByType("profile"),
     ]);
-    inputOptions.value = inputs;
-    outputOptions.value = outputs;
-    profileOptions.value = profiles;
+
+    // Only update if they're not already loaded by AdvancedFilter
+    if (filterOptions.inputOptions.length === 0) {
+      filterOptions.inputOptions = inputs;
+    }
+    if (filterOptions.outputOptions.length === 0) {
+      filterOptions.outputOptions = outputs;
+    }
+    if (filterOptions.profileOptions.length === 0) {
+      filterOptions.profileOptions = profiles;
+    }
   } catch (error) {
     console.error("Error fetching filter options:", error);
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -141,13 +138,7 @@ const toggleFilters = () => {
 };
 
 const applyFilters = () => {
-  const filterParams = {
-    name: filters.name ? filters.name.name : "",
-    inputs: filters.inputs.map((item) => item.name),
-    outputs: filters.outputs.map((item) => item.name),
-    profiles: filters.profiles.map((item) => item.name),
-  };
-  emits("apply-filters", filterParams);
+  emits("apply-filters", getFilterParams());
 };
 
 onMounted(() => {

@@ -29,8 +29,8 @@
         <div class="mb-4">
           <h4 class="font-medium mb-1">Tool Name</h4>
           <Dropdown
-            v-model="filters.name"
-            :options="toolOptions"
+            v-model="filterState.name"
+            :options="filterOptions.toolOptions"
             optionLabel="name"
             placeholder="Select tool"
             class="ml-1 w-[90%]"
@@ -43,8 +43,8 @@
         <div class="mb-4">
           <h4 class="font-medium mb-1">Input</h4>
           <MultiSelect
-            v-model="filters.inputs"
-            :options="inputOptions"
+            v-model="filterState.inputs"
+            :options="filterOptions.inputOptions"
             optionLabel="name"
             placeholder="Select inputs"
             class="ml-1 w-[90%]"
@@ -57,8 +57,8 @@
         <div class="mb-4">
           <h4 class="font-medium mb-1">Output</h4>
           <MultiSelect
-            v-model="filters.outputs"
-            :options="outputOptions"
+            v-model="filterState.outputs"
+            :options="filterOptions.outputOptions"
             optionLabel="name"
             placeholder="Select outputs"
             class="ml-1 w-[90%]"
@@ -71,8 +71,8 @@
         <div class="mb-4">
           <h4 class="font-medium mb-1">Profile</h4>
           <MultiSelect
-            v-model="filters.profiles"
-            :options="profileOptions"
+            v-model="filterState.profiles"
+            :options="filterOptions.profileOptions"
             optionLabel="name"
             placeholder="Select profiles"
             class="ml-1 w-[90%]"
@@ -93,8 +93,8 @@
           <h4 class="font-medium mb-1">Setup</h4>
           <div class="ml-1 w-[90%]">
             <ButtonGroup
-              v-model="filters.setups"
-              :options="setupOptions"
+              v-model="filterState.setups"
+              :options="filterOptions.setupOptions"
               optionLabel="name"
               multiple
             />
@@ -106,8 +106,8 @@
           <h4 class="font-medium mb-1">Use</h4>
           <div class="ml-1 w-[90%]">
             <ButtonGroup
-              v-model="filters.uses"
-              :options="useOptions"
+              v-model="filterState.uses"
+              :options="filterOptions.useOptions"
               optionLabel="name"
               multiple
             />
@@ -119,8 +119,8 @@
           <h4 class="font-medium mb-1">Pricing</h4>
           <div class="ml-1 w-[90%]">
             <ButtonGroup
-              v-model="filters.pricings"
-              :options="pricingOptions"
+              v-model="filterState.pricings"
+              :options="filterOptions.pricingOptions"
               optionLabel="name"
               multiple
             />
@@ -132,8 +132,8 @@
           <h4 class="font-medium mb-1">License</h4>
           <div class="ml-1 w-[90%]">
             <ButtonGroup
-              v-model="filters.licenses"
-              :options="licenseOptions"
+              v-model="filterState.licenses"
+              :options="filterOptions.licenseOptions"
               optionLabel="name"
               multiple
             />
@@ -145,8 +145,8 @@
           <h4 class="font-medium mb-1">Average Time to Generate</h4>
           <div class="ml-1 w-[90%]">
             <ButtonGroup
-              v-model="filters.generationTimes"
-              :options="generationTimeOptions"
+              v-model="filterState.generationTimes"
+              :options="filterOptions.generationTimeOptions"
               optionLabel="name"
               multiple
             />
@@ -158,8 +158,8 @@
           <h4 class="font-medium mb-1">Specific Task</h4>
           <MultiSelect
             filter
-            v-model="filters.tasks"
-            :options="taskOptions"
+            v-model="filterState.tasks"
+            :options="filterOptions.taskOptions"
             optionLabel="name"
             placeholder="Select tasks"
             class="ml-1 w-[90%]"
@@ -189,14 +189,22 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted, watch, computed } from "vue";
+import { onMounted, computed, watch } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import MultiSelect from "primevue/multiselect";
 import Divider from "primevue/divider";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
-import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
+import { useTaxonomyTypes } from "~/composables/useTaxonomyTypes";
+import {
+  filterState,
+  filterOptions,
+  loading,
+  clearAllFilters,
+  getFilterParams,
+  reorderOptions,
+} from "~/config/filterHandler";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
 
 const props = defineProps({
@@ -215,106 +223,121 @@ const emit = defineEmits(["update:modelValue", "apply-filters"]);
 // Computed property for dialog visibility
 const isVisible = computed(() => props.modelValue);
 
+// Update tool options in the filter handler when props change
+watch(
+  () => props.toolOptions,
+  (newTools) => {
+    if (newTools && newTools.length > 0) {
+      filterOptions.toolOptions = newTools;
+    }
+  },
+  { immediate: true }
+);
+
 // Function to update visibility and emit the update event
 function updateVisibility(value) {
   emit("update:modelValue", value);
 }
 
-// Interface for filter state
-interface FilterState {
-  name: TaxonomyItem | null;
-  uses: TaxonomyItem[];
-  setups: TaxonomyItem[];
-  pricings: TaxonomyItem[];
-  licenses: TaxonomyItem[];
-  generationTimes: TaxonomyItem[];
-  inputs: TaxonomyItem[];
-  outputs: TaxonomyItem[];
-  profiles: TaxonomyItem[];
-  tasks: TaxonomyItem[];
-}
-
-const filters = reactive<FilterState>({
-  name: null,
-  uses: [],
-  setups: [],
-  pricings: [],
-  licenses: [],
-  generationTimes: [],
-  inputs: [],
-  outputs: [],
-  profiles: [],
-  tasks: [],
-});
-
-// Refs for filter options
-const useOptions = ref<TaxonomyItem[]>([]);
-const setupOptions = ref<TaxonomyItem[]>([]);
-const pricingOptions = ref<TaxonomyItem[]>([]);
-const licenseOptions = ref<TaxonomyItem[]>([]);
-const generationTimeOptions = ref<TaxonomyItem[]>([]);
-const inputOptions = ref<TaxonomyItem[]>([]);
-const outputOptions = ref<TaxonomyItem[]>([]);
-const profileOptions = ref<TaxonomyItem[]>([]);
-const taskOptions = ref<TaxonomyItem[]>([]);
-
 // Initialize the taxonomy types composable
-const { loading, error, fetchTaxonomyByType } = useTaxonomyTypes();
-
-// Helper function to reorder taxonomy options
-function reorderOptions(
-  options: TaxonomyItem[],
-  order: string[]
-): TaxonomyItem[] {
-  return options.sort((a, b) => {
-    const idxA = order.indexOf(a.name.toLowerCase());
-    const idxB = order.indexOf(b.name.toLowerCase());
-    if (idxA === -1 && idxB === -1) return a.name.localeCompare(b.name);
-    if (idxA === -1) return 1;
-    if (idxB === -1) return -1;
-    return idxA - idxB;
-  });
-}
+const { fetchTaxonomyByType } = useTaxonomyTypes();
 
 // Fetch all filter options
 async function fetchFilterOptions() {
   try {
-    const [
-      uses,
-      setups,
-      pricings,
-      licenses,
-      generationTimes,
-      inputs,
-      outputs,
-      profiles,
-      tasks,
-    ] = await Promise.all([
-      fetchTaxonomyByType("use"),
-      fetchTaxonomyByType("setup"),
-      fetchTaxonomyByType("pricing"),
-      fetchTaxonomyByType("license"),
-      fetchTaxonomyByType("generationTime"),
-      fetchTaxonomyByType("input"),
-      fetchTaxonomyByType("output"),
-      fetchTaxonomyByType("profile"),
-      fetchTaxonomyByType("task"),
-    ]);
+    loading.value = true;
+    // Only fetch options that aren't already loaded
+    const promises = [];
+    const results = [];
 
-    useOptions.value = reorderOptions(uses, defaultSelectionOrder.use);
-    setupOptions.value = reorderOptions(setups, defaultSelectionOrder.setup);
-    pricingOptions.value = reorderOptions(
-      pricings,
-      defaultSelectionOrder.pricing
-    );
-    licenseOptions.value = licenses;
-    generationTimeOptions.value = generationTimes;
-    inputOptions.value = inputs;
-    outputOptions.value = outputs;
-    profileOptions.value = profiles;
-    taskOptions.value = tasks;
+    // Check each option type and only fetch if needed
+    if (filterOptions.useOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("use"));
+      results.push("use");
+    }
+
+    if (filterOptions.setupOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("setup"));
+      results.push("setup");
+    }
+
+    if (filterOptions.pricingOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("pricing"));
+      results.push("pricing");
+    }
+
+    if (filterOptions.licenseOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("license"));
+      results.push("license");
+    }
+
+    if (filterOptions.generationTimeOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("generationTime"));
+      results.push("generationTime");
+    }
+
+    if (filterOptions.inputOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("input"));
+      results.push("input");
+    }
+
+    if (filterOptions.outputOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("output"));
+      results.push("output");
+    }
+
+    if (filterOptions.profileOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("profile"));
+      results.push("profile");
+    }
+
+    if (filterOptions.taskOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("task"));
+      results.push("task");
+    }
+
+    // Fetch all needed taxonomies
+    if (promises.length > 0) {
+      const data = await Promise.all(promises);
+
+      // Assign fetched data to corresponding filter options
+      data.forEach((items, index) => {
+        const type = results[index];
+
+        if (type === "use") {
+          filterOptions.useOptions = reorderOptions(
+            items,
+            defaultSelectionOrder.use
+          );
+        } else if (type === "setup") {
+          filterOptions.setupOptions = reorderOptions(
+            items,
+            defaultSelectionOrder.setup
+          );
+        } else if (type === "pricing") {
+          filterOptions.pricingOptions = reorderOptions(
+            items,
+            defaultSelectionOrder.pricing
+          );
+        } else if (type === "license") {
+          filterOptions.licenseOptions = items;
+        } else if (type === "generationTime") {
+          filterOptions.generationTimeOptions = items;
+        } else if (type === "input") {
+          filterOptions.inputOptions = items;
+        } else if (type === "output") {
+          filterOptions.outputOptions = items;
+        } else if (type === "profile") {
+          filterOptions.profileOptions = items;
+        } else if (type === "task") {
+          filterOptions.taskOptions = items;
+        }
+      });
+    }
   } catch (error) {
     console.error("Error fetching filter options:", error);
+  } finally {
+    loading.value = false;
   }
 }
 
@@ -324,34 +347,12 @@ function close() {
 }
 
 function applyFilters() {
-  const filterParams = {
-    name: filters.name ? filters.name.name : "",
-    uses: filters.uses.map((item) => item.name),
-    setups: filters.setups.map((item) => item.name),
-    pricings: filters.pricings.map((item) => item.name),
-    licenses: filters.licenses.map((item) => item.name),
-    generationTimes: filters.generationTimes.map((item) => item.name),
-    inputs: filters.inputs.map((item) => item.name),
-    outputs: filters.outputs.map((item) => item.name),
-    profiles: filters.profiles.map((item) => item.name),
-    tasks: filters.tasks.map((item) => item.name),
-  };
-
-  emit("apply-filters", filterParams);
+  emit("apply-filters", getFilterParams());
   close();
 }
 
 function clearFilters() {
-  filters.name = null;
-  filters.uses = [];
-  filters.setups = [];
-  filters.pricings = [];
-  filters.licenses = [];
-  filters.generationTimes = [];
-  filters.inputs = [];
-  filters.outputs = [];
-  filters.profiles = [];
-  filters.tasks = [];
+  clearAllFilters();
 }
 
 onMounted(() => {

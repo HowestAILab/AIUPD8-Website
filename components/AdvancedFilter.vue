@@ -12,8 +12,8 @@
         <h3 class="text-lg font-bold mb-2">Setup</h3>
         <div class="flex w-full overflow-x-auto">
           <ButtonGroup
-            v-model="filters.setups"
-            :options="setupOptions"
+            v-model="filterState.setups"
+            :options="filterOptions.setupOptions"
             optionLabel="name"
             multiple
           />
@@ -25,8 +25,8 @@
         <h3 class="text-lg font-bold mb-2">Use</h3>
         <div class="flex w-full overflow-x-auto">
           <ButtonGroup
-            v-model="filters.uses"
-            :options="useOptions"
+            v-model="filterState.uses"
+            :options="filterOptions.useOptions"
             optionLabel="name"
             multiple
           />
@@ -38,8 +38,8 @@
         <h3 class="text-lg font-bold mb-2">Pricing</h3>
         <div class="flex w-full overflow-x-auto">
           <ButtonGroup
-            v-model="filters.pricings"
-            :options="pricingOptions"
+            v-model="filterState.pricings"
+            :options="filterOptions.pricingOptions"
             optionLabel="name"
             multiple
           />
@@ -51,8 +51,8 @@
         <h3 class="text-lg font-bold mb-2">License</h3>
         <div class="flex w-full overflow-x-auto">
           <ButtonGroup
-            v-model="filters.licenses"
-            :options="licenseOptions"
+            v-model="filterState.licenses"
+            :options="filterOptions.licenseOptions"
             optionLabel="name"
             multiple
           />
@@ -64,8 +64,8 @@
         <h3 class="text-lg font-bold mb-2">Average time to generate</h3>
         <div class="flex w-full overflow-x-auto">
           <ButtonGroup
-            v-model="filters.generationTimes"
-            :options="generationTimeOptions"
+            v-model="filterState.generationTimes"
+            :options="filterOptions.generationTimeOptions"
             optionLabel="name"
             multiple
           />
@@ -79,8 +79,8 @@
         <h3 class="text-lg font-bold mb-2">Input type</h3>
         <MultiSelect
           filter
-          v-model="filters.inputs"
-          :options="inputOptions"
+          v-model="filterState.inputs"
+          :options="filterOptions.inputOptions"
           optionLabel="name"
           placeholder="Select input types"
           :loading="loading"
@@ -93,8 +93,8 @@
         <h3 class="text-lg font-bold mb-2">Output</h3>
         <MultiSelect
           filter
-          v-model="filters.outputs"
-          :options="outputOptions"
+          v-model="filterState.outputs"
+          :options="filterOptions.outputOptions"
           optionLabel="name"
           placeholder="Select output types"
           :loading="loading"
@@ -107,8 +107,8 @@
         <h3 class="text-lg font-bold mb-2">Profile</h3>
         <MultiSelect
           filter
-          v-model="filters.profiles"
-          :options="profileOptions"
+          v-model="filterState.profiles"
+          :options="filterOptions.profileOptions"
           optionLabel="name"
           placeholder="Select profiles"
           :loading="loading"
@@ -121,8 +121,8 @@
         <h3 class="text-lg font-bold mb-2">Specific task</h3>
         <MultiSelect
           filter
-          v-model="filters.tasks"
-          :options="taskOptions"
+          v-model="filterState.tasks"
+          :options="filterOptions.taskOptions"
           optionLabel="name"
           placeholder="Select tasks"
           :loading="loading"
@@ -147,13 +147,6 @@
           @click="clearFilters"
         />
       </div>
-      <!-- CLEAR FILTERS BUTTON -->
-      <!-- <button
-        class="w-full px-4 py-2 bg-red-100 text-red-500 rounded-full text-sm font-medium hover:bg-red-200 transition-colors mt-4"
-        @click="clearFilters"
-      >
-        Clear Filters
-      </button> -->
     </ScrollAreaViewport>
 
     <!-- Optional Reka scrollbars -->
@@ -167,51 +160,19 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import MultiSelect from "primevue/multiselect";
-import RecurringButton from "~/components/ui/RecurringButton.vue";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
-import { useTaxonomyTypes, TaxonomyItem } from "~/composables/useTaxonomyTypes";
+import { useTaxonomyTypes } from "~/composables/useTaxonomyTypes";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
-
-interface FilterState {
-  uses: TaxonomyItem[];
-  setups: TaxonomyItem[];
-  pricings: TaxonomyItem[];
-  licenses: TaxonomyItem[];
-  generationTimes: TaxonomyItem[];
-  inputs: TaxonomyItem[];
-  outputs: TaxonomyItem[];
-  profiles: TaxonomyItem[];
-  tasks: TaxonomyItem[];
-}
-
-// Refs for filter options
-const useOptions = ref<TaxonomyItem[]>([]);
-const setupOptions = ref<TaxonomyItem[]>([]);
-const pricingOptions = ref<TaxonomyItem[]>([]);
-const licenseOptions = ref<TaxonomyItem[]>([]);
-const generationTimeOptions = ref<TaxonomyItem[]>([]);
-const inputOptions = ref<TaxonomyItem[]>([]);
-const outputOptions = ref<TaxonomyItem[]>([]);
-const profileOptions = ref<TaxonomyItem[]>([]);
-const taskOptions = ref<TaxonomyItem[]>([]);
-
-// Initialize the taxonomy types composable
-const { loading, error, fetchTaxonomyByType } = useTaxonomyTypes();
-
-// Filter state
-const filters = reactive<FilterState>({
-  uses: [],
-  setups: [],
-  pricings: [],
-  licenses: [],
-  generationTimes: [],
-  inputs: [],
-  outputs: [],
-  profiles: [],
-  tasks: [],
-});
+import {
+  filterState,
+  filterOptions,
+  clearAllFilters,
+  loading,
+  reorderOptions,
+  getFilterParams,
+} from "~/config/filterHandler";
 
 const props = defineProps({
   isVisible: {
@@ -222,24 +183,13 @@ const props = defineProps({
 
 const emits = defineEmits(["apply-filters", "update:isVisible"]);
 
-// Helper function to reorder taxonomy options based on provided order
-function reorderOptions(
-  options: TaxonomyItem[],
-  order: string[]
-): TaxonomyItem[] {
-  return options.sort((a, b) => {
-    const idxA = order.indexOf(a.name.toLowerCase());
-    const idxB = order.indexOf(b.name.toLowerCase());
-    if (idxA === -1 && idxB === -1) return b.name.localeCompare(a.name); // fallback: reversed alphabetical
-    if (idxA === -1) return 1;
-    if (idxB === -1) return -1;
-    return idxA - idxB;
-  });
-}
+// Initialize the taxonomy types composable
+const { fetchTaxonomyByType } = useTaxonomyTypes();
 
 // Fetch all filter options using the dynamic route
 async function fetchFilterOptions() {
   try {
+    loading.value = true;
     // Fetch all taxonomy types in parallel for better performance
     const [
       uses,
@@ -264,53 +214,37 @@ async function fetchFilterOptions() {
     ]);
 
     // Reorder options for use, setup and pricing using defaultSelectionOrder
-    useOptions.value = reorderOptions(uses, defaultSelectionOrder.use);
-    setupOptions.value = reorderOptions(setups, defaultSelectionOrder.setup);
-    pricingOptions.value = reorderOptions(
+    filterOptions.useOptions = reorderOptions(uses, defaultSelectionOrder.use);
+    filterOptions.setupOptions = reorderOptions(
+      setups,
+      defaultSelectionOrder.setup
+    );
+    filterOptions.pricingOptions = reorderOptions(
       pricings,
       defaultSelectionOrder.pricing
     );
 
     // Other options remain unchanged
-    licenseOptions.value = licenses;
-    generationTimeOptions.value = generationTimes;
-    inputOptions.value = inputs;
-    outputOptions.value = outputs;
-    profileOptions.value = profiles;
-    taskOptions.value = tasks;
+    filterOptions.licenseOptions = licenses;
+    filterOptions.generationTimeOptions = generationTimes;
+    filterOptions.inputOptions = inputs;
+    filterOptions.outputOptions = outputs;
+    filterOptions.profileOptions = profiles;
+    filterOptions.taskOptions = tasks;
   } catch (error) {
     console.error("Error fetching filter options:", error);
+  } finally {
+    loading.value = false;
   }
 }
 
 function applyFilters() {
-  // Convert selected objects to name arrays for filtering
-  const filterParams = {
-    uses: filters.uses.map((item) => item.name),
-    setups: filters.setups.map((item) => item.name),
-    pricings: filters.pricings.map((item) => item.name),
-    licenses: filters.licenses.map((item) => item.name),
-    generationTimes: filters.generationTimes.map((item) => item.name),
-    inputs: filters.inputs.map((item) => item.name),
-    outputs: filters.outputs.map((item) => item.name),
-    profiles: filters.profiles.map((item) => item.name),
-    tasks: filters.tasks.map((item) => item.name),
-  };
-
-  // Emit the event with filter parameters
-  emits("apply-filters", filterParams);
+  // Get filter parameters and emit them
+  emits("apply-filters", getFilterParams());
 }
 
 function clearFilters() {
-  filters.uses = [];
-  filters.setups = [];
-  filters.pricings = [];
-  filters.licenses = [];
-  filters.generationTimes = [];
-  filters.inputs = [];
-  filters.outputs = [];
-  filters.profiles = [];
-  filters.tasks = [];
+  clearAllFilters();
 }
 
 onMounted(() => {
