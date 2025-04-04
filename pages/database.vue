@@ -7,7 +7,7 @@
       <!-- Left column: advanced filter -->
       <aside
         v-show="showFilters"
-        class="w-full md:w-1/4 p-4"
+        class="w-full md:w-1/4 p-4 hidden md:block"
         ref="filterSidebar"
       >
         <AdvancedFilter
@@ -23,7 +23,7 @@
             - Cards grid
         -->
       <main class="w-full md:w-3/4 p-4 max-w-7xl mx-auto">
-        <div class="mb-6">
+        <div class="mb-6 hidden md:block">
           <FilterBar
             :toolOptions="toolOptions"
             :comparisonCount="comparisonCount"
@@ -92,28 +92,68 @@
       </main>
     </div>
 
-    <button
-      v-if="comparisonCount > 0"
-      class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-dark transition-colors duration-300 z-50"
-      @click="handleButtonClick"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 640 512"
-        class="w-6 h-6"
-      >
-        <path
-          fill="currentColor"
-          d="M384 32l128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L398.4 96c-5.2 25.8-22.9 47.1-46.4 57.3L352 448l160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-192 0-192 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l160 0 0-294.7c-23.5-10.3-41.2-31.6-46.4-57.3L128 96c-17.7 0-32-14.3-32-32s14.3-32 32-32l128 0c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288l144.9 0L512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C627.2 382 574.9 416 512 416zM126.8 195.8L54.4 320l144.9 0L126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C242 382 189.7 416 126.8 416S11.7 382 .9 337.1z"
-        />
-      </svg>
-      <span
+    <!-- Floating buttons section -->
+    <div class="fixed-buttons-container">
+      <!-- Comparison floating button (already exists) -->
+      <button
         v-if="comparisonCount > 0"
-        class="absolute top-0 right-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs"
+        class="fixed-button comparison-button"
+        @click="handleButtonClick"
       >
-        {{ comparisonCount }}
-      </span>
-    </button>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 640 512"
+          class="w-6 h-6"
+        >
+          <path
+            fill="currentColor"
+            d="M384 32l128 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L398.4 96c-5.2 25.8-22.9 47.1-46.4 57.3L352 448l160 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-192 0-192 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l160 0 0-294.7c-23.5-10.3-41.2-31.6-46.4-57.3L128 96c-17.7 0-32-14.3-32-32s14.3-32 32-32l128 0c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288l144.9 0L512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C627.2 382 574.9 416 512 416zM126.8 195.8L54.4 320l144.9 0L126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C242 382 189.7 416 126.8 416S11.7 382 .9 337.1z"
+          />
+        </svg>
+        <span
+          v-if="comparisonCount > 0"
+          class="absolute top-0 right-0 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs"
+        >
+          {{ comparisonCount }}
+        </span>
+      </button>
+      
+      <!-- New Mobile Filter Button (visible only on mobile) -->
+      <button
+        class="fixed-button filter-button md:hidden"
+        @click="showMobileFilter = true"
+      >
+        <svg 
+          xmlns="http://www.w3.org/2000/svg" 
+          width="24" 
+          height="24" 
+          viewBox="0 0 24 24" 
+          fill="none" 
+          stroke="currentColor" 
+          stroke-width="2" 
+          stroke-linecap="round" 
+          stroke-linejoin="round"
+        >
+          <line x1="4" y1="21" x2="4" y2="14"></line>
+          <line x1="4" y1="10" x2="4" y2="3"></line>
+          <line x1="12" y1="21" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12" y2="3"></line>
+          <line x1="20" y1="21" x2="20" y2="16"></line>
+          <line x1="20" y1="12" x2="20" y2="3"></line>
+          <line x1="1" y1="14" x2="7" y2="14"></line>
+          <line x1="9" y1="8" x2="15" y2="8"></line>
+          <line x1="17" y1="16" x2="23" y2="16"></line>
+        </svg>
+        <span class="filter-label">Filters</span>
+      </button>
+    </div>
+
+    <!-- Mobile Filter Modal -->
+    <MobileFilterModal
+      v-model="showMobileFilter"
+      :toolOptions="toolOptions"
+      @apply-filters="handleFiltersApplied"
+    />
 
     <ComparisonModal ref="comparisonModal" @item-removed="handleItemRemoved" />
   </div>
@@ -126,6 +166,7 @@ import AdvancedFilter from "~/components/AdvancedFilter.vue";
 import FilterBar from "~/components/FilterBar.vue";
 import DatabaseItem from "~/components/DatabaseItem.vue";
 import ComparisonModal from "~/components/ComparisonModal.vue";
+import MobileFilterModal from "~/components/MobileFilterModal.vue";
 import type { ToolItem } from "~/composables/useDatabase";
 // import { useDatabase } from "~/composables/useDatabase";
 
@@ -134,6 +175,9 @@ const filteredItems = ref<ToolItem[]>([]);
 
 // Show/hide advanced filter sidebar
 const showFilters = ref(false);
+
+// Show/hide mobile filter modal
+const showMobileFilter = ref(false);
 
 const comparisonModal = ref(null);
 
@@ -269,10 +313,11 @@ function filterItems(filters: any) {
   return result;
 }
 
-// Apply filters from the top filter bar
+// Apply filters from the top filter bar or mobile filter modal
 const handleFiltersApplied = (filters) => {
   console.log("Filters applied:", filters);
   filteredItems.value = filterItems(filters);
+  showMobileFilter.value = false; // Close mobile filter modal after applying filters
 };
 
 // Apply filters from the advanced sidebar
@@ -302,6 +347,58 @@ onMounted(async () => {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.fixed-buttons-container {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  z-index: 50;
+  pointer-events: none;
+}
+
+.fixed-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.filter-button {
+  background-color: white;
+  color: #3178f2;
+  border: 1px solid #3178f2;
+}
+
+.comparison-button {
+  background-color: #3178f2;
+  color: white;
+  position: absolute;
+  right: 20px;
+}
+
+.filter-label {
+  position: absolute;
+  bottom: -20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .filter-button {
+    display: none;
   }
 }
 </style>
