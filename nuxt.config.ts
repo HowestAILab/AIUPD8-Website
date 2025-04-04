@@ -715,9 +715,4 @@ export default defineNuxtConfig({
     },
   },
 
-  css: [
-    '~/assets/css/primevue-overrides.css',
-    // Other CSS files you might have
-  ],
-
 });

@@ -58,7 +58,7 @@
           </div>
           <button
             @click="openComparisonModal"
-            class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors duration-300 flex items-center"
+            class="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors duration-300 flex items-center"
           >
             Compare Tools
           </button>
