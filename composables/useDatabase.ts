@@ -69,10 +69,11 @@ export function useDatabase() {
   // Reworked mapping function for better compatibility
   const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     const attrs = item.attributes || item;
-    
+    console.log(attrs)
     const result: ToolItem = {
       id: item.id || item._id || '',
       title: attrs.title || "Untitled",
+      toolsentence:attrs.toolsentence || "",
       description: Array.isArray(attrs.description) ? attrs.description : [],
       isFavourite: !!attrs.isFavourite,
       uses: extractRelationNames(attrs.uses),

@@ -19,6 +19,7 @@ export default defineEventHandler(async (event) => {
       description,
       isFavourite,
       link,
+      toolsentence,
       youtubeLink,
       "uses": uses[]->{ _id, title },
       "setups": setups[]->{ _id, title },
@@ -48,7 +49,7 @@ export default defineEventHandler(async (event) => {
           createdAt: "",
           updatedAt: "",
           publishedAt: "",
-          // Map relations to match Strapi format with correct name field
+          toolsentence: tool.toolsentence,
           uses: { 
             data: tool.uses?.map(use => ({ 
               id: use._id || 0, 
