@@ -116,22 +116,23 @@
         >
           {{ comparisonCount }}
         </span>
+        <span class="filter-label z-10">Compare</span>
       </button>
-      
+
       <!-- New Mobile Filter Button (visible only on mobile) -->
       <button
         class="fixed-button filter-button md:hidden"
         @click="showMobileFilter = true"
       >
-        <svg 
-          xmlns="http://www.w3.org/2000/svg" 
-          width="24" 
-          height="24" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          stroke="currentColor" 
-          stroke-width="2" 
-          stroke-linecap="round" 
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
           stroke-linejoin="round"
         >
           <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -356,7 +357,8 @@ onMounted(async () => {
   left: 0;
   right: 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  padding: 0 20px;
   gap: 16px;
   z-index: 50;
   pointer-events: none;
@@ -385,8 +387,6 @@ onMounted(async () => {
 .comparison-button {
   background-color: #3178f2;
   color: white;
-  position: absolute;
-  right: 20px;
 }
 
 .filter-label {
@@ -394,11 +394,35 @@ onMounted(async () => {
   bottom: -20px;
   font-size: 12px;
   font-weight: 500;
+  color: #333; /* Added specific text color */
+  text-shadow: 0px 0px 2px white; /* Added text shadow for better visibility */
+  width: 100%; /* Ensure the label takes full width of button */
+  text-align: center; /* Center the text */
 }
 
+/* Responsive adjustments */
 @media (min-width: 768px) {
   .filter-button {
     display: none;
+  }
+
+  .fixed-buttons-container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .comparison-button {
+    position: relative;
+    right: auto;
+  }
+}
+
+/* For larger screens, ensure buttons don't get too far to the edge */
+@media (min-width: 1536px) {
+  .fixed-buttons-container {
+    margin-bottom: 2%;
+    margin-right: 7%;
   }
 }
 </style>
