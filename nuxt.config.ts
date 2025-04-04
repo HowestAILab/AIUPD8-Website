@@ -681,21 +681,9 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.API_BASE_URL || 'https://aiupd8frontend.netlify.app'
     }
   },
-
-  // Optional date or versioning
   compatibilityDate: '2025-01-30',
 
   modules: ["@nuxtjs/sanity", "@nuxtjs/tailwindcss", "@nuxtjs/google-fonts", '@primevue/nuxt-module'],
-
-  // Remove duplicate sanity config if present
-  sanity: {
-    projectId: process.env.SANITY_PROJECT_ID || 't6eu00c4',
-    dataset: process.env.SANITY_DATASET || 'production',
-    apiVersion: '2023-05-03',
-    useCdn: process.env.NODE_ENV === 'production',
-    // Using server-side token for authenticated requests
-    token: process.env.SANITY_TOKEN,
-  },
 
   primevue: {
     options: {
@@ -705,7 +693,7 @@ export default defineNuxtConfig({
                 darkModeSelector: '.my-app-dark',
             }
         },
-        ripple: true // Added ripple effect for better interactions
+        ripple: true 
     }
   },
 
