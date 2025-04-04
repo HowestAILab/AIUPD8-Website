@@ -67,7 +67,7 @@
         <!-- Filter and Clear buttons -->
         <div class="flex gap-2 w-full justify-center sm:justify-start">
           <Button
-            label="more filters"
+            label="filters"
             icon="pi pi-filter"
             @click="toggleFilters"
             class="p-button-outlined more-filters-button flex-grow"

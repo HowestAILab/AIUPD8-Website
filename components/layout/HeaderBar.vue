@@ -53,7 +53,7 @@ const props = defineProps({
 // Build CSS classes depending on the variant
 const computedClasses = computed(() => {
   if (props.variant === "transparent") {
-    return "fixed top-0 left-0 right-0 z-50 bg-transparent p-4 shadow-none";
+    return "fixed top-0 left-0 right-0 z-50 bg-white p-4 shadow-none";
   } else if (props.variant === "white") {
     return "fixed top-0 left-0 right-0 z-50 bg-white p-4 shadow";
   }
