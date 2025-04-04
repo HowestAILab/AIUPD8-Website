@@ -93,6 +93,7 @@
     </div>
 
     <button
+      v-if="comparisonCount > 0"
       class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full shadow-lg flex items-center justify-center hover:bg-primary-dark transition-colors duration-300 z-50"
       @click="handleButtonClick"
     >

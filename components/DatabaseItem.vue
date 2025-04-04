@@ -26,11 +26,9 @@
           <p class="text-primary text-sm mt-1">
             <span class="font-bold"
               >{{
-                Array.isArray(item.outputs)
-                  ? item.outputs.join(", ")
-                  : item.outputType
+                item.toolsentence
               }}
-              generation tool</span
+              </span
             >
           </p>
         </div>

@@ -10,9 +10,9 @@ const AIUPD8 = definePreset(Material, {
             none: "0",
             xs: "4px",
             sm: "8px",
-            md: "8px", 
-            lg: "9999px", // Changed to fully rounded
-            xl: "9999px"  // Changed to fully rounded
+            md: "12px", 
+            lg: "16px", 
+            xl: "24px"  
         },
         emerald: {
             50: "#ecfdf5",
@@ -339,7 +339,7 @@ const AIUPD8 = definePreset(Material, {
                 paddingX: "0.875rem",
                 paddingY: "0.625rem"
             },
-            borderRadius: "9999px", // Changed to fully rounded
+            borderRadius: "9999px", 
             focusRing: {
                 width: "2px", // Changed from 0 to visible outline
                 style: "solid", // Changed from none to solid
@@ -357,7 +357,7 @@ const AIUPD8 = definePreset(Material, {
             },
             option: {
                 padding: "0.5rem 0.75rem",
-                borderRadius: "9999px" // Changed to fully rounded
+                borderRadius: "9999px" 
             },
             optionGroup: {
                 padding: "0.5rem 0.75rem",
@@ -377,7 +377,7 @@ const AIUPD8 = definePreset(Material, {
             },
             item: {
                 padding: "0.5rem 0.75rem",
-                borderRadius: "9999px", // Changed to fully rounded
+                borderRadius: "9999px", 
                 gap: "0.5rem"
             },
             submenuLabel: {

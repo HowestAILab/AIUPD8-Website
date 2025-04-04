@@ -53,7 +53,7 @@
         <!-- Search button in its own container -->
         <div class="w-full mb-2 sm:mb-0">
           <Button
-            label="Search"
+            label="search"
             icon="pi pi-search"
             @click="applyFilters"
             class="w-full search-button"
@@ -63,7 +63,7 @@
         <!-- Filter button -->
         <div class="flex gap-2 w-full justify-center sm:justify-start">
           <Button
-            label="More Filters"
+            label="more filters"
             icon="pi pi-filter"
             @click="toggleFilters"
             class="p-button-outlined more-filters-button flex-grow"

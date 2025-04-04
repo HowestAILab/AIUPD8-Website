@@ -21,11 +21,15 @@
           to="/database"
           class="font-bold hover:underline text-light-page-text-dark"
         >
-          Database
+          database
         </NuxtLink>
 
-        <a href="mailto:laura.willems@howest.be" class="hover:underline">
-          <RecurringButton variant="neutral">Contact</RecurringButton>
+        <a
+          href="mailto:laura.willems@howest.be"
+          class="font-bold hover:underline text-light-page-text-dark"
+        >
+          <!-- <RecurringButton variant="neutral">contact</RecurringButton> -->
+          contact
         </a>
       </div>
     </nav>

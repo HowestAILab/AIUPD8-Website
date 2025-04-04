@@ -6,6 +6,7 @@ import { useRuntimeConfig } from '#app';
 export interface ToolItem {
   id: string;
   title: string;
+  toolsentence:string;
   description: any[]; // Updated to array for Portable Text
   isFavourite: boolean;
   uses: string[];
