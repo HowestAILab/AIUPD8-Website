@@ -2,43 +2,28 @@
   <div>
     <HeaderBar variant="white" />
 
-    <!-- main content area -->
     <div class="pt-16 min-h-screen bg-light-page-background flex">
-      <!-- Advanced Filter Modal Overlay -->
-      <transition name="fade">
-        <div
+      <!-- Sidebar Filter (desktop only) -->
+      <transition name="slide-fade">
+        <aside
           v-if="showFilters"
-          class="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-40"
-          @mousedown.self="showFilters = false"
+          class="hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-80 bg-white shadow-lg z-30 p-8 overflow-y-auto border-r border-gray-200"
         >
-          <div
-            class="relative bg-white rounded-3xl shadow-lg w-full max-w-[90vw] md:w-1/2 h-[80vh] mt-24 mx-4 p-10 mb-16 overflow-y-auto"
-            ref="filterSidebar"
-            @mousedown.stop
-          >
-            <button
-              class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
-              @click="showFilters = false"
-              aria-label="Close"
-            >
-              &times;
-            </button>
-            <AdvancedFilter
-              :is-visible="showFilters"
-              @apply-filters="handleAdvancedFilters"
-              @update:is-visible="showFilters = $event"
-            />
-          </div>
-        </div>
+          <AdvancedFilter
+            :is-visible="showFilters"
+            @apply-filters="handleAdvancedFilters"
+          />
+        </aside>
       </transition>
 
-      <!-- 
-          Right column: 
-            - Filter bar (some top filters or search bar)
-            - Cards grid
-        -->
-      <main class="w-full md:w-3/4 p-4 max-w-7xl mx-auto">
-        <div class="mb-6 hidden md:block">
+      <!-- Main content area, with left margin for sidebar on desktop -->
+      <main
+        :class="[
+          'w-full md:w-3/4 p-4 max-w-7xl mx-auto',
+          showFilters ? 'md:ml-80' : '',
+        ]"
+      >
+        <div class="mb-6 hidden md:flex items-center gap-4">
           <FilterBar
             :toolOptions="toolOptions"
             :comparisonCount="comparisonCount"
@@ -472,5 +457,31 @@ onMounted(async () => {
 .fade-enter-to,
 .fade-leave-from {
   opacity: 1;
+}
+
+/* Sidebar styles */
+@media (min-width: 768px) {
+  aside {
+    min-width: 20rem;
+    max-width: 20rem;
+  }
+  main {
+    margin-left: 20rem;
+  }
+}
+
+.slide-fade-enter-active,
+.slide-fade-leave-active {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.slide-fade-enter-from,
+.slide-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-40px);
+}
+.slide-fade-enter-to,
+.slide-fade-leave-from {
+  opacity: 1;
+  transform: translateX(0);
 }
 </style>
