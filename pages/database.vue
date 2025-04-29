@@ -4,18 +4,33 @@
 
     <!-- main content area -->
     <div class="pt-16 min-h-screen bg-light-page-background flex">
-      <!-- Left column: advanced filter -->
-      <aside
-        v-show="showFilters"
-        class="w-full md:w-1/4 p-4 hidden md:block"
-        ref="filterSidebar"
-      >
-        <AdvancedFilter
-          :is-visible="showFilters"
-          @apply-filters="handleAdvancedFilters"
-          @update:is-visible="showFilters = $event"
-        />
-      </aside>
+      <!-- Advanced Filter Modal Overlay -->
+      <transition name="fade">
+        <div
+          v-if="showFilters"
+          class="fixed inset-0 z-50 flex items-start justify-center bg-black bg-opacity-40"
+          @mousedown.self="showFilters = false"
+        >
+          <div
+            class="relative bg-white rounded-3xl shadow-lg w-full max-w-[90vw] md:w-1/2 h-[80vh] mt-24 mx-4 p-10 mb-16 overflow-y-auto"
+            ref="filterSidebar"
+            @mousedown.stop
+          >
+            <button
+              class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl"
+              @click="showFilters = false"
+              aria-label="Close"
+            >
+              &times;
+            </button>
+            <AdvancedFilter
+              :is-visible="showFilters"
+              @apply-filters="handleAdvancedFilters"
+              @update:is-visible="showFilters = $event"
+            />
+          </div>
+        </div>
+      </transition>
 
       <!-- 
           Right column: 
@@ -444,5 +459,18 @@ onMounted(async () => {
     margin-bottom: 2%;
     margin-right: 7%;
   }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
 }
 </style>
