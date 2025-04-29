@@ -17,13 +17,9 @@
       </transition>
 
       <!-- Main content area, with left margin for sidebar on desktop -->
-      <main
-        :class="[
-          'w-full md:w-3/4 p-4 max-w-7xl mx-auto',
-          showFilters ? 'md:ml-80' : '',
-        ]"
-      >
-        <div class="mb-6 hidden md:flex items-center gap-4">
+      
+      <main class="w-full md:w-3/4 p-4 max-w-7xl mx-auto">
+        <div class="mb-6 hidden md:block">
           <FilterBar
             :toolOptions="toolOptions"
             :comparisonCount="comparisonCount"
