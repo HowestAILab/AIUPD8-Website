@@ -11,12 +11,38 @@ export function useMedia() {
       dataset: config.public.sanity.dataset
     });
   };
-  
+
   /**
-   * Get a properly formatted URL for a Sanity image
+   * Helper: Cache a value in localStorage for 1 day (24h)
+   */
+  const getCachedUrl = (key: string): string | null => {
+    if (typeof window === 'undefined') return null;
+    const cached = localStorage.getItem(key);
+    if (cached) {
+      try {
+        const { url, timestamp } = JSON.parse(cached);
+        const CACHE_TTL = 24 * 60 * 60 * 1000; // 1 day
+        if (Date.now() - timestamp < CACHE_TTL) {
+          return url;
+        }
+      } catch {}
+    }
+    return null;
+  };
+  const setCachedUrl = (key: string, url: string) => {
+    if (typeof window === 'undefined') return;
+    localStorage.setItem(key, JSON.stringify({ url, timestamp: Date.now() }));
+  };
+
+  /**
+   * Get a properly formatted URL for a Sanity image, with 1-day cache
    */
   const getSanityImageUrl = (image: any, width = 800): string => {
     if (!image) return '';
+    // Use a cache key based on image ref/id and width
+    const cacheKey = `aiupd8_media_sanity_${(image._ref || image._id || image.asset?._ref || image.asset?._id || JSON.stringify(image)).replace(/[^a-zA-Z0-9_]/g, '')}_${width}`;
+    const cached = getCachedUrl(cacheKey);
+    if (cached) return cached;
     
     try {
       // Check if this is a Sanity asset
@@ -27,24 +53,13 @@ export function useMedia() {
       const builder = createImageUrlBuilder();
       
       // If it's already a URL string, return it
-      if (typeof image === 'string') return image;
-      
-      // Handle Sanity image reference
-      if (image.asset) {
-        return builder.image(image).width(width).url();
-      }
-      
-      // Handle direct asset reference
-      if (image._ref || image._id) {
-        return builder.image(image).width(width).url();
-      }
-      
-      // If we have a URL directly, use it
-      if (image.url) {
-        return image.url;
-      }
-      
-      return '';
+      let url = '';
+      if (typeof image === 'string') url = image;
+      else if (image.asset) url = builder.image(image).width(width).url();
+      else if (image._ref || image._id) url = builder.image(image).width(width).url();
+      else if (image.url) url = image.url;
+      if (url) setCachedUrl(cacheKey, url);
+      return url;
     } catch (e) {
       console.error('Error formatting Sanity image URL:', e);
       return '';
@@ -61,45 +76,51 @@ export function useMedia() {
   };
 
   /**
-   * Extract image URL from any media object structure
+   * Extract image URL from any media object structure, with 1-day cache
    */
   const getMediaUrl = (media: any): string => {
     if (!media) return '';
+    // Use a cache key based on JSON string of media
+    const cacheKey = `aiupd8_media_url_${JSON.stringify(media).replace(/[^a-zA-Z0-9_]/g, '')}`;
+    const cached = getCachedUrl(cacheKey);
+    if (cached) return cached;
     
+    let url = '';
     // Handle null or undefined case
     if (media === null || media === undefined) return '';
     
     // Check if this is a Sanity asset
     if (media._sanityAsset || media.asset || media._ref || media._id) {
-      return getSanityImageUrl(media);
+      url = getSanityImageUrl(media);
     }
     
     // Handle direct URL string
-    if (typeof media === 'string') return media;
+    else if (typeof media === 'string') url = media;
     
     // Handle standard URL object
-    if (media.url) return media.url;
+    else if (media.url) url = media.url;
     
     // Handle formats with preference for medium size
-    if (media.formats) {
-      const url = media.formats.medium?.url || media.formats.small?.url || media.formats.thumbnail?.url || media.url;
-      return formatStrapiUrl(url || '');
+    else if (media.formats) {
+      url = media.formats.medium?.url || media.formats.small?.url || media.formats.thumbnail?.url || media.url;
+      url = formatStrapiUrl(url || '');
     }
     
     // Handle nested data structure from Strapi v4
-    if (media.data) {
+    else if (media.data) {
       const attributes = media.data.attributes || {};
-      const url = attributes.formats?.medium?.url || attributes.formats?.small?.url || attributes.url;
-      return formatStrapiUrl(url || '');
+      url = attributes.formats?.medium?.url || attributes.formats?.small?.url || attributes.url;
+      url = formatStrapiUrl(url || '');
     }
     
     // Handle attributes directly
-    if (media.attributes) {
-      const url = media.attributes.formats?.medium?.url || media.attributes.formats?.small?.url || media.attributes.url;
-      return formatStrapiUrl(url || '');
+    else if (media.attributes) {
+      url = media.attributes.formats?.medium?.url || media.attributes.formats?.small?.url || media.attributes.url;
+      url = formatStrapiUrl(url || '');
     }
     
-    return '';
+    if (url) setCachedUrl(cacheKey, url);
+    return url;
   };
 
   /**
