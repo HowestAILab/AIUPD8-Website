@@ -117,7 +117,24 @@ export function useDatabase() {
     loading.value = true;
     error.value = null;
 
+    // Caching logic: use localStorage to cache for 1 day (24h)
+    const CACHE_KEY = 'aiupd8_tools_cache';
+    const CACHE_TTL = 24 * 60 * 60 * 1000; // 1 day in ms
     try {
+      if (typeof window !== 'undefined') {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          if (Date.now() - timestamp < CACHE_TTL) {
+            console.log('Using tools data from localStorage cache');
+            items.value = data;
+            loading.value = false;
+            connected.value = true;
+            return;
+          }
+        }
+      }
+
       const response = await api.get('/api/tools');
       if (response.data.data) {
         // Log raw data for debugging if needed
@@ -125,6 +142,14 @@ export function useDatabase() {
         const mappedItems = response.data.data.map(mapDatabaseItemToToolItem);
         // Sort tools alphabetically by title
         items.value = mappedItems.sort((a, b) => a.title.localeCompare(b.title));
+        // Save to cache
+        if (typeof window !== 'undefined') {
+          localStorage.setItem(CACHE_KEY, JSON.stringify({
+            data: items.value,
+            timestamp: Date.now()
+          }));
+          console.log('Saved tools data to localStorage cache');
+        }
       } else {
         items.value = [];
       }
