@@ -46,6 +46,7 @@
             </NuxtLink>
           </div>
         </div>
+
         <div class="border-b border-gray-900 my-4"></div>
 
         <!-- Input/Output information -->
@@ -117,35 +118,13 @@
         </div>
       </div>
       <div class="py-8" v-if="carouselItems.length > 0">
-        <Galleria
-          :value="carouselItems"
-          :showThumbnails="false"
-          :showIndicators="true"
-          class="w-full rounded-3xl overflow-hidden"
-        >
-          <template #item="slotProps">
-            <div
-              v-if="slotProps.item.type === 'youtube'"
-              class="video-container w-full"
-            >
-              <div class="relative pt-[56.25%]">
-                <iframe
-                  :src="getYoutubeEmbedUrl(slotProps.item.url)"
-                  frameborder="0"
-                  allowfullscreen
-                  class="absolute top-0 left-0 w-full h-full"
-                ></iframe>
-              </div>
-            </div>
-            <div v-else>
-              <img
-                :src="getMediaUrl(slotProps.item)"
-                :alt="item.title"
-                class="w-full h-[416px] object-cover"
-              />
-            </div>
-          </template>
-        </Galleria>
+        <ToolCarousel
+          v-if="item"
+          :title="item.title"
+          :showcase-images="item.showcaseImages"
+          :youtube-link="item.youtubeLink"
+          class="mt-8 mb-8"
+        />
       </div>
       <div class="p-8 bg-gray-100 rounded-3xl">
         <div>
@@ -280,6 +259,7 @@ import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 import SanityPortableText from "./SanityPortableText.vue";
+import ToolCarousel from "./ToolCarousel.vue";
 
 const { parseRichText } = useRichText();
 const { getMediaUrl, getCarouselImageUrl, getYoutubeEmbedUrl } = useMedia();

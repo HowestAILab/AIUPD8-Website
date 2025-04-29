@@ -50,6 +50,7 @@
                 <h2 class="text-3xl font-semibold text-black mb-4">
                   {{ item.title }}
                 </h2>
+
                 <div
                   class="w-full break-words rich-text-content line-clamp-3 text-sm"
                   v-html="parseRichText(item.description)"
@@ -110,6 +111,15 @@
                   </div>
                 </div>
               </div>
+            </div>
+
+            <div class="rounded-3xl bg-white p-6 mb-4">
+              <ToolCarousel
+                v-if="item"
+                :title="item.title"
+                :showcase-images="item.showcaseImages"
+                :youtube-link="item.youtubeLink"
+              />
             </div>
 
             <!-- Specifications section -->
@@ -256,14 +266,18 @@
 <script setup lang="ts">
 import "primeicons/primeicons.css";
 import Dialog from "primevue/dialog";
+import Galleria from "primevue/galleria";
+import ToolCarousel from "./ToolCarousel.vue";
 import { ref } from "vue";
 import { useRichText } from "~/composables/useRichText";
+import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 import { useRouter } from "vue-router";
 
 const visible = ref(false);
 const comparisonItems = ref<ToolItem[]>([]);
 const { parseRichText } = useRichText();
+const { getMediaUrl, getYoutubeEmbedUrl } = useMedia();
 const router = useRouter();
 
 const open = () => {
