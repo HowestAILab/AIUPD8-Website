@@ -16,6 +16,14 @@
               our favourite
             </div>
           </div>
+          <div class="">
+            <div
+              v-if="item.isExperimental"
+              class="absolute top-2 left-2 bg-accent-extra2 text-light-page-text-dark text-xs px-4 py-1 rounded-full"
+            >
+              experimental
+            </div>
+          </div>
         </div>
       </div>
     </template>
@@ -24,12 +32,7 @@
         <div>
           <h3 class="text-xl font-semibold">{{ item.title }}</h3>
           <p class="text-primary text-sm mt-1">
-            <span class="font-bold"
-              >{{
-                item.toolsentence
-              }}
-              </span
-            >
+            <span class="font-bold">{{ item.toolsentence }} </span>
           </p>
         </div>
         <div class="flex space-x-2">

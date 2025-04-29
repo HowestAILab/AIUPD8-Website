@@ -19,6 +19,7 @@ module.exports = {
         highlight: "#C6DAFB",
         accent: "#FC7509",
         "accent-extra": "#FFDADB",
+        "accent-extra2": "#FDFD96",
         "light-page": {
           "text-dark": "#000000",
           "text-light": "#535353",

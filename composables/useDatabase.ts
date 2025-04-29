@@ -9,6 +9,7 @@ export interface ToolItem {
   toolsentence:string;
   description: any[]; // Updated to array for Portable Text
   isFavourite: boolean;
+  isExperimental: boolean;
   uses: string[];
   setups: string[];
   pricings: string[];
@@ -76,6 +77,7 @@ export function useDatabase() {
       toolsentence:attrs.toolsentence || "",
       description: Array.isArray(attrs.description) ? attrs.description : [],
       isFavourite: !!attrs.isFavourite,
+      isExperimental: !!attrs.isExperimental,
       uses: extractRelationNames(attrs.uses),
       setups: extractRelationNames(attrs.setups),
       pricings: extractRelationNames(attrs.pricings),
