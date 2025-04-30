@@ -28,25 +28,21 @@
       </div>
     </template>
     <template #title>
-      <div class="flex justify-between items-center">
-        <div>
-          <h3 class="text-xl font-semibold">{{ item.title }}</h3>
+      <div class="flex justify-between items-start gap-4">
+        <div class="w-[80%] min-w-0">
+          <h3
+            class="text-xl font-semibold truncate whitespace-normal break-words"
+          >
+            {{ item.title }}
+          </h3>
           <p class="text-primary text-sm mt-1">
             <span class="font-bold">{{ item.toolsentence }} </span>
           </p>
         </div>
-        <div class="flex space-x-2">
-          <!-- <NuxtLink
-            v-if="item.link"
-            :href="item.link"
-            target="_blank"
-            class="flex items-center justify-center bg-blue-500 text-white text-sm font-semibold rounded-full px-6 py-1 hover:bg-blue-600 text-center w-full max-w-xs sm:w-auto mx-2"
-          >
-            Go to Tool Website
-          </NuxtLink> -->
+        <div class="w-[20%] flex items-center justify-end">
           <button
             @click="openModal"
-            class="bg-black text-white text-sm font-semibold rounded-full px-4 py-1"
+            class="bg-black text-white text-sm font-semibold rounded-full px-4 py-1 whitespace-nowrap"
           >
             see more
           </button>
