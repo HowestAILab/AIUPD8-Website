@@ -20,22 +20,55 @@
       </div>
 
       <div class="comparison-container px-8 pb-8 bg-gray-100 relative">
-        <!-- Mobile scroll indicators -->
+        <!-- Mobile scroll indicators (fixed, floating, Tailwind only) -->
         <div class="md:hidden">
-          <div
-            class="scroll-indicator scroll-indicator-left"
+          <button
             v-show="showLeftArrow"
             @click="scrollLeft"
+            class="fixed left-3 top-1/2 z-50 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 shadow-md border border-gray-200 text-blue-500 opacity-90 hover:opacity-100 transition"
+            aria-label="Scroll left"
+            type="button"
           >
-            <i class="pi pi-chevron-left"></i>
-          </div>
-          <div
-            class="scroll-indicator scroll-indicator-right"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 19.5L8.25 12l7.5-7.5"
+              />
+            </svg>
+          </button>
+          <button
             v-show="showRightArrow"
             @click="scrollRight"
+            :class="[
+              'fixed right-3 top-1/2 z-50 -translate-y-1/2 w-10 h-10 flex items-center justify-center rounded-full bg-white/80 shadow-md border border-gray-200 text-blue-500 opacity-90 hover:opacity-100 transition',
+              highlightRightArrow ? 'ring-4 ring-blue-400' : '',
+            ]"
+            aria-label="Scroll right"
+            type="button"
           >
-            <i class="pi pi-chevron-right"></i>
-          </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M8.25 4.5l7.5 7.5-7.5 7.5"
+              />
+            </svg>
+          </button>
         </div>
 
         <!-- Tools grid for comparison -->
@@ -186,12 +219,7 @@
                   class="flex flex-wrap bg-gray-100 rounded-full w-full border border-gray-200"
                 >
                   <span
-                    v-for="option in [
-                      'free',
-
-                      'subscription',
-                      'credits',
-                    ]"
+                    v-for="option in ['free', 'subscription', 'credits']"
                     :key="option"
                     class="flex-1 text-center px-2 py-1 rounded-full text-sm"
                     :class="{
@@ -334,12 +362,20 @@ const navigateToTool = (id: string) => {
 const scrollContainer = ref<HTMLElement | null>(null);
 const showLeftArrow = ref(false);
 const showRightArrow = ref(false);
+const highlightRightArrow = ref(false);
 
 const updateArrows = () => {
   const el = scrollContainer.value;
   if (!el) return;
   showLeftArrow.value = el.scrollLeft > 5;
   showRightArrow.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 5;
+
+  // Highlight right arrow after scrolling past the first card
+  if (el.scrollLeft > el.clientWidth * 0.5) {
+    highlightRightArrow.value = true;
+  } else {
+    highlightRightArrow.value = false;
+  }
 };
 
 const scrollLeft = () => {
@@ -420,34 +456,5 @@ defineExpose({ open, addItem, removeItem, clearItems });
 .overflow-x-auto::-webkit-scrollbar-thumb {
   background-color: #b0b0b0; /* neutral grey */
   border-radius: 8px; /* smaller radius */
-}
-
-.scroll-indicator {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-}
-
-.scroll-indicator-left {
-  left: 10px;
-}
-
-.scroll-indicator-right {
-  right: 10px;
-}
-
-@media (hover: none) {
-  .scroll-indicator {
-    display: none;
-  }
 }
 </style>
