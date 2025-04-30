@@ -106,7 +106,7 @@
             <span
               v-for="option in selections.pricing"
               :key="option"
-              class="sm:flex-1 basis-1/3 text-center px-4 py-1 rounded-full transition-all"
+              class="flex-1 basis-1/3 text-center py-1 rounded-full transition-all"
               :class="{
                 'bg-blue-200 text-blue-500 font-semibold':
                   item.pricings.includes(option),
