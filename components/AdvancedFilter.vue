@@ -1,7 +1,7 @@
 <template>
   <ScrollAreaRoot
     class="w-full h-full relative overflow-hidden"
-    style="--scrollbar-size: 8px"
+    style="--scrollbar-size: 4px"
   >
     <ScrollAreaViewport class="w-full h-full px-4 py-6">
       <h2 class="text-2xl font-bold mb-4">Advanced Filters</h2>

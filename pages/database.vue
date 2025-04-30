@@ -5,20 +5,20 @@
     <div class="pt-16 min-h-screen bg-light-page-background flex">
       <!-- Sidebar Filter (desktop only) -->
       <transition name="slide-fade">
-        <aside
+        <div
           v-if="showFilters"
-          class="hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-80 bg-white shadow-lg z-30 p-8 overflow-y-auto border-r border-gray-200"
+          class="hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-[18%] bg-white shadow-lg z-30 p-8 overflow-y-auto border-r border-gray-200"
         >
           <AdvancedFilter
             :is-visible="showFilters"
             @apply-filters="handleAdvancedFilters"
           />
-        </aside>
+        </div>
       </transition>
 
       <!-- Main content area, with left margin for sidebar on desktop -->
-      
-      <main class="w-full md:w-3/4 p-4 max-w-7xl mx-auto">
+
+      <div class="w-full p-4 max-w-[65%] mx-auto">
         <div class="mb-6 hidden md:block">
           <FilterBar
             :toolOptions="toolOptions"
@@ -85,7 +85,7 @@
             @remove-from-comparison="removeFromComparison"
           />
         </div>
-      </main>
+      </div>
     </div>
 
     <!-- Floating buttons section -->
