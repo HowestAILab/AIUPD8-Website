@@ -27,7 +27,7 @@
           <img
             :src="getMediaUrl(slotProps.item)"
             :alt="title"
-            class="w-full h-[240px] object-cover"
+            class="w-full h-[40vw] max-h-[416px] min-h-[200px] object-cover"
           />
         </div>
       </template>
