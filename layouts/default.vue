@@ -17,21 +17,28 @@ import Footer from "~/components/layout/Footer.vue";
 </script>
 
 <style>
-/* Custom scrollbar styling */
+/* Global thin, small, grey scrollbar */
 ::-webkit-scrollbar {
-  width: 12px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #3178f2;
-  border-radius: 6px;
+  background: #b0b0b0;
+  border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #1e50a2;
+  background: #8a8a8a;
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #b0b0b0 transparent;
 }
 </style>

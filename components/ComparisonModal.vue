@@ -22,16 +22,28 @@
       <div class="comparison-container px-8 pb-8 bg-gray-100 relative">
         <!-- Mobile scroll indicators -->
         <div class="md:hidden">
-          <div class="scroll-indicator scroll-indicator-left">
+          <div
+            class="scroll-indicator scroll-indicator-left"
+            v-show="showLeftArrow"
+            @click="scrollLeft"
+          >
             <i class="pi pi-chevron-left"></i>
           </div>
-          <div class="scroll-indicator scroll-indicator-right">
+          <div
+            class="scroll-indicator scroll-indicator-right"
+            v-show="showRightArrow"
+            @click="scrollRight"
+          >
             <i class="pi pi-chevron-right"></i>
           </div>
         </div>
 
         <!-- Tools grid for comparison -->
-        <div class="flex overflow-x-auto gap-8 snap-x pt-6">
+        <div
+          class="flex overflow-x-auto gap-8 snap-x pt-6"
+          ref="scrollContainer"
+          @scroll="updateArrows"
+        >
           <div
             v-for="(item, index) in comparisonItems"
             :key="index"
@@ -268,7 +280,7 @@ import "primeicons/primeicons.css";
 import Dialog from "primevue/dialog";
 import Galleria from "primevue/galleria";
 import ToolCarousel from "./ToolCarousel.vue";
-import { ref } from "vue";
+import { ref, onMounted, watch, nextTick } from "vue";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
@@ -319,6 +331,43 @@ const navigateToTool = (id: string) => {
   visible.value = false;
 };
 
+const scrollContainer = ref<HTMLElement | null>(null);
+const showLeftArrow = ref(false);
+const showRightArrow = ref(false);
+
+const updateArrows = () => {
+  const el = scrollContainer.value;
+  if (!el) return;
+  showLeftArrow.value = el.scrollLeft > 5;
+  showRightArrow.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 5;
+};
+
+const scrollLeft = () => {
+  const el = scrollContainer.value;
+  if (!el) return;
+  el.scrollBy({ left: -el.clientWidth * 0.8, behavior: "smooth" });
+};
+
+const scrollRight = () => {
+  const el = scrollContainer.value;
+  if (!el) return;
+  el.scrollBy({ left: el.clientWidth * 0.8, behavior: "smooth" });
+};
+
+onMounted(() => {
+  nextTick(() => {
+    updateArrows();
+    if (scrollContainer.value) {
+      scrollContainer.value.addEventListener("scroll", updateArrows);
+    }
+  });
+});
+
+watch(comparisonItems, async () => {
+  await nextTick();
+  updateArrows();
+});
+
 defineExpose({ open, addItem, removeItem, clearItems });
 </script>
 
@@ -356,11 +405,12 @@ defineExpose({ open, addItem, removeItem, clearItems });
 
 .overflow-x-auto {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 transparent;
+  scrollbar-color: #b0b0b0 transparent; /* more neutral grey */
 }
 
 .overflow-x-auto::-webkit-scrollbar {
-  height: 6px;
+  height: 4px; /* thinner */
+  width: 4px; /* thinner for vertical scrollbars if any */
 }
 
 .overflow-x-auto::-webkit-scrollbar-track {
@@ -368,8 +418,8 @@ defineExpose({ open, addItem, removeItem, clearItems });
 }
 
 .overflow-x-auto::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 20px;
+  background-color: #b0b0b0; /* neutral grey */
+  border-radius: 8px; /* smaller radius */
 }
 
 .scroll-indicator {
