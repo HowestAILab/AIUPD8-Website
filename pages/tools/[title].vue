@@ -314,7 +314,7 @@ const parsedDescription = computed(() => {
 const specifications = {
   use: { options: ["no-code", "low-code", "code"] },
   setup: { options: ["no-code", "low-code", "code"] },
-  pricing: { options: ["free", "freemium", "subscription", "credits"] },
+  pricing: { options: ["free", "subscription", "credits"] },
   license: { options: ["personal", "commercial"] },
   averageTime: { options: ["seconds", "minutes", "hours", "days"] },
 };

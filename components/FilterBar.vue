@@ -11,6 +11,7 @@
         class="w-full"
         filter
         showClear
+        @change="emitInstantFilters"
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col">
@@ -24,6 +25,7 @@
         filter
         class="w-full"
         showClear
+        @change="emitInstantFilters"
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col">
@@ -37,6 +39,7 @@
         filter
         class="w-full"
         showClear
+        @change="emitInstantFilters"
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col">
@@ -50,27 +53,18 @@
         filter
         class="w-full"
         showClear
+        @change="emitInstantFilters"
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col justify-end mt-[24px]">
       <div class="flex flex-col sm:flex-row gap-2 w-full">
-        <!-- Search button in its own container -->
-        <div class="w-full mb-2 sm:mb-0">
-          <Button
-            label="search"
-            icon="pi pi-search"
-            @click="applyFilters"
-            class="w-full search-button"
-          />
-        </div>
-
-        <!-- Filter and Clear buttons -->
+        <!-- Filter button only -->
         <div class="flex gap-2 w-full justify-center sm:justify-start">
           <Button
-            label="filters"
+            label="more filters"
             icon="pi pi-filter"
             @click="toggleFilters"
-            class="p-button-outlined more-filters-button flex-grow"
+            class="p-button more-filters-button flex-grow"
           />
         </div>
       </div>
@@ -137,7 +131,8 @@ const toggleFilters = () => {
   emits("toggle-filters");
 };
 
-const applyFilters = () => {
+// Emit filters instantly on any change
+const emitInstantFilters = () => {
   emits("apply-filters", getFilterParams());
 };
 

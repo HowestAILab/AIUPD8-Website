@@ -186,7 +186,6 @@
               <span
                 v-for="option in [
                   'free',
-                  'freemium',
                   'subscription',
                   'credits',
                 ]"

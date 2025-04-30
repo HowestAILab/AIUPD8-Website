@@ -16,6 +16,7 @@
             :options="filterOptions.setupOptions"
             optionLabel="name"
             multiple
+            @update:modelValue="emitInstantFilters"
           />
         </div>
       </div>
@@ -29,6 +30,7 @@
             :options="filterOptions.useOptions"
             optionLabel="name"
             multiple
+            @update:modelValue="emitInstantFilters"
           />
         </div>
       </div>
@@ -42,6 +44,7 @@
             :options="filterOptions.pricingOptions"
             optionLabel="name"
             multiple
+            @update:modelValue="emitInstantFilters"
           />
         </div>
       </div>
@@ -55,6 +58,7 @@
             :options="filterOptions.licenseOptions"
             optionLabel="name"
             multiple
+            @update:modelValue="emitInstantFilters"
           />
         </div>
       </div>
@@ -68,6 +72,7 @@
             :options="filterOptions.generationTimeOptions"
             optionLabel="name"
             multiple
+            @update:modelValue="emitInstantFilters"
           />
         </div>
       </div>
@@ -85,6 +90,7 @@
           placeholder="Select input types"
           :loading="loading"
           class="w-full"
+          @change="emitInstantFilters"
         />
       </div>
 
@@ -99,6 +105,7 @@
           placeholder="Select output types"
           :loading="loading"
           class="w-full"
+          @change="emitInstantFilters"
         />
       </div>
 
@@ -113,6 +120,7 @@
           placeholder="Select profiles"
           :loading="loading"
           class="w-full"
+          @change="emitInstantFilters"
         />
       </div>
 
@@ -128,18 +136,13 @@
           :loading="loading"
           class="w-full"
           showClear
+          @change="emitInstantFilters"
         />
       </div>
 
       <!-- APPLY FILTERS BUTTON -->
+      <!-- Removed Apply Filters button for web -->
       <div class="w-full mb-2 sm:mb-0 flex flex-col gap-2">
-        <Button
-          label="Apply Filters"
-          icon="pi pi-search"
-          @click="applyFilters"
-          class="w-full search-button"
-        />
-
         <Button
           label="Clear Filters"
           icon="pi pi-trash"
@@ -238,8 +241,7 @@ async function fetchFilterOptions() {
   }
 }
 
-function applyFilters() {
-  // Get filter parameters and emit them
+function emitInstantFilters() {
   emits("apply-filters", getFilterParams());
 }
 
