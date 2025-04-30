@@ -367,15 +367,11 @@ const highlightRightArrow = ref(false);
 const updateArrows = () => {
   const el = scrollContainer.value;
   if (!el) return;
+  // Show left arrow if not at the very start
   showLeftArrow.value = el.scrollLeft > 5;
+  // Show right arrow if not at the very end
   showRightArrow.value = el.scrollLeft + el.clientWidth < el.scrollWidth - 5;
-
-  // Highlight right arrow after scrolling past the first card
-  if (el.scrollLeft > el.clientWidth * 0.5) {
-    highlightRightArrow.value = true;
-  } else {
-    highlightRightArrow.value = false;
-  }
+  highlightRightArrow.value = false;
 };
 
 const scrollLeft = () => {
@@ -402,6 +398,13 @@ onMounted(() => {
 watch(comparisonItems, async () => {
   await nextTick();
   updateArrows();
+});
+
+watch(visible, async (val) => {
+  if (val) {
+    await nextTick();
+    updateArrows();
+  }
 });
 
 defineExpose({ open, addItem, removeItem, clearItems });
