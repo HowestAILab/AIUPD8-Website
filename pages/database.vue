@@ -7,7 +7,7 @@
       <transition name="slide-fade">
         <div
           v-if="showFilters"
-          class="hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] w-[18%] bg-white shadow-lg z-30 p-8 overflow-y-auto border-r border-gray-200"
+          class="hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] md:w-[18%] bg-white shadow-lg z-30 p-8 overflow-y-auto border-r border-gray-200"
         >
           <AdvancedFilter
             :is-visible="showFilters"
@@ -18,7 +18,7 @@
 
       <!-- Main content area, with left margin for sidebar on desktop -->
 
-      <div class="w-full p-4 max-w-[65%] mx-auto">
+      <div class="w-full p-4 md:max-w-[65%] mx-auto">
         <div class="mb-6 hidden md:block">
           <FilterBar
             :toolOptions="toolOptions"
