@@ -141,7 +141,12 @@ export function useDatabase() {
         console.log("Raw tools data received:", response.data.data);
         const mappedItems = response.data.data.map(mapDatabaseItemToToolItem);
         // Sort tools alphabetically by title
-        items.value = mappedItems.sort((a, b) => a.title.localeCompare(b.title));
+        items.value = mappedItems.sort((a, b) => {
+          if (a.isFavourite === b.isFavourite) {
+            return a.title.localeCompare(b.title);
+          }
+          return a.isFavourite ? -1 : 1;
+        });
         // Save to cache
         if (typeof window !== 'undefined') {
           localStorage.setItem(CACHE_KEY, JSON.stringify({
