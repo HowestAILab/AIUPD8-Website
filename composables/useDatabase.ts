@@ -196,5 +196,6 @@ export function useDatabase() {
     connected,
     fetchDatabaseItems,
     fetchToolById,
+    mapDatabaseItemToToolItem,
   };
 }

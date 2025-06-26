@@ -22,10 +22,30 @@ export default defineEventHandler(async (event) => {
       excerpt,
       body[]{
         ...,
-        _type == "exercise" => {
+        _type == "youtube" => {
+          url
+        },
+        _type == "toolEmbed" => {
           "tool": tool->{
+            _id,
             title,
-            "slug": slug.current
+            description,
+            isFavourite,
+            isExperimental,
+            link,
+            toolsentence,
+            youtubeLink,
+            "uses": uses[]->{ _id, title },
+            "setups": setups[]->{ _id, title },
+            "pricings": pricings[]->{ _id, title },
+            "licenses": licenses[]->{ _id, title },
+            "generationTimes": generationTimes[]->{ _id, title },
+            "inputs": inputs[]->{ _id, title },
+            "outputs": outputs[]->{ _id, title },
+            "tasks": tasks[]->{ _id, title },
+            "profiles": profiles[]->{ _id, title },
+            image,
+            showcaseImages
           }
         }
       }
@@ -61,7 +81,7 @@ export default defineEventHandler(async (event) => {
         }
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error(`Error fetching blog post: ${error.message}`)
     throw createError({
       statusCode: 500,

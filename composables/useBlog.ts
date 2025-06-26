@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRuntimeConfig } from '#app';
+import { mapDatabaseItemToToolItem, type ToolItem } from '~/composables/useDatabase';
 
 export interface BlogPost {
   id: string;
@@ -10,6 +11,10 @@ export interface BlogPost {
   publishedAt: string;
   mainImage: any;
   body: any[];
+}
+
+export interface MappedTool {
+  [key: string]: ToolItem;
 }
 
 export function useBlog() {
@@ -25,6 +30,16 @@ export function useBlog() {
 
   const mapBlogPost = (item: any): BlogPost => {
     const attrs = item.attributes || {};
+
+    if (attrs.body) {
+      attrs.body.forEach((block: any) => {
+        if (block._type === 'toolEmbed' && block.tool) {
+          // Remap the tool data to match the ToolItem structure
+          block.tool = mapDatabaseItemToToolItem(block.tool);
+        }
+      });
+    }
+
     return {
       id: item.id || '',
       title: attrs.title || "Untitled",
@@ -58,7 +73,7 @@ export function useBlog() {
       const response = await api.get('/api/blog');
       if (response.data.data) {
         const mappedPosts = response.data.data.map(mapBlogPost);
-        posts.value = mappedPosts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+        posts.value = mappedPosts.sort((a: BlogPost, b: BlogPost) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
         
         if (typeof window !== 'undefined') {
           localStorage.setItem(CACHE_KEY, JSON.stringify({

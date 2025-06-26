@@ -25,7 +25,8 @@ import { ref, onMounted, h } from 'vue';
 import { useRoute } from 'vue-router';
 import HeaderBar from '~/components/layout/HeaderBar.vue';
 import SanityPortableText from '~/components/SanityPortableText.vue';
-import ExerciseCard from '~/components/ExerciseCard.vue';
+import DatabaseItem from '~/components/DatabaseItem.vue';
+import YoutubeEmbed from '~/components/YoutubeEmbed.vue';
 import { useBlog, type BlogPost } from '~/composables/useBlog';
 import { useMedia } from '~/composables/useMedia';
 
@@ -42,8 +43,11 @@ const formatDate = (dateString: string) => {
 
 const portableTextComponents = {
   types: {
-    exercise: (value) => {
-      return h(ExerciseCard, { tool: value.tool });
+    toolEmbed: (value) => {
+      return h('div', { class: 'flex justify-center' }, h(DatabaseItem, { item: value.tool, 'onUpdate:itemsInComparison': () => {} }));
+    },
+    youtube: (value) => {
+      return h(YoutubeEmbed, { url: value.url });
     },
   },
 };
