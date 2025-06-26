@@ -23,6 +23,12 @@
         >
           database
         </NuxtLink>
+        <NuxtLink
+          to="/blog"
+          class="font-bold hover:underline text-light-page-text-dark"
+        >
+          blog
+        </NuxtLink>
 
         <a
           href="#"
