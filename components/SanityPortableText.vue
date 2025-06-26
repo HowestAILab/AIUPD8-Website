@@ -1,7 +1,7 @@
 <template>
   <div class="portable-text">
     <template v-for="(block, index) in blocks" :key="index">
-      <!-- Handle different block types -->
+      <!-- Handle standard text blocks -->
       <component
         :is="getBlockComponent(block)"
         :class="getBlockClass(block)"
@@ -15,6 +15,18 @@
         </template>
       </component>
 
+      <!-- Handle custom: Tool Embed -->
+      <ToolEmbed
+        v-else-if="block._type === 'toolEmbed' && block.tool"
+        :tool="block.tool"
+      />
+
+      <!-- Handle custom: YouTube Embed -->
+      <YoutubeEmbed
+        v-else-if="block._type === 'youtube' && block.url"
+        :url="block.url"
+      />
+
       <!-- Handle image blocks -->
       <div v-else-if="block._type === 'image'" class="my-4">
         <img
@@ -24,9 +36,10 @@
         />
       </div>
 
-      <!-- Fallback for other block types -->
-      <div v-else class="my-2">
-        {{ JSON.stringify(block) }}
+      <!-- Fallback for other block types to avoid showing raw JSON -->
+      <div v-else-if="isDevelopment" class="my-2 p-2 bg-red-100 text-red-700 rounded">
+        <p class="font-bold">Unknown block type: {{ block._type }}</p>
+        <pre class="text-xs">{{ JSON.stringify(block, null, 2) }}</pre>
       </div>
     </template>
   </div>
@@ -34,8 +47,12 @@
 
 <script setup>
 import { useMedia } from "~/composables/useMedia";
+import ToolEmbed from '~/components/ToolEmbed.vue';
+import YoutubeEmbed from '~/components/YoutubeEmbed.vue';
 
 const { getSanityImageUrl } = useMedia();
+
+const isDevelopment = process.env.NODE_ENV === 'development';
 
 const props = defineProps({
   blocks: {

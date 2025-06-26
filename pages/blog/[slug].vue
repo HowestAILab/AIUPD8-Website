@@ -13,7 +13,7 @@
           <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
           <p class="text-gray-500 mb-4">{{ formatDate(post.publishedAt) }}</p>
           <img v-if="post.mainImage" :src="getMediaUrl(post.mainImage)" :alt="post.title" class="w-full h-auto object-cover rounded-lg mb-8">
-          <SanityPortableText :blocks="post.body" :components="portableTextComponents" />
+          <SanityPortableText :blocks="post.body" />
         </div>
       </div>
     </div>
@@ -21,12 +21,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, h } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import HeaderBar from '~/components/layout/HeaderBar.vue';
 import SanityPortableText from '~/components/SanityPortableText.vue';
-import DatabaseItem from '~/components/DatabaseItem.vue';
-import YoutubeEmbed from '~/components/YoutubeEmbed.vue';
 import { useBlog, type BlogPost } from '~/composables/useBlog';
 import { useMedia } from '~/composables/useMedia';
 
@@ -39,17 +37,6 @@ const formatDate = (dateString: string) => {
   if (!dateString) return '';
   const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
-};
-
-const portableTextComponents = {
-  types: {
-    toolEmbed: (value) => {
-      return h('div', { class: 'flex justify-center' }, h(DatabaseItem, { item: value.tool, 'onUpdate:itemsInComparison': () => {} }));
-    },
-    youtube: (value) => {
-      return h(YoutubeEmbed, { url: value.url });
-    },
-  },
 };
 
 onMounted(async () => {
