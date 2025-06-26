@@ -120,7 +120,7 @@
       </div>
     </template>
     <template #footer>
-      <div class="pt-6 flex items-center justify-between">
+      <div v-if="props.showComparison" class="pt-6 flex items-center justify-between">
         <label
           class="flex items-center text-sm text-light-page-text-light space-x-2 cursor-pointer"
         >
@@ -161,10 +161,15 @@ const selections = ref({
   pricing: defaultSelectionOrder.pricing,
 });
 
-const props = defineProps<{
+interface Props {
   item: ToolItem;
   itemsInComparison?: Set<number>;
-}>();
+  showComparison?: boolean;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showComparison: true,
+});
 
 const isInComparison = computed(() => {
   return props.itemsInComparison?.has(props.item.id) || false;
