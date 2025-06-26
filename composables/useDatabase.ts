@@ -31,6 +31,75 @@ export interface ToolItem {
   averageTimeToGenerate?: string;
 }
 
+// Updated helper to extract relation names:
+const extractRelationNames = (relation: any): string[] => {
+  if (!relation) return [];
+  
+  let arr = [];
+  if (relation.data) {
+    arr = Array.isArray(relation.data) ? relation.data : [relation.data];
+  } else if (Array.isArray(relation)) {
+    arr = relation;
+  }
+  
+  return arr
+    .map((r: any) => {
+      // First try to get name from attributes
+      if (r.attributes && (r.attributes.name || r.attributes.title)) {
+        return r.attributes.name || r.attributes.title;
+      }
+      // Then try direct properties
+      return r.name || r.title || '';
+    })
+    .filter((val: string) => val.trim() !== '');
+};
+
+// Reworked mapping function for better compatibility
+export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
+  const attrs = item.attributes || item;
+  console.log(attrs)
+  const result: ToolItem = {
+    id: item.id || item._id || '',
+    title: attrs.title || "Untitled",
+    toolsentence:attrs.toolsentence || "",
+    description: Array.isArray(attrs.description) ? attrs.description : [],
+    isFavourite: !!attrs.isFavourite,
+    isExperimental: !!attrs.isExperimental,
+    uses: extractRelationNames(attrs.uses),
+    setups: extractRelationNames(attrs.setups),
+    pricings: extractRelationNames(attrs.pricings),
+    licenses: extractRelationNames(attrs.licenses),
+    generationTimes: extractRelationNames(attrs.generationTimes),
+    inputs: extractRelationNames(attrs.inputs),
+    outputs: extractRelationNames(attrs.outputs),
+    tasks: extractRelationNames(attrs.tasks),
+    profiles: extractRelationNames(attrs.profiles),
+    // For backward compatibility
+    use: null,
+    setup: null,
+    pricing: null,
+    license: null,
+    averageTimeToGenerate: null,
+    // Media fields
+    Image: attrs.Image?.data?.attributes || attrs.image || null,
+    showcaseImages: attrs.showcaseImages?.data
+      ? attrs.showcaseImages.data.map((img: any) => img.attributes)
+      : attrs.showcaseImages || [],
+    // Simple fields
+    link: attrs.link || "",
+    youtubeLink: attrs.youtubeLink || ""
+  };
+  
+  // Set the backward compatibility fields after extraction
+  result.use = result.uses[0] || null;
+  result.setup = result.setups[0] || null;
+  result.pricing = result.pricings[0] || null;
+  result.license = result.licenses[0] || null;
+  result.averageTimeToGenerate = result.generationTimes[0] || null;
+  
+  return result;
+};
+
 export function useDatabase() {
   const config = useRuntimeConfig();
   
@@ -43,75 +112,6 @@ export function useDatabase() {
   const loading = ref(false);
   const error = ref<string | null>(null);
   const connected = ref(true);
-
-  // Updated helper to extract relation names:
-  const extractRelationNames = (relation: any): string[] => {
-    if (!relation) return [];
-    
-    let arr = [];
-    if (relation.data) {
-      arr = Array.isArray(relation.data) ? relation.data : [relation.data];
-    } else if (Array.isArray(relation)) {
-      arr = relation;
-    }
-    
-    return arr
-      .map((r: any) => {
-        // First try to get name from attributes
-        if (r.attributes && (r.attributes.name || r.attributes.title)) {
-          return r.attributes.name || r.attributes.title;
-        }
-        // Then try direct properties
-        return r.name || r.title || '';
-      })
-      .filter((val: string) => val.trim() !== '');
-  };
-
-  // Reworked mapping function for better compatibility
-  const mapDatabaseItemToToolItem = (item: any): ToolItem => {
-    const attrs = item.attributes || item;
-    console.log(attrs)
-    const result: ToolItem = {
-      id: item.id || item._id || '',
-      title: attrs.title || "Untitled",
-      toolsentence:attrs.toolsentence || "",
-      description: Array.isArray(attrs.description) ? attrs.description : [],
-      isFavourite: !!attrs.isFavourite,
-      isExperimental: !!attrs.isExperimental,
-      uses: extractRelationNames(attrs.uses),
-      setups: extractRelationNames(attrs.setups),
-      pricings: extractRelationNames(attrs.pricings),
-      licenses: extractRelationNames(attrs.licenses),
-      generationTimes: extractRelationNames(attrs.generationTimes),
-      inputs: extractRelationNames(attrs.inputs),
-      outputs: extractRelationNames(attrs.outputs),
-      tasks: extractRelationNames(attrs.tasks),
-      profiles: extractRelationNames(attrs.profiles),
-      // For backward compatibility
-      use: null,
-      setup: null,
-      pricing: null,
-      license: null,
-      averageTimeToGenerate: null,
-      // Media fields
-      Image: attrs.Image?.data?.attributes || null,
-      showcaseImages: attrs.showcaseImages?.data
-        ? attrs.showcaseImages.data.map((img: any) => img.attributes)
-        : [],
-      // Simple fields
-      link: attrs.link || "",
-      youtubeLink: attrs.youtubeLink || ""
-    };
-    
-    // Set the backward compatibility fields after extraction
-    result.use = result.uses[0] || null;
-    result.setup = result.setups[0] || null;
-    result.pricing = result.pricings[0] || null;
-    result.license = result.licenses[0] || null;
-    result.averageTimeToGenerate = result.generationTimes[0] || null;
-    
-    return result;
-  };
 
   async function fetchDatabaseItems() {
     loading.value = true;
@@ -196,6 +196,5 @@ export function useDatabase() {
     connected,
     fetchDatabaseItems,
     fetchToolById,
-    mapDatabaseItemToToolItem,
   };
 }
