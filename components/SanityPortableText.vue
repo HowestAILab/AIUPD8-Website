@@ -1,11 +1,31 @@
 <template>
   <div class="portable-text">
-    <template v-for="(block, index) in blocks" :key="index">
-      <!-- Handle standard text blocks -->
+    <template v-for="(block, index) in processedBlocks" :key="index">
+      <!-- Handle lists -->
+      <component
+        :is="block.listItem === 'bullet' ? 'ul' : 'ol'"
+        v-if="block._type === 'list'"
+        :class="{
+          'list-disc': block.listItem === 'bullet',
+          'list-decimal': block.listItem === 'number',
+          'ml-5': block.level > 1,
+        }"
+        class="pl-5 mb-4"
+      >
+        <li v-for="(item, i) in block.children" :key="i" class="mb-2">
+          <template v-for="(span, j) in item.children" :key="j">
+            <span v-if="span._type === 'span'" :class="getSpanClasses(span)">
+              {{ span.text }}
+            </span>
+          </template>
+        </li>
+      </component>
+
+      <!-- Handle standard text blocks (but not list items) -->
       <component
         :is="getBlockComponent(block)"
         :class="getBlockClass(block)"
-        v-if="block._type === 'block'"
+        v-else-if="block._type === 'block' && !block.listItem"
       >
         <template v-for="(span, i) in block.children" :key="i">
           <!-- Handle spans with marks (formatting) -->
@@ -37,7 +57,7 @@
       </div>
 
       <!-- Fallback for other block types to avoid showing raw JSON -->
-      <div v-else-if="isDevelopment" class="my-2 p-2 bg-red-100 text-red-700 rounded">
+      <div v-else-if="isDevelopment && block._type !== 'block'" class="my-2 p-2 bg-red-100 text-red-700 rounded">
         <p class="font-bold">Unknown block type: {{ block._type }}</p>
         <pre class="text-xs">{{ JSON.stringify(block, null, 2) }}</pre>
       </div>
@@ -49,6 +69,7 @@
 import { useMedia } from "~/composables/useMedia";
 import ToolEmbed from '~/components/ToolEmbed.vue';
 import YoutubeEmbed from '~/components/YoutubeEmbed.vue';
+import { computed } from "vue";
 
 const { getSanityImageUrl } = useMedia();
 
@@ -59,6 +80,54 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+});
+
+const processedBlocks = computed(() => {
+  if (!props.blocks) return [];
+
+  const groups = [];
+  let currentList = null;
+
+  for (const block of props.blocks) {
+    if (block._type === 'block' && block.listItem) {
+      const level = block.level || 1;
+      if (!currentList) {
+        // Start a new list
+        currentList = {
+          _type: 'list',
+          listItem: block.listItem, // 'bullet' or 'number'
+          level: level,
+          children: [block],
+        };
+      } else if (block.listItem === currentList.listItem && level === currentList.level) {
+        // Add to current list
+        currentList.children.push(block);
+      } else {
+        // Different list type or level, push the old list and start a new one
+        groups.push(currentList);
+        currentList = {
+          _type: 'list',
+          listItem: block.listItem,
+          level: level,
+          children: [block],
+        };
+      }
+    } else {
+      // Not a list item, push any existing list and then the current block
+      if (currentList) {
+        groups.push(currentList);
+        currentList = null;
+      }
+      groups.push(block);
+    }
+  }
+
+  // Push the last list if it exists
+  if (currentList) {
+    groups.push(currentList);
+  }
+
+  return groups;
 });
 
 // Map Sanity block styles to HTML elements
