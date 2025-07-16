@@ -16,7 +16,8 @@
           <SanityPortableText :blocks="post.body" />
           
           <!-- Outro Section -->
-          <div v-if="post.outro && post.outro.length > 0" class="mt-8 pt-6 border-t border-gray-200 text-gray-600">
+          <div v-if="post.outro && post.outro.length > 0" class="mt-8 p-6 bg-highlight rounded-lg text-gray-700">
+            <h3 class="text-xl font-semibold mb-4 text-gray-800">Conclusion</h3>
             <SanityPortableText :blocks="post.outro" />
           </div>
         </div>

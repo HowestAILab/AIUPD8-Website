@@ -1,6 +1,6 @@
 <template>
   <div class="my-8 flex justify-center">
-    <div class="w-full max-w-[50%]">
+    <div class="w-full md:max-w-[50%]">
       <DatabaseItem :item="tool" :show-comparison="false" @update:itemsInComparison="() => {}" />
     </div>
   </div>
