@@ -48,7 +48,8 @@ export default defineEventHandler(async (event) => {
             showcaseImages
           }
         }
-      }
+      },
+      outro
     }`
     
     const post = await client.fetch(query, { slug })
@@ -69,6 +70,7 @@ export default defineEventHandler(async (event) => {
           publishedAt: post.publishedAt,
           excerpt: post.excerpt || "",
           body: post.body || [],
+          outro: post.outro || [],
           mainImage: {
             data: post.mainImage ? {
               id: 0,
