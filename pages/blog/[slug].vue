@@ -14,6 +14,11 @@
           <p class="text-gray-500 mb-4">{{ formatDate(post.publishedAt) }}</p>
           <img v-if="post.mainImage" :src="getMediaUrl(post.mainImage)" :alt="post.title" class="w-full h-auto object-cover rounded-lg mb-8">
           <SanityPortableText :blocks="post.body" />
+          
+          <!-- Outro Section -->
+          <div v-if="post.outro && post.outro.length > 0" class="mt-8 pt-6 border-t border-gray-200 text-gray-600">
+            <SanityPortableText :blocks="post.outro" />
+          </div>
         </div>
       </div>
     </div>

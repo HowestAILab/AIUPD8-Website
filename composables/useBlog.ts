@@ -11,6 +11,7 @@ export interface BlogPost {
   publishedAt: string;
   mainImage: any;
   body: any[];
+  outro: any[];
 }
 
 export interface MappedTool {
@@ -48,6 +49,7 @@ export function useBlog() {
       publishedAt: attrs.publishedAt || "",
       mainImage: attrs.mainImage?.data?.attributes || null,
       body: attrs.body || [],
+      outro: attrs.outro || [],
     };
   };
 
