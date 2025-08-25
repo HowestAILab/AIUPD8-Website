@@ -678,7 +678,8 @@ export default defineNuxtConfig({
         apiVersion: '2023-05-03',
         useCdn: process.env.NODE_ENV === 'production',
       },
-      apiBaseUrl: process.env.API_BASE_URL || 'https://aiupd8frontend.netlify.app'
+      apiBaseUrl: process.env.API_BASE_URL || 'https://aiupd8frontend.netlify.app',
+      cloudflareBeaconToken: process.env.CLOUDFLARE_BEACON_TOKEN || ''
     }
   },
   compatibilityDate: '2025-01-30',
