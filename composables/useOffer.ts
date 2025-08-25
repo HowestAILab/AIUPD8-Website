@@ -13,7 +13,6 @@ export interface OfferItem {
 }
 
 export function useOffer() {
-  const { client } = useSanity();
   const config = useRuntimeConfig();
 
   const items = ref<OfferItem[]>([]);
@@ -22,17 +21,16 @@ export function useOffer() {
 
   async function fetchOfferItems() {
     try {
-      const query = `*[_type == "offerItem"] | order(coalesce(order, 9999) asc, _createdAt asc){
-        "id": _id,
-        heading,
-        subtitle,
-        body,
-        image,
-        imageAlt,
-        variants[]{ name, description }
-      }`;
-      const data = await client.fetch(query);
-      items.value = Array.isArray(data) ? data : [];
+      const res = await $fetch<{ data: any[] }>(`${config.public.apiBaseUrl}/api/offer`)
+      items.value = (res?.data || []).map((row: any) => ({
+        id: row.id,
+        heading: row.attributes.heading,
+        subtitle: row.attributes.subtitle,
+        body: row.attributes.body,
+        image: row.attributes.image,
+        imageAlt: row.attributes.imageAlt,
+        variants: row.attributes.variants,
+      }))
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch offer items';
     }
