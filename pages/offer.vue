@@ -6,8 +6,13 @@
       <!-- Hero section with title and background image -->
       <section class="max-w-6xl mx-auto px-4 py-8">
         <div
-          class="relative overflow-hidden h-[25vh] md:h-[40vh] bg-cover bg-center bg-no-repeat rounded-lg"
-          style="background-image: url('/images/Cover-website.png')"
+          class="relative overflow-hidden bg-center bg-no-repeat rounded-lg"
+          style="
+            background-image: url('/images/Cover-website.png');
+            background-size: 100% 100%;
+            aspect-ratio: 1500 / 387;
+            width: 100%;
+          "
         >
           <!-- Dark overlay for better text readability -->
           <div class="absolute inset-0 bg-black/10 rounded-lg"></div>
@@ -24,12 +29,14 @@
 
       <!-- Info and button section -->
       <section class="max-w-6xl mx-auto px-4 py-8 text-center">
-        <p class="text-base text-black-700 max-w-3xl mx-auto mb-6">
+        <p class="text-base font-bold text-black-700 max-w-3xl mx-auto mb-6">
           Aiupdate helpt creatieve professionals AI praktisch en duidelijk te
-          gebruiken. We kiezen samen de juiste tools, zetten slimme workflows op
-          en geven training zodat je vlot aan de slag kan. Alles stemmen we af
-          op jouw doelen en mogelijkheden, zodat je stap voor stap AI kan
-          invoeren en uitbreiden zonder verrassingen.
+          gebruiken. We kiezen <br />
+          samen de juiste tools, zetten slimme workflows op en geven training
+          zodat je vlot aan de <br />
+          slag kan. Alles stemmen we af op jouw doelen en mogelijkheden, zodat
+          je stap voor stap <br />
+          AI kan invoeren en uitbreiden zonder verrassingen.
         </p>
         <a
           :href="contactEmail"
