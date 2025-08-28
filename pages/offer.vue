@@ -2,7 +2,7 @@
   <div>
     <HeaderBar variant="white" />
 
-    <div class="pt-16 bg-light-page-background min-h-screen">
+    <div class="pt-10 md:pt-7 bg-light-page-background min-h-screen">
       <!-- Hero section with title and background image -->
       <section class="max-w-6xl mx-auto px-4 py-8">
         <div
