@@ -6,7 +6,7 @@
       <!-- Hero section with title and background image -->
       <section class="max-w-6xl mx-auto px-4 py-8">
         <div
-          class="relative overflow-hidden h-[40vh] bg-cover bg-center bg-no-repeat rounded-lg"
+          class="relative overflow-hidden h-[25vh] md:h-[40vh] bg-cover bg-center bg-no-repeat rounded-lg"
           style="background-image: url('/images/Cover-website.png')"
         >
           <!-- Dark overlay for better text readability -->
