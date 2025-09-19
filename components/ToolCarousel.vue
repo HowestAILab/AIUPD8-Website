@@ -36,7 +36,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import Galleria from "primevue/galleria";
 import { useMedia } from "~/composables/useMedia";
 
@@ -56,6 +56,38 @@ const carouselItems = computed(() => {
   }
   return slides;
 });
+
+function preloadImages(items: Array<any>) {
+  if (!items || items.length === 0) return;
+  items.forEach((media) => {
+    if (media && media.type !== "youtube") {
+      try {
+        const url = getMediaUrl(media);
+        const img = new Image();
+        img.decoding = "async" as any;
+        img.loading = "eager" as any;
+        img.src = url;
+        if (img.decode) {
+          img.decode().catch(() => {});
+        }
+      } catch (_) {
+        // ignore preload errors
+      }
+    }
+  });
+}
+
+onMounted(() => {
+  preloadImages(carouselItems.value);
+});
+
+watch(
+  () => carouselItems.value,
+  (newItems) => {
+    preloadImages(newItems);
+  },
+  { immediate: false }
+);
 
 function onSwipeLeft() {
   if (galleriaRef.value) galleriaRef.value.next();

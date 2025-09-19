@@ -80,6 +80,8 @@
                     :src="getMediaUrl(slotProps.item)"
                     :alt="item.title"
                     class="w-full h-[416px] object-cover"
+                    decoding="async"
+                    loading="lazy"
                   />
                 </div>
               </template>
@@ -280,7 +282,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
@@ -297,8 +299,8 @@ const { getMediaUrl, getYoutubeEmbedUrl } = useMedia();
 // Update computed property for carousel items using normal media loader
 const carouselItems = computed(() => {
   if (!item.value) return [];
-  // Use the showcase images directly.
-  let slides = item.value.showcaseImages || [];
+  // Copy showcase images to avoid mutating original array.
+  const slides = item.value.showcaseImages ? [...item.value.showcaseImages] : [];
   // Add a youtube slide if present with a new property "type"
   if (item.value.youtubeLink) {
     slides.push({ type: "youtube", url: item.value.youtubeLink });
@@ -327,6 +329,34 @@ onMounted(async () => {
     console.log("Showcase images:", item.value.showcaseImages);
   }
 });
+
+function preloadImages(items: Array<any>) {
+  if (!items || items.length === 0) return;
+  items.forEach((media) => {
+    if (media && media.type !== "youtube") {
+      try {
+        const url = getMediaUrl(media);
+        const img = new Image();
+        img.decoding = "async" as any;
+        img.loading = "eager" as any;
+        img.src = url;
+        if (img.decode) {
+          img.decode().catch(() => {});
+        }
+      } catch (_) {
+        // ignore preload errors
+      }
+    }
+  });
+}
+
+watch(
+  () => carouselItems.value,
+  (newItems) => {
+    preloadImages(newItems);
+  },
+  { immediate: true }
+);
 </script>
 
 <style scoped>

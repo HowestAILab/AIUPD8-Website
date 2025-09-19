@@ -314,7 +314,7 @@ const open = (toolItem: ToolItem) => {
 // New computed property for modal carousel items
 const carouselItems = computed(() => {
   if (!item.value) return [];
-  let slides = item.value.showcaseImages || [];
+  const slides = item.value.showcaseImages ? [...item.value.showcaseImages] : [];
   if (item.value.youtubeLink) {
     slides.push({ type: "youtube", url: item.value.youtubeLink });
   }
