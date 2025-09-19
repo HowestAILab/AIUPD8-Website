@@ -21,6 +21,79 @@
         </li>
       </component>
 
+      <!-- Handle embed groups (audio players, tools, youtube, images) -->
+      <div
+        v-else-if="block._type === 'embedGroup'"
+        class="my-8"
+        :class="{
+          'flex justify-center': block.children.length === 1,
+          'grid grid-cols-1 md:grid-cols-2 gap-4': block.children.length === 2,
+          'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4':
+            block.children.length >= 3,
+        }"
+      >
+        <div
+          v-for="(embedBlock, embedIndex) in block.children"
+          :key="embedIndex"
+          :class="{
+            'w-full max-w-md': block.children.length === 1,
+            'flex justify-center': block.children.length > 1,
+          }"
+        >
+          <!-- Tool Embed -->
+          <div
+            v-if="embedBlock._type === 'toolEmbed' && embedBlock.tool"
+            :class="{
+              'w-full': true,
+              'max-w-md': block.children.length > 1,
+            }"
+          >
+            <ToolEmbed :tool="embedBlock.tool" />
+          </div>
+
+          <!-- Audio Clip -->
+          <div
+            v-else-if="embedBlock._type === 'audioClip' && embedBlock.file"
+            :class="{
+              'w-full': true,
+              'max-w-md': block.children.length > 1,
+            }"
+          >
+            <AudioPlayer
+              :file="embedBlock.file"
+              :title="embedBlock.title"
+              :description="embedBlock.description"
+            />
+          </div>
+
+          <!-- YouTube Embed -->
+          <div
+            v-else-if="embedBlock._type === 'youtube' && embedBlock.url"
+            :class="{
+              'w-full': true,
+              'max-w-md': block.children.length > 1,
+            }"
+          >
+            <YoutubeEmbed :url="embedBlock.url" />
+          </div>
+
+          <!-- Image -->
+          <div
+            v-else-if="embedBlock._type === 'image'"
+            :class="{
+              'w-full': true,
+              'max-w-md': block.children.length > 1,
+            }"
+          >
+            <img
+              :src="getSanityImageUrl(embedBlock)"
+              alt="Content image"
+              class="w-full rounded shadow-lg"
+            />
+          </div>
+        </div>
+      </div>
+
       <!-- Handle standard text blocks (but not list items) -->
       <component
         :is="getBlockComponent(block)"
@@ -35,29 +108,15 @@
         </template>
       </component>
 
-      <!-- Handle custom: Tool Embed -->
-      <ToolEmbed
-        v-else-if="block._type === 'toolEmbed' && block.tool"
-        :tool="block.tool"
-      />
-
-      <!-- Handle custom: YouTube Embed -->
-      <YoutubeEmbed
-        v-else-if="block._type === 'youtube' && block.url"
-        :url="block.url"
-      />
-
-      <!-- Handle image blocks -->
-      <div v-else-if="block._type === 'image'" class="my-4">
-        <img
-          :src="getSanityImageUrl(block)"
-          alt="Content image"
-          class="max-w-full rounded"
-        />
-      </div>
-
       <!-- Fallback for other block types to avoid showing raw JSON -->
-      <div v-else-if="isDevelopment && block._type !== 'block'" class="my-2 p-2 bg-red-100 text-red-700 rounded">
+      <div
+        v-else-if="
+          isDevelopment &&
+          block._type !== 'block' &&
+          block._type !== 'embedGroup'
+        "
+        class="my-2 p-2 bg-red-100 text-red-700 rounded"
+      >
         <p class="font-bold">Unknown block type: {{ block._type }}</p>
         <pre class="text-xs">{{ JSON.stringify(block, null, 2) }}</pre>
       </div>
@@ -67,13 +126,14 @@
 
 <script setup>
 import { useMedia } from "~/composables/useMedia";
-import ToolEmbed from '~/components/ToolEmbed.vue';
-import YoutubeEmbed from '~/components/YoutubeEmbed.vue';
+import ToolEmbed from "~/components/ToolEmbed.vue";
+import YoutubeEmbed from "~/components/YoutubeEmbed.vue";
+import AudioPlayer from "~/components/AudioPlayer.vue";
 import { computed } from "vue";
 
 const { getSanityImageUrl } = useMedia();
 
-const isDevelopment = process.env.NODE_ENV === 'development';
+const isDevelopment = process.env.NODE_ENV === "development";
 
 const props = defineProps({
   blocks: {
@@ -87,44 +147,99 @@ const processedBlocks = computed(() => {
 
   const groups = [];
   let currentList = null;
+  let currentEmbedGroup = null;
+
+  // Helper function to check if a block is an embeddable element
+  const isEmbeddableElement = (block) => {
+    return ["toolEmbed", "audioClip", "youtube", "image"].includes(block._type);
+  };
 
   for (const block of props.blocks) {
-    if (block._type === 'block' && block.listItem) {
+    if (block._type === "block" && block.listItem) {
+      // Handle list items
       const level = block.level || 1;
+
+      // Close any existing embed group
+      if (currentEmbedGroup) {
+        groups.push(currentEmbedGroup);
+        currentEmbedGroup = null;
+      }
+
       if (!currentList) {
         // Start a new list
         currentList = {
-          _type: 'list',
+          _type: "list",
           listItem: block.listItem, // 'bullet' or 'number'
           level: level,
           children: [block],
         };
-      } else if (block.listItem === currentList.listItem && level === currentList.level) {
+      } else if (
+        block.listItem === currentList.listItem &&
+        level === currentList.level
+      ) {
         // Add to current list
         currentList.children.push(block);
       } else {
         // Different list type or level, push the old list and start a new one
         groups.push(currentList);
         currentList = {
-          _type: 'list',
+          _type: "list",
           listItem: block.listItem,
           level: level,
           children: [block],
         };
       }
-    } else {
-      // Not a list item, push any existing list and then the current block
+    } else if (isEmbeddableElement(block)) {
+      // Handle embeddable elements (toolEmbed, audioClip, youtube, image)
+
+      // Close any existing list
       if (currentList) {
         groups.push(currentList);
         currentList = null;
       }
+
+      if (!currentEmbedGroup) {
+        // Start a new embed group
+        currentEmbedGroup = {
+          _type: "embedGroup",
+          embedType: block._type,
+          children: [block],
+        };
+      } else if (currentEmbedGroup.embedType === block._type) {
+        // Add to current embed group only if same type
+        currentEmbedGroup.children.push(block);
+      } else {
+        // Different embed type, push the old group and start a new one
+        groups.push(currentEmbedGroup);
+        currentEmbedGroup = {
+          _type: "embedGroup",
+          embedType: block._type,
+          children: [block],
+        };
+      }
+    } else {
+      // Handle other blocks (text, etc.)
+
+      // Close any existing list or embed group
+      if (currentList) {
+        groups.push(currentList);
+        currentList = null;
+      }
+      if (currentEmbedGroup) {
+        groups.push(currentEmbedGroup);
+        currentEmbedGroup = null;
+      }
+
       groups.push(block);
     }
   }
 
-  // Push the last list if it exists
+  // Push any remaining list or embed group
   if (currentList) {
     groups.push(currentList);
+  }
+  if (currentEmbedGroup) {
+    groups.push(currentEmbedGroup);
   }
 
   return groups;

@@ -167,12 +167,47 @@ export function useMedia() {
     // If URL is already an embed or doesn't match patterns, return as is
     return url;
   };
+
+  /**
+   * Get a properly formatted URL for a Sanity file asset
+   */
+  const getSanityFileUrl = (file: any): string => {
+    if (!file) return '';
+    
+    const config = useRuntimeConfig();
+    const { projectId, dataset } = config.public.sanity;
+    
+    // Handle different file object structures
+    let assetRef = '';
+    
+    if (file.asset?._ref) {
+      assetRef = file.asset._ref;
+    } else if (file._ref) {
+      assetRef = file._ref;
+    } else if (file._id) {
+      assetRef = file._id;
+    } else if (file.url) {
+      return file.url;
+    }
+    
+    if (!assetRef) return '';
+    
+    // Parse the asset reference to get the file ID and extension
+    const match = assetRef.match(/^file-([a-f0-9]+)-(\w+)$/);
+    if (!match) return '';
+    
+    const [, fileId, extension] = match;
+    
+    // Construct the CDN URL
+    return `https://cdn.sanity.io/files/${projectId}/${dataset}/${fileId}.${extension}`;
+  };
   
   return {
     formatStrapiUrl,
     getMediaUrl,
     getCarouselImageUrl,
     getYoutubeEmbedUrl,
-    getSanityImageUrl
+    getSanityImageUrl,
+    getSanityFileUrl
   };
 }

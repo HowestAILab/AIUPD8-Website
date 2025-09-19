@@ -1,17 +1,20 @@
 <template>
-  <div class="my-8 flex justify-center">
-    <div class="w-full md:max-w-[50%]">
-      <DatabaseItem :item="tool" :show-comparison="false" @update:itemsInComparison="() => {}" />
-    </div>
+  <div class="w-full">
+    <DatabaseItem
+      :item="tool"
+      :show-comparison="false"
+      @update:itemsInComparison="() => {}"
+    />
   </div>
 </template>
 
-<script setup lang="ts">
-import { defineProps } from 'vue';
-import DatabaseItem from '~/components/DatabaseItem.vue';
-import type { ToolItem } from '~/composables/useDatabase';
+<script setup>
+import DatabaseItem from "~/components/DatabaseItem.vue";
 
-defineProps<{
-  tool: ToolItem;
-}>();
-</script> 
+defineProps({
+  tool: {
+    type: Object,
+    required: true,
+  },
+});
+</script>
