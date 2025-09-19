@@ -85,10 +85,9 @@
               'max-w-md': block.children.length > 1,
             }"
           >
-            <img
-              :src="getSanityImageUrl(embedBlock)"
+            <ImageModal
+              :image-url="getSanityImageUrl(embedBlock)"
               alt="Content image"
-              class="w-full rounded shadow-lg"
             />
           </div>
         </div>
@@ -129,6 +128,7 @@ import { useMedia } from "~/composables/useMedia";
 import ToolEmbed from "~/components/ToolEmbed.vue";
 import YoutubeEmbed from "~/components/YoutubeEmbed.vue";
 import AudioPlayer from "~/components/AudioPlayer.vue";
+import ImageModal from "~/components/ImageModal.vue";
 import { computed } from "vue";
 
 const { getSanityImageUrl } = useMedia();
