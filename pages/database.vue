@@ -7,11 +7,12 @@
       <transition name="slide-fade">
         <div
           v-if="showFilters"
-          class="hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] md:w-[18%] bg-white shadow-lg z-30 p-8 overflow-y-auto border-r border-gray-200"
+          class="hidden md:block fixed left-0 top-16 h-[calc(100vh-4rem)] md:w-[18%] bg-white shadow-lg z-30 border-r border-gray-200"
         >
           <AdvancedFilter
             :is-visible="showFilters"
             @apply-filters="handleAdvancedFilters"
+            @update:is-visible="(val) => (showFilters = val)"
           />
         </div>
       </transition>
@@ -19,6 +20,11 @@
       <!-- Main content area, with left margin for sidebar on desktop -->
 
       <div class="w-full p-4 md:max-w-[65%] mx-auto">
+        <!-- Project Selector -->
+        <div class="mb-6">
+          <ProjectSelector />
+        </div>
+
         <div class="mb-6 hidden md:block">
           <FilterBar
             :toolOptions="toolOptions"
@@ -159,17 +165,21 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from "vue";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
-import AdvancedFilter from "~/components/AdvancedFilter.vue";
-import FilterBar from "~/components/FilterBar.vue";
-import DatabaseItem from "~/components/DatabaseItem.vue";
-import ComparisonModal from "~/components/ComparisonModal.vue";
-import MobileFilterModal from "~/components/MobileFilterModal.vue";
+import AdvancedFilter from "~/components/filters/AdvancedFilter.vue";
+import FilterBar from "~/components/filters/FilterBar.vue";
+import DatabaseItem from "~/components/items/DatabaseItem.vue";
+import ComparisonModal from "~/components/modals/ComparisonModal.vue";
+import MobileFilterModal from "~/components/filters/MobileFilterModal.vue";
+import ProjectSelector from "~/components/selectors/ProjectSelector.vue";
 import type { ToolItem } from "~/composables/useDatabase";
 import {
   getFilterParams,
   clearAllFilters,
   setToolOptions,
+  activeProjectFilter,
+  showOldTools,
 } from "~/config/filterHandler";
+import { useProjectProfile } from "~/composables/useProjectProfile";
 
 const { items, loading, error, fetchDatabaseItems } = useDatabase();
 const filteredItems = ref<ToolItem[]>([]);
@@ -179,6 +189,15 @@ const showFilters = ref(false);
 
 // Show/hide mobile filter modal
 const showMobileFilter = ref(false);
+
+// Helper function to check if tool is older than 1 year
+function isToolOlderThanOneYear(dateAdded: string): boolean {
+  if (!dateAdded) return false;
+  const added = new Date(dateAdded);
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  return added < oneYearAgo;
+}
 
 const comparisonModal = ref(null);
 
@@ -322,6 +341,22 @@ function filterItems(filters: any) {
     );
   }
 
+  // Filter by data storage locations if selected
+  if (filters.dataStorageLocations && filters.dataStorageLocations.length > 0) {
+    result = result.filter((item) =>
+      item.dataStorageLocations.some((location: string) =>
+        filters.dataStorageLocations.includes(location)
+      )
+    );
+  }
+
+  // Filter out tools older than 1 year unless showOldTools is true
+  if (!showOldTools.value) {
+    result = result.filter(
+      (item) => !isToolOlderThanOneYear(item.dateAdded || "")
+    );
+  }
+
   return result;
 }
 
@@ -337,6 +372,12 @@ const handleAdvancedFilters = () => {
   console.log("Advanced filters applied:", getFilterParams());
   filteredItems.value = filterItems(getFilterParams());
 };
+
+// Watch for changes to showOldTools toggle
+watch(showOldTools, () => {
+  // Re-apply current filters when toggle changes
+  filteredItems.value = filterItems(getFilterParams());
+});
 
 onMounted(async () => {
   await fetchDatabaseItems();

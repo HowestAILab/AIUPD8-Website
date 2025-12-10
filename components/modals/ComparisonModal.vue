@@ -307,7 +307,7 @@
 import "primeicons/primeicons.css";
 import Dialog from "primevue/dialog";
 import Galleria from "primevue/galleria";
-import ToolCarousel from "./ToolCarousel.vue";
+import ToolCarousel from "~/components/media/ToolCarousel.vue";
 import { ref, onMounted, watch, nextTick } from "vue";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";

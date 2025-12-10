@@ -2,7 +2,7 @@ import { createClient } from '@sanity/client'
 
 export default defineEventHandler(async (event) => {
   try {
-    const taxonomyType = getRouterParam(event, 'type')
+    const taxonomyType = getRouterParam(event, 'type') || ''
     
     // Map of type names to their corresponding Sanity document types
     const typeToSanityType: Record<string, string> = {
@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
       'output-types': 'outputType',
       'profile-types': 'profileType',
       'task-types': 'taskType',
+      'data-storage-locations': 'dataStorageLocation',
     }
     
     const sanityType = typeToSanityType[taxonomyType]
@@ -48,7 +49,7 @@ export default defineEventHandler(async (event) => {
     
     // Transform to match expected format with name field
     return {
-      data: items.map(item => ({
+      data: items.map((item: any) => ({
         id: item._id,
         attributes: {
           name: item.title || ''
@@ -56,10 +57,12 @@ export default defineEventHandler(async (event) => {
       }))
     }
   } catch (error) {
-    console.error(`Error fetching taxonomy: ${error.message}`)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    const statusCode = (error as any)?.statusCode || 500
+    console.error(`Error fetching taxonomy: ${errorMessage}`)
     throw createError({
-      statusCode: error.statusCode || 500,
-      message: error.message || 'Failed to fetch taxonomy'
+      statusCode,
+      message: errorMessage || 'Failed to fetch taxonomy'
     })
   }
 })

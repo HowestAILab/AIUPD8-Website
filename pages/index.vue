@@ -19,6 +19,9 @@
         class="min-h-screen"
       />
 
+      <!-- Research Projects Section -->
+      <ResearchProjects />
+
       <!-- Cards Section -->
       <CardSection :cards="cards" class="min-h-screen" />
     </div>
@@ -29,6 +32,7 @@
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import HeroSection from "~/components/sections/HeroSection.vue";
 import CardSection from "~/components/sections/CardSection.vue";
+import ResearchProjects from "~/components/sections/ResearchProjects.vue";
 
 /**
  * For now, we're hardcoding or using placeholders.
@@ -37,7 +41,7 @@ import CardSection from "~/components/sections/CardSection.vue";
 const heroContent = ref({
   title: "Curated database <br> for genAI tools.",
   subtitle:
-    "This database is the result of AI-UPD8. It  is a COOCK+ project led by the HOWEST research groups Digital Arts & Entertainment and Business & Media. Our mission is to guide creative companies in the game, film, media, communication, and marketing sectors through the maze of genAI possibilities.",
+    "AIUPD8 is a Howest initiative dedicated to keeping you up-to-date with the latest AI tools. Through our courses, expert teachers, and collaborative research projects, we empower creative professionals to harness the power of generative AI.",
 });
 
 const cards = ref([

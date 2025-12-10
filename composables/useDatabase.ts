@@ -2,12 +2,35 @@ import { ref } from 'vue';
 import axios from 'axios';
 import { useRuntimeConfig } from '#app';
 
+// ============================================
+// PROJECT-SPECIFIC WORKFLOW TYPES
+// ============================================
+
+// Aiupdate Workflow Step
+export interface AiupdateWorkflowStep {
+  _key: string;
+  stepNumber: number; // Required, min 1
+  title: string; // Required
+  shortDescription?: string; // Optional
+  image?: any; // Optional - image URL or Sanity asset
+  imageAlt?: string; // Optional
+}
+
+// Aiupdate Workflow (project-specific)
+export interface AiupdateWorkflow {
+  _key: string;
+  name: string; // Required - workflow name
+  steps?: AiupdateWorkflowStep[];
+}
+
 // Keep the interfaces similar to maintain compatibility
 export interface ToolItem {
   id: string;
   title: string;
-  toolsentence:string;
-  description: any[]; // Updated to array for Portable Text
+  toolsentence: string;
+  about: string; // CHANGED: was description (BlockContent), now plain text
+  advantages: string[]; // NEW: required, min 3 items
+  disadvantages: string[]; // NEW: required, min 2 items
   isFavourite: boolean;
   isExperimental: boolean;
   uses: string[];
@@ -19,16 +42,23 @@ export interface ToolItem {
   outputs: string[];
   tasks: string[];
   profiles: string[];
+  dataStorageLocations: string[]; // NEW: required filter
   Image: any;
   showcaseImages: any[];
   link: string;
   youtubeLink: string;
+  privacyPolicy: string; // CHANGED: now required
+  aiupdateWorkflows?: AiupdateWorkflow[]; // NEW: project-specific workflows for Aiupdate
+  dateAdded?: string;
+  lastChanged?: string;
   // For backward compatibility
   use?: string;
   setup?: string;
   pricing?: string;
   license?: string;
   averageTimeToGenerate?: string;
+  description?: any[]; // DEPRECATED: kept for backward compatibility
+  dataStorageLocation?: string; // DEPRECATED: use dataStorageLocations array
 }
 
 // Updated helper to extract relation names:
@@ -61,8 +91,10 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
   const result: ToolItem = {
     id: item.id || item._id || '',
     title: attrs.title || "Untitled",
-    toolsentence:attrs.toolsentence || "",
-    description: Array.isArray(attrs.description) ? attrs.description : [],
+    toolsentence: attrs.toolsentence || "",
+    about: attrs.about || "", // NEW: plain text description
+    advantages: attrs.advantages || [], // NEW: array of strings
+    disadvantages: attrs.disadvantages || [], // NEW: array of strings
     isFavourite: !!attrs.isFavourite,
     isExperimental: !!attrs.isExperimental,
     uses: extractRelationNames(attrs.uses),
@@ -74,12 +106,15 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     outputs: extractRelationNames(attrs.outputs),
     tasks: extractRelationNames(attrs.tasks),
     profiles: extractRelationNames(attrs.profiles),
+    dataStorageLocations: extractRelationNames(attrs.dataStorageLocations), // NEW: required filter
     // For backward compatibility
-    use: null,
-    setup: null,
-    pricing: null,
-    license: null,
-    averageTimeToGenerate: null,
+    use: undefined,
+    setup: undefined,
+    pricing: undefined,
+    license: undefined,
+    averageTimeToGenerate: undefined,
+    description: Array.isArray(attrs.description) ? attrs.description : undefined, // DEPRECATED
+    dataStorageLocation: undefined, // DEPRECATED
     // Media fields
     Image: attrs.Image?.data?.attributes || attrs.image || null,
     showcaseImages: attrs.showcaseImages?.data
@@ -87,15 +122,21 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
       : attrs.showcaseImages || [],
     // Simple fields
     link: attrs.link || "",
-    youtubeLink: attrs.youtubeLink || ""
+    youtubeLink: attrs.youtubeLink || "",
+    privacyPolicy: attrs.privacyPolicy || attrs.privacy_policy || "", // NOW REQUIRED
+    // NEW: Project-specific workflows
+    aiupdateWorkflows: attrs.aiupdateWorkflows || undefined,
+    dateAdded: attrs.dateAdded || attrs.date_added || attrs.createdAt || attrs._createdAt || "",
+    lastChanged: attrs.lastChanged || attrs.last_changed || attrs.updatedAt || attrs._updatedAt || ""
   };
   
   // Set the backward compatibility fields after extraction
-  result.use = result.uses[0] || null;
-  result.setup = result.setups[0] || null;
-  result.pricing = result.pricings[0] || null;
-  result.license = result.licenses[0] || null;
-  result.averageTimeToGenerate = result.generationTimes[0] || null;
+  result.use = result.uses[0] || undefined;
+  result.setup = result.setups[0] || undefined;
+  result.pricing = result.pricings[0] || undefined;
+  result.license = result.licenses[0] || undefined;
+  result.averageTimeToGenerate = result.generationTimes[0] || undefined;
+  result.dataStorageLocation = result.dataStorageLocations[0] || undefined;
   
   return result;
 };
@@ -141,7 +182,7 @@ export function useDatabase() {
         console.log("Raw tools data received:", response.data.data);
         const mappedItems = response.data.data.map(mapDatabaseItemToToolItem);
         // Sort tools alphabetically by title
-        items.value = mappedItems.sort((a, b) => {
+        items.value = mappedItems.sort((a: ToolItem, b: ToolItem) => {
           if (a.isFavourite === b.isFavourite) {
             return a.title.localeCompare(b.title);
           }

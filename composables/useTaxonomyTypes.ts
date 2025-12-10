@@ -29,6 +29,7 @@ export function useTaxonomyTypes() {
     'output': 'output-types',
     'profile': 'profile-types',
     'task': 'task-types',
+    'dataStorageLocation': 'data-storage-locations',
   };
 
   /**

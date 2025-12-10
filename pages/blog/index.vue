@@ -13,7 +13,10 @@
         <div v-else-if="posts.length === 0" class="text-center py-8">
           <p>No blog posts found.</p>
         </div>
-        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div
+          v-else
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+        >
           <BlogItem v-for="post in posts" :key="post.id" :post="post" />
         </div>
       </div>
@@ -22,14 +25,14 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import HeaderBar from '~/components/layout/HeaderBar.vue';
-import BlogItem from '~/components/BlogItem.vue';
-import { useBlog } from '~/composables/useBlog';
+import { onMounted } from "vue";
+import HeaderBar from "~/components/layout/HeaderBar.vue";
+import BlogItem from "~/components/items/BlogItem.vue";
+import { useBlog } from "~/composables/useBlog";
 
 const { posts, loading, error, fetchBlogPosts } = useBlog();
 
 onMounted(async () => {
   await fetchBlogPosts();
 });
-</script> 
+</script>

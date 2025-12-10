@@ -9,7 +9,7 @@
             class="inline-flex items-center text-light-page-text-dark hover:underline"
           >
             <i class="pi pi-arrow-left"></i>
-            ← Back to List
+            Back to List
           </NuxtLink>
         </div>
         <div v-if="item" class="py-2">
@@ -20,8 +20,8 @@
                 alt=""
                 class="mb-4 w-full object-cover h-80 rounded-xl"
               />
-              <div class="flex items-center pb-4">
-                <h2 class="text-5xl font-semibold text-black mr-5">
+              <div class="flex items-center pb-4 gap-3 flex-wrap">
+                <h2 class="text-5xl font-semibold text-black">
                   {{ item.title }}
                 </h2>
                 <div
@@ -30,24 +30,73 @@
                 >
                   our favourite
                 </div>
+                <div
+                  v-if="item.lastChanged && isToolOutdated(item.lastChanged)"
+                  class="bg-orange-500 text-white text-md px-6 py-1 rounded-full cursor-default"
+                >
+                  ⚠️ possibly outdated
+                </div>
               </div>
+              <!-- About section (plain text) -->
+              <div class="description mb-6" v-if="item.about">
+                <p class="text-gray-700 text-lg">{{ item.about }}</p>
+              </div>
+
+              <!-- Advantages section -->
               <div
-                class="description mb-6"
-                v-if="Array.isArray(item?.description)"
+                v-if="item.advantages && item.advantages.length > 0"
+                class="mb-6"
               >
-                <SanityPortableText :blocks="item.description" />
+                <h3 class="font-semibold text-xl mb-3 text-green-700">
+                  ✓ Advantages
+                </h3>
+                <ul class="list-disc list-inside space-y-2">
+                  <li
+                    v-for="(advantage, index) in item.advantages"
+                    :key="index"
+                    class="text-gray-700"
+                  >
+                    {{ advantage }}
+                  </li>
+                </ul>
               </div>
-              <div class="description mb-6" v-else-if="item?.description">
-                <p>{{ item.description }}</p>
+
+              <!-- Disadvantages section -->
+              <div
+                v-if="item.disadvantages && item.disadvantages.length > 0"
+                class="mb-6"
+              >
+                <h3 class="font-semibold text-xl mb-3 text-red-700">
+                  ✗ Disadvantages
+                </h3>
+                <ul class="list-disc list-inside space-y-2">
+                  <li
+                    v-for="(disadvantage, index) in item.disadvantages"
+                    :key="index"
+                    class="text-gray-700"
+                  >
+                    {{ disadvantage }}
+                  </li>
+                </ul>
               </div>
-              <!-- New website button -->
-              <div v-if="item.link" class="mt-4">
+
+              <!-- Buttons -->
+              <div class="flex gap-3 mt-6">
                 <NuxtLink
+                  v-if="item.link"
                   :href="item.link"
                   target="_blank"
-                  class="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
+                  class="inline-flex items-center bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 text-lg"
                 >
                   Go to Tool Website
+                </NuxtLink>
+                <NuxtLink
+                  v-if="item.privacyPolicy"
+                  :href="item.privacyPolicy"
+                  target="_blank"
+                  class="inline-flex items-center bg-gray-500 text-white px-6 py-3 rounded-full hover:bg-gray-600 text-lg"
+                >
+                  Privacy Policy
                 </NuxtLink>
               </div>
             </div>
@@ -199,6 +248,38 @@
                   >
                 </div>
               </div>
+
+              <!-- Data Storage Locations -->
+              <div
+                v-if="
+                  item.dataStorageLocations &&
+                  item.dataStorageLocations.length > 0
+                "
+                class="mt-4"
+              >
+                <div class="font-bold text-sm text-light-page-text-light mb-2">
+                  Data Storage Locations
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span
+                    v-for="location in item.dataStorageLocations"
+                    :key="location"
+                    class="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                  >
+                    {{ location }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Date Added -->
+              <div v-if="item.dateAdded" class="mt-4">
+                <div class="font-bold text-sm text-light-page-text-light mb-1">
+                  Date Added
+                </div>
+                <span class="text-sm text-gray-700">{{
+                  formatDate(item.dateAdded)
+                }}</span>
+              </div>
             </div>
 
             <!-- Additional specifications for inputs, outputs, tasks, and profiles -->
@@ -274,6 +355,20 @@
                 </div>
               </div>
             </div>
+
+            <!-- Tool Workflows Section -->
+            <!-- Tool Workflows Section -->
+            <div class="mt-12">
+              <ToolWorkflows :aiupdateWorkflows="item.aiupdateWorkflows" />
+            </div>
+
+            <!-- Project Workflows Section -->
+            <div v-if="item" class="mt-12">
+              <ProjectWorkflows
+                :toolId="item.id"
+                :aiupdateWorkflows="item.aiupdateWorkflows"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -287,30 +382,48 @@ import { useRoute } from "vue-router";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
 import Divider from "primevue/divider";
-import { useDatabase } from "~/composables/useDatabase";
+import ToolWorkflows from "~/components/workflows/ToolWorkflows.vue";
+import { useDatabase, type ToolItem } from "~/composables/useDatabase";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
 
 const route = useRoute();
-const item = ref(null);
+const item = ref<ToolItem | null>(null);
 const { parseRichText } = useRichText();
 const { getMediaUrl, getYoutubeEmbedUrl } = useMedia();
+
+// Format date helper
+function formatDate(dateString: string): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+// Check if tool is outdated (> 5 months)
+function isToolOutdated(lastChangedDate: string): boolean {
+  if (!lastChangedDate) return false;
+  const lastChanged = new Date(lastChangedDate);
+  const fiveMonthsAgo = new Date();
+  fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
+  return lastChanged < fiveMonthsAgo;
+}
 
 // Update computed property for carousel items using normal media loader
 const carouselItems = computed(() => {
   if (!item.value) return [];
   // Copy showcase images to avoid mutating original array.
-  const slides = item.value.showcaseImages ? [...item.value.showcaseImages] : [];
+  const slides = item.value.showcaseImages
+    ? [...item.value.showcaseImages]
+    : [];
   // Add a youtube slide if present with a new property "type"
   if (item.value.youtubeLink) {
     slides.push({ type: "youtube", url: item.value.youtubeLink });
   }
   return slides;
-});
-
-const parsedDescription = computed(() => {
-  if (!item.value || !item.value.description) return "";
-  return parseRichText(item.value.description);
 });
 
 const specifications = {
@@ -323,7 +436,10 @@ const specifications = {
 
 onMounted(async () => {
   const { fetchToolById } = useDatabase();
-  item.value = await fetchToolById(route.params.title);
+  const titleParam = Array.isArray(route.params.title)
+    ? route.params.title[0]
+    : route.params.title;
+  item.value = await fetchToolById(titleParam);
   console.log("Tool data:", item.value);
   if (item.value && item.value.showcaseImages) {
     console.log("Showcase images:", item.value.showcaseImages);
@@ -352,7 +468,7 @@ function preloadImages(items: Array<any>) {
 
 watch(
   () => carouselItems.value,
-  (newItems) => {
+  (newItems: any) => {
     preloadImages(newItems);
   },
   { immediate: true }

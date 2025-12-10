@@ -67,17 +67,31 @@
           />
         </div>
 
-        <!-- Profile filter -->
+        <!-- Data Storage Location filter -->
         <div class="mb-4">
-          <h4 class="font-medium mb-1">Profile</h4>
+          <h4 class="font-medium mb-1">Data Storage Location</h4>
           <MultiSelect
-            v-model="filterState.profiles"
-            :options="filterOptions.profileOptions"
+            v-model="filterState.dataStorageLocations"
+            :options="filterOptions.dataStorageLocationOptions"
             optionLabel="name"
-            placeholder="Select profiles"
+            placeholder="Select storage locations"
             class="ml-1 w-[90%]"
             filter
             showClear
+          />
+        </div>
+
+        <!-- Database/Project Selector -->
+        <div class="mb-4">
+          <h4 class="font-medium mb-1">Database</h4>
+          <Dropdown
+            v-model="localSelectedProject"
+            :options="projectOptions"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Select Database"
+            class="ml-1 w-[90%]"
+            @change="handleProjectChange"
           />
         </div>
       </div>
@@ -153,20 +167,63 @@
           </div>
         </div>
 
-        <!-- TASKS -->
+        <!-- SHOW OLD TOOLS TOGGLE -->
         <div class="mb-4">
-          <h4 class="font-medium mb-1">Specific Task</h4>
-          <MultiSelect
-            filter
-            v-model="filterState.tasks"
-            :options="filterOptions.taskOptions"
-            optionLabel="name"
-            placeholder="Select tasks"
-            class="ml-1 w-[90%]"
-            showClear
-          />
+          <label
+            class="flex items-center text-sm text-gray-700 cursor-pointer hover:text-gray-900 ml-1"
+          >
+            <input
+              type="checkbox"
+              v-model="showOldTools"
+              class="mr-2 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+            />
+            <span>Show tools older than 1 year</span>
+          </label>
         </div>
       </div>
+
+      <!-- PROJECT-SPECIFIC FILTERS (Only for AI-UPD8) -->
+      <template v-if="isAIUpd8Project">
+        <Divider class="filter-divider" />
+
+        <div class="filter-section">
+          <div
+            class="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200"
+          >
+            <p class="text-sm text-purple-800 font-medium">
+              AI-UPD8 Specific Filters
+            </p>
+          </div>
+
+          <!-- PROFILE (AI-UPD8 Only) -->
+          <div class="mb-4">
+            <h4 class="font-medium mb-1">Profile</h4>
+            <MultiSelect
+              filter
+              v-model="filterState.profiles"
+              :options="filterOptions.profileOptions"
+              optionLabel="name"
+              placeholder="Select profiles"
+              class="ml-1 w-[90%]"
+              showClear
+            />
+          </div>
+
+          <!-- TASKS (AI-UPD8 Only) -->
+          <div class="mb-4">
+            <h4 class="font-medium mb-1">Specific Task</h4>
+            <MultiSelect
+              filter
+              v-model="filterState.tasks"
+              :options="filterOptions.taskOptions"
+              optionLabel="name"
+              placeholder="Select tasks"
+              class="ml-1 w-[90%]"
+              showClear
+            />
+          </div>
+        </div>
+      </template>
     </div>
 
     <template #footer>
@@ -189,7 +246,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, watch } from "vue";
+import { onMounted, computed, watch, ref } from "vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
@@ -204,8 +261,35 @@ import {
   clearAllFilters,
   getFilterParams,
   reorderOptions,
+  showOldTools,
+  setProjectFilter,
 } from "~/config/filterHandler";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
+import { useProjectProfile } from "~/composables/useProjectProfile";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
+const { projects, activeProjects, activeProjectId, setActiveProject } =
+  useProjectProfile();
+
+// Check if current project is AI-UPD8 to show additional filters
+const isAIUpd8Project = computed(() => activeProjectId.value === "aiupd8");
+
+// Local state for project selection
+const localSelectedProject = ref<string>(activeProjectId.value);
+
+// Create options for dropdown (matching FilterBar style)
+const projectOptions = computed(() => {
+  const options = [
+    { label: "All Tools", value: "general" },
+    ...activeProjects.value.map((p) => ({
+      label: p.name,
+      value: p.id,
+    })),
+  ];
+  return options;
+});
 
 const props = defineProps({
   modelValue: {
@@ -222,6 +306,31 @@ const emit = defineEmits(["update:modelValue", "apply-filters"]);
 
 // Computed property for dialog visibility
 const isVisible = computed(() => props.modelValue);
+
+// Watch for changes in activeProjectId and sync with localSelectedProject
+watch(
+  () => activeProjectId.value,
+  (newValue) => {
+    localSelectedProject.value = newValue;
+  }
+);
+
+// Handle project change
+const handleProjectChange = () => {
+  const selectedProjectId = localSelectedProject.value;
+  setActiveProject(selectedProjectId);
+  setProjectFilter(selectedProjectId);
+
+  // Navigate to database page with project query if not already there
+  if (router.currentRoute.value.path === "/database") {
+    const query =
+      selectedProjectId === "general" ? {} : { project: selectedProjectId };
+    router.push({ path: "/database", query });
+  }
+
+  // Emit filters to refresh the results
+  emit("apply-filters", getFilterParams());
+};
 
 // Update tool options in the filter handler when props change
 watch(
@@ -296,6 +405,11 @@ async function fetchFilterOptions() {
       results.push("task");
     }
 
+    if (filterOptions.dataStorageLocationOptions.length === 0) {
+      promises.push(fetchTaxonomyByType("dataStorageLocation"));
+      results.push("dataStorageLocation");
+    }
+
     // Fetch all needed taxonomies
     if (promises.length > 0) {
       const data = await Promise.all(promises);
@@ -331,6 +445,8 @@ async function fetchFilterOptions() {
           filterOptions.profileOptions = items;
         } else if (type === "task") {
           filterOptions.taskOptions = items;
+        } else if (type === "dataStorageLocation") {
+          filterOptions.dataStorageLocationOptions = items;
         }
       });
     }

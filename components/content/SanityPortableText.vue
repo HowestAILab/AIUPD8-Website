@@ -125,10 +125,10 @@
 
 <script setup>
 import { useMedia } from "~/composables/useMedia";
-import ToolEmbed from "~/components/ToolEmbed.vue";
-import YoutubeEmbed from "~/components/YoutubeEmbed.vue";
-import AudioPlayer from "~/components/AudioPlayer.vue";
-import ImageModal from "~/components/ImageModal.vue";
+import ToolEmbed from "~/components/media/ToolEmbed.vue";
+import YoutubeEmbed from "~/components/media/YoutubeEmbed.vue";
+import AudioPlayer from "~/components/media/AudioPlayer.vue";
+import ImageModal from "~/components/modals/ImageModal.vue";
 import { computed } from "vue";
 
 const { getSanityImageUrl } = useMedia();

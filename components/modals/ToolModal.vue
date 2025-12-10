@@ -23,26 +23,80 @@
           <h2 class="text-5xl font-semibold text-black pb-6">
             {{ item.title }}
           </h2>
+          <div class="absolute top-2 right-2 flex flex-col gap-2">
+            <div
+              v-if="item.isFavourite"
+              class="bg-accent-extra text-light-page-text-dark text-sm px-4 py-1 rounded-full"
+            >
+              our favourite
+            </div>
+            <div
+              v-if="item.lastChanged && isToolOutdated(item.lastChanged)"
+              class="bg-orange-500 text-white text-sm px-4 py-1 rounded-full"
+            >
+              ⚠️ possibly outdated
+            </div>
+          </div>
+          <!-- About section (plain text) -->
+          <div class="description mb-6" v-if="item.about">
+            <p class="text-gray-700">{{ item.about }}</p>
+          </div>
+
+          <!-- Advantages section -->
           <div
-            v-if="item.isFavourite"
-            class="absolute top-2 right-2 bg-accent-extra text-light-page-text-dark text-sm px-4 py-1 rounded-full"
+            v-if="item.advantages && item.advantages.length > 0"
+            class="mb-6"
           >
-            our favourite
+            <h3 class="font-semibold text-lg mb-2 text-green-700">
+              ✓ Advantages
+            </h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li
+                v-for="(advantage, index) in item.advantages"
+                :key="index"
+                class="text-gray-700"
+              >
+                {{ advantage }}
+              </li>
+            </ul>
           </div>
-          <div class="description mb-6" v-if="Array.isArray(item?.description)">
-            <SanityPortableText :blocks="item.description" />
+
+          <!-- Disadvantages section -->
+          <div
+            v-if="item.disadvantages && item.disadvantages.length > 0"
+            class="mb-6"
+          >
+            <h3 class="font-semibold text-lg mb-2 text-red-700">
+              ✗ Disadvantages
+            </h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li
+                v-for="(disadvantage, index) in item.disadvantages"
+                :key="index"
+                class="text-gray-700"
+              >
+                {{ disadvantage }}
+              </li>
+            </ul>
           </div>
-          <div class="description mb-6" v-else-if="item?.description">
-            <p>{{ item.description }}</p>
-          </div>
-          <!-- New website button -->
-          <div v-if="item.link" class="mt-4">
+
+          <!-- Buttons -->
+          <div class="flex gap-3">
             <NuxtLink
+              v-if="item.link"
               :href="item.link"
               target="_blank"
               class="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
             >
               Go to Tool Website
+            </NuxtLink>
+            <NuxtLink
+              v-if="item.privacyPolicy"
+              :href="item.privacyPolicy"
+              target="_blank"
+              class="inline-flex items-center bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600"
+            >
+              Privacy Policy
             </NuxtLink>
           </div>
         </div>
@@ -184,11 +238,7 @@
               class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
             >
               <span
-                v-for="option in [
-                  'free',
-                  'subscription',
-                  'credits',
-                ]"
+                v-for="option in ['free', 'subscription', 'credits']"
                 :key="option"
                 class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
@@ -242,7 +292,52 @@
               >
             </div>
           </div>
+
+          <!-- Data Storage Locations -->
+          <div
+            v-if="
+              item.dataStorageLocations && item.dataStorageLocations.length > 0
+            "
+            class="mt-4"
+          >
+            <div class="font-bold text-sm text-light-page-text-light mb-1">
+              Data Storage Locations
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <span
+                v-for="location in item.dataStorageLocations"
+                :key="location"
+                class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
+              >
+                {{ location }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Date Added -->
+          <div v-if="item.dateAdded" class="mt-4">
+            <div class="font-bold text-sm text-light-page-text-light mb-1">
+              Date Added
+            </div>
+            <span class="text-sm text-gray-700">{{
+              formatDate(item.dateAdded)
+            }}</span>
+          </div>
         </div>
+      </div>
+
+      <!-- Tool Workflows Section -->
+      <!-- Tool Workflows Section -->
+      <div class="py-8">
+        <ToolWorkflows :aiupdateWorkflows="item.aiupdateWorkflows" />
+      </div>
+
+      <!-- Project Workflows Section -->
+      <div v-if="item" class="py-8">
+        <ProjectWorkflows
+          :toolId="item.id"
+          :aiupdateWorkflows="item.aiupdateWorkflows"
+        />
       </div>
     </div>
   </Dialog>
@@ -257,8 +352,9 @@ import Divider from "primevue/divider";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
-import SanityPortableText from "./SanityPortableText.vue";
-import ToolCarousel from "./ToolCarousel.vue";
+import SanityPortableText from "~/components/content/SanityPortableText.vue";
+import ToolCarousel from "~/components/media/ToolCarousel.vue";
+import ToolWorkflows from "~/components/workflows/ToolWorkflows.vue";
 
 const { parseRichText } = useRichText();
 const { getMediaUrl, getCarouselImageUrl, getYoutubeEmbedUrl } = useMedia();
@@ -266,6 +362,26 @@ const { getMediaUrl, getCarouselImageUrl, getYoutubeEmbedUrl } = useMedia();
 const visible = ref(false);
 const item = ref<ToolItem | null>(null);
 const compareChecked = ref(false);
+
+// Format date helper
+function formatDate(dateString: string): string {
+  if (!dateString) return "";
+  const date = new Date(dateString);
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+// Check if tool is outdated (> 5 months)
+function isToolOutdated(lastChangedDate: string): boolean {
+  if (!lastChangedDate) return false;
+  const lastChanged = new Date(lastChangedDate);
+  const fiveMonthsAgo = new Date();
+  fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
+  return lastChanged < fiveMonthsAgo;
+}
 
 const props = defineProps({
   itemsInComparison: {
@@ -292,11 +408,6 @@ watch(visible, (newValue) => {
   }
 });
 
-const parsedDescription = computed(() => {
-  if (!item.value || !item.value.description) return "";
-  return parseRichText(item.value.description);
-});
-
 const open = (toolItem: ToolItem) => {
   item.value = toolItem;
   console.log("Opening modal with item:", toolItem);
@@ -314,7 +425,9 @@ const open = (toolItem: ToolItem) => {
 // New computed property for modal carousel items
 const carouselItems = computed(() => {
   if (!item.value) return [];
-  const slides = item.value.showcaseImages ? [...item.value.showcaseImages] : [];
+  const slides = item.value.showcaseImages
+    ? [...item.value.showcaseImages]
+    : [];
   if (item.value.youtubeLink) {
     slides.push({ type: "youtube", url: item.value.youtubeLink });
   }

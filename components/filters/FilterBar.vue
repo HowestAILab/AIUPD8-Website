@@ -42,18 +42,17 @@
         @change="emitInstantFilters"
       />
     </div>
+    <!-- Project/Database Selector -->
     <div class="w-full sm:w-48 flex flex-col">
-      <h3 class="font-semibold">profile</h3>
-      <MultiSelect
-        v-model="filterState.profiles"
-        :options="filterOptions.profileOptions"
-        optionLabel="name"
-        placeholder="search"
-        :loading="loading"
-        filter
+      <h3 class="font-semibold">database</h3>
+      <Dropdown
+        v-model="localSelectedProject"
+        :options="projectOptions"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Select Database"
         class="w-full"
-        showClear
-        @change="emitInstantFilters"
+        @change="handleProjectChange"
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col justify-end mt-[24px]">
@@ -73,17 +72,62 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
 import { useTaxonomyTypes } from "~/composables/useTaxonomyTypes";
+import { useProjectProfile } from "~/composables/useProjectProfile";
 import {
   filterState,
   filterOptions,
   loading,
   getFilterParams,
+  setProjectFilter,
 } from "~/config/filterHandler";
+
+const router = useRouter();
+const route = useRoute();
+
+const { projects, activeProjects, activeProjectId, setActiveProject } =
+  useProjectProfile();
+
+// Local state for project selection
+const localSelectedProject = ref<string>(activeProjectId.value);
+
+// Create options for dropdown (matching ProjectSelector style)
+const projectOptions = computed(() => {
+  return [
+    { label: "All Tools (General)", value: "general" },
+    ...activeProjects.value.map((project: any) => ({
+      label: `${project.name} Tools`,
+      value: project.id,
+    })),
+  ];
+});
+
+// Handle project change
+function handleProjectChange(): void {
+  const newProject = localSelectedProject.value;
+  setActiveProject(newProject);
+  setProjectFilter(newProject);
+
+  // Update URL with project parameter
+  if (newProject === "general") {
+    router.push({ path: "/database", query: {} });
+  } else {
+    router.push({ path: "/database", query: { project: newProject } });
+  }
+
+  // Emit filters to refresh results
+  emitInstantFilters();
+}
+
+// Sync with global state
+watch(activeProjectId, (newValue: string) => {
+  localSelectedProject.value = newValue;
+});
 
 // Accept toolOptions from parent and rename input props
 const props = defineProps<{
@@ -102,10 +146,9 @@ const { fetchTaxonomyByType } = useTaxonomyTypes();
 async function fetchFilterOptions() {
   try {
     loading.value = true;
-    const [inputs, outputs, profiles] = await Promise.all([
+    const [inputs, outputs] = await Promise.all([
       fetchTaxonomyByType("input"),
       fetchTaxonomyByType("output"),
-      fetchTaxonomyByType("profile"),
     ]);
 
     // Only update if they're not already loaded by AdvancedFilter
@@ -114,9 +157,6 @@ async function fetchFilterOptions() {
     }
     if (filterOptions.outputOptions.length === 0) {
       filterOptions.outputOptions = outputs;
-    }
-    if (filterOptions.profileOptions.length === 0) {
-      filterOptions.profileOptions = profiles;
     }
   } catch (error) {
     console.error("Error fetching filter options:", error);
@@ -138,6 +178,12 @@ const emitInstantFilters = () => {
 
 onMounted(() => {
   fetchFilterOptions();
+
+  // Initialize project from URL parameter
+  const projectParam = route.query.project as string;
+  if (projectParam && projects.value.some((p: any) => p.id === projectParam)) {
+    localSelectedProject.value = projectParam;
+  }
 });
 </script>
 

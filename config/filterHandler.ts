@@ -13,6 +13,7 @@ export interface FilterState {
   outputs: TaxonomyItem[];
   profiles: TaxonomyItem[];
   tasks: TaxonomyItem[];
+  dataStorageLocations: TaxonomyItem[]; // NEW
 }
 
 // Create a reactive filter state
@@ -27,10 +28,14 @@ export const filterState = reactive<FilterState>({
   outputs: [],
   profiles: [],
   tasks: [],
+  dataStorageLocations: [], // NEW
 });
 
 // Loading state for taxonomy data
 export const loading = ref(false);
+
+// Show old tools toggle (tools older than 1 year)
+export const showOldTools = ref(false);
 
 // Option stores for each filter type
 export const filterOptions = reactive({
@@ -43,6 +48,7 @@ export const filterOptions = reactive({
   outputOptions: [] as TaxonomyItem[],
   profileOptions: [] as TaxonomyItem[],
   taskOptions: [] as TaxonomyItem[],
+  dataStorageLocationOptions: [] as TaxonomyItem[], // NEW
   toolOptions: [] as TaxonomyItem[],
 });
 
@@ -73,6 +79,7 @@ export function clearAllFilters() {
   filterState.outputs = [];
   filterState.profiles = [];
   filterState.tasks = [];
+  filterState.dataStorageLocations = []; // NEW
 }
 
 // Function to add a filter item
@@ -113,6 +120,7 @@ export function getFilterParams() {
     outputs: filterState.outputs.map(item => item.name),
     profiles: filterState.profiles.map(item => item.name),
     tasks: filterState.tasks.map(item => item.name),
+    dataStorageLocations: filterState.dataStorageLocations.map(item => item.name), // NEW
   };
 }
 
@@ -121,4 +129,67 @@ export function setToolOptions(tools: TaxonomyItem[]) {
   if (tools && Array.isArray(tools)) {
     filterOptions.toolOptions = tools;
   }
+}
+
+// ============================================================================
+// PROJECT-SPECIFIC FILTER SUPPORT
+// ============================================================================
+
+// Current active project for filtering context
+export const activeProjectFilter = ref<string>('general');
+
+// Custom filter values for project-specific filters
+export const customFilterState = reactive<Record<string, any>>({});
+
+/**
+ * Set the active project for filtering context
+ */
+export function setProjectFilter(projectId: string) {
+  activeProjectFilter.value = projectId;
+  // Clear custom filters when switching projects
+  Object.keys(customFilterState).forEach(key => {
+    delete customFilterState[key];
+  });
+}
+
+/**
+ * Set a custom filter value
+ */
+export function setCustomFilter(filterId: string, value: any) {
+  customFilterState[filterId] = value;
+}
+
+/**
+ * Get a custom filter value
+ */
+export function getCustomFilter(filterId: string): any {
+  return customFilterState[filterId];
+}
+
+/**
+ * Clear all custom filters
+ */
+export function clearCustomFilters() {
+  Object.keys(customFilterState).forEach(key => {
+    delete customFilterState[key];
+  });
+}
+
+/**
+ * Get all filter params including project and custom filters
+ */
+export function getFullFilterParams() {
+  return {
+    ...getFilterParams(),
+    project: activeProjectFilter.value,
+    customFilters: { ...customFilterState },
+  };
+}
+
+/**
+ * Check if a general filter should be visible based on current project context
+ * This is used by filter UI components to hide/show filters
+ */
+export function shouldShowFilter(filterId: string, hiddenFilters: string[]): boolean {
+  return !hiddenFilters.includes(filterId);
 }

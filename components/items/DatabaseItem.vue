@@ -1,19 +1,28 @@
 <template>
-  <Card>
+  <Card :class="{ 'old-tool-card': isToolOld }">
     <template #header>
       <div class="pt-5 px-5">
         <div class="relative">
           <img
             :src="getMediaUrl(item.Image)"
             alt=""
-            class="w-full object-cover h-48 rounded-md"
+            :class="[
+              'w-full object-cover h-48 rounded-md',
+              { 'grayscale opacity-70': isToolOld },
+            ]"
           />
-          <div class="">
+          <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
             <div
               v-if="item.isFavourite"
-              class="absolute top-2 right-2 bg-accent-extra text-light-page-text-dark text-xs px-4 py-1 rounded-full"
+              class="bg-accent-extra text-light-page-text-dark text-xs px-4 py-1 rounded-full"
             >
               our favourite
+            </div>
+            <div
+              v-if="item.lastChanged && isToolOutdated(item.lastChanged)"
+              class="bg-orange-500 text-white text-xs px-3 py-1 rounded-full"
+            >
+              ⚠️ possibly outdated
             </div>
           </div>
           <div class="">
@@ -51,13 +60,11 @@
     </template>
     <template #content>
       <div class="flex flex-col gap-4 text-sm text-light-page-text-light">
-        <div
-          v-if="showDescription && Array.isArray(item.description)"
-          class="mb-4"
-        >
-          <SanityPortableText :blocks="item.description" />
+        <!-- Display about text if available 
+        <div v-if="item.about" class="mb-4 text-gray-700 line-clamp-3">
+          {{ item.about }}
         </div>
-
+        -->
         <div v-if="item.setups && item.setups.length > 0">
           <span class="font-bold">setup</span>
           <div
@@ -120,7 +127,10 @@
       </div>
     </template>
     <template #footer>
-      <div v-if="props.showComparison" class="pt-6 flex items-center justify-between">
+      <div
+        v-if="props.showComparison"
+        class="pt-6 flex items-center justify-between"
+      >
         <label
           class="flex items-center text-sm text-light-page-text-light space-x-2 cursor-pointer"
         >
@@ -145,8 +155,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import Card from "primevue/card";
-import ToolModal from "./ToolModal.vue";
-import SanityPortableText from "./SanityPortableText.vue";
+import ToolModal from "~/components/modals/ToolModal.vue";
+import SanityPortableText from "~/components/content/SanityPortableText.vue";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
@@ -199,4 +209,39 @@ function openModal() {
 
 // Control whether to show description in card (optional)
 const showDescription = ref(false);
+
+// Check if tool is outdated (> 5 months)
+function isToolOutdated(lastChangedDate: string): boolean {
+  if (!lastChangedDate) return false;
+  const lastChanged = new Date(lastChangedDate);
+  const fiveMonthsAgo = new Date();
+  fiveMonthsAgo.setMonth(fiveMonthsAgo.getMonth() - 5);
+  return lastChanged < fiveMonthsAgo;
+}
+
+// Check if tool is older than 1 year
+function isToolOlderThanOneYear(dateAdded: string): boolean {
+  if (!dateAdded) return false;
+  const added = new Date(dateAdded);
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+  return added < oneYearAgo;
+}
+
+// Computed to check if this tool is old
+const isToolOld = computed(() =>
+  isToolOlderThanOneYear(props.item.dateAdded || "")
+);
 </script>
+
+<style scoped>
+.old-tool-card {
+  opacity: 0.85;
+  border: 1px solid #e0e0e0 !important;
+  background-color: #fafafa;
+}
+
+.old-tool-card:hover {
+  opacity: 1;
+}
+</style>

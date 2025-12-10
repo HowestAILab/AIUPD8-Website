@@ -676,9 +676,10 @@ export default defineNuxtConfig({
         projectId: process.env.SANITY_PROJECT_ID || 't6eu00c4',
         dataset: process.env.SANITY_DATASET || 'production',
         apiVersion: '2023-05-03',
-        useCdn: process.env.NODE_ENV === 'production',
+        useCdn: false, // Disable CDN for local development
       },
-      apiBaseUrl: process.env.API_BASE_URL || 'https://aiupd8frontend.netlify.app',
+      // Use local Sanity server for testing - set this via API_BASE_URL env var
+      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3333',
       cloudflareBeaconToken: process.env.CLOUDFLARE_BEACON_TOKEN || ''
     }
   },

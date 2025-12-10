@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import DatabaseItem from "~/components/DatabaseItem.vue";
+import DatabaseItem from "~/components/items/DatabaseItem.vue";
 
 defineProps({
   tool: {
