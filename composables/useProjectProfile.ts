@@ -1,24 +1,16 @@
 import { ref, reactive, computed } from 'vue';
+import { projectConfigs } from '~/config/projects';
+import type { ProjectConfig } from '~/config/projects';
 
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
 
 /**
- * Represents a research project configuration
+ * Represents a research project - uses ProjectConfig as base
+ * This type extends ProjectConfig with Vue component-specific properties
  */
-export interface ResearchProject {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  shortDescription: string;
-  image: string;
-  logos: ProjectLogo[];
-  targetAudience: string[];
-  color: string; // Theme color for the project
-  isActive: boolean;
-}
+export type ResearchProject = ProjectConfig;
 
 /**
  * Logo associated with a project (partners, sponsors, etc.)
@@ -112,46 +104,14 @@ export interface ComponentSection {
 }
 
 // ============================================================================
-// MOCK DATA - Will be replaced with Sanity data later
+// MOCK DATA - Uses config from projects.ts as single source of truth
 // ============================================================================
 
-const mockProjects: ResearchProject[] = [
-  {
-    id: 'general',
-    name: 'General Database',
-    slug: 'general',
-    description: 'Access all AI tools in our curated database without any specific project context. This view shows all tools with standard filters.',
-    shortDescription: 'All AI tools with standard filters',
-    image: '/images/general-database.jpg',
-    logos: [],
-    targetAudience: ['Everyone'],
-    color: '#3B82F6', // blue-500
-    isActive: true,
-  },
-  {
-    id: 'aiupd8',
-    name: 'AI-UPD8',
-    slug: 'aiupd8',
-    description: 'AI-UPD8 is a COOCK+ project led by the HOWEST research groups Digital Arts & Entertainment and Business & Media. Our mission is to guide creative companies in the game, film, media, communication, and marketing sectors through the maze of genAI possibilities.',
-    shortDescription: 'GenAI tools for creative industries',
-    image: '/images/aiupd8-project.jpg',
-    logos: [
-      { src: '/images/DAE.png', alt: 'Digital Arts & Entertainment' },
-      { src: '/images/VLAIO.png', alt: 'VLAIO' },
-      { src: '/images/bm_cluster.png', alt: 'Business & Media Cluster' },
-      { src: '/images/AI-Lab.png', alt: 'AI Lab' },
-    ],
-    targetAudience: [
-      'Game Developers',
-      'Film Producers',
-      'Media Professionals',
-      'Marketing Teams',
-      'Communication Specialists',
-    ],
-    color: '#8B5CF6', // purple-500
-    isActive: true,
-  },
-];
+/**
+ * Projects data - automatically populated from config/projects.ts
+ * The config is the single source of truth, no duplication here
+ */
+const mockProjects: ResearchProject[] = projectConfigs;
 
 const mockFilterConfigs: ProjectFilterConfig[] = [
   {

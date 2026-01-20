@@ -23,6 +23,11 @@ export interface AiupdateWorkflow {
   steps?: AiupdateWorkflowStep[];
 }
 
+// Generic project-specific data wrapper for extensibility
+export interface ProjectSpecificData {
+  [projectId: string]: any; // Allow any project-specific data structure
+}
+
 // Keep the interfaces similar to maintain compatibility
 export interface ToolItem {
   id: string;
@@ -31,7 +36,10 @@ export interface ToolItem {
   about: string; // CHANGED: was description (BlockContent), now plain text
   advantages: string[]; // NEW: required, min 3 items
   disadvantages: string[]; // NEW: required, min 2 items
-  isFavourite: boolean;
+  // NEW: Project-specific favorites instead of single isFavourite
+  // Map of projectId -> boolean indicating if favorite for that project
+  favorites?: Record<string, boolean>;
+  isFavourite?: boolean; // DEPRECATED: kept for backward compatibility
   isExperimental: boolean;
   uses: string[];
   setups: string[];
@@ -43,12 +51,16 @@ export interface ToolItem {
   tasks: string[];
   profiles: string[];
   dataStorageLocations: string[]; // NEW: required filter
+  // PsyAid project-specific filters
+  psychoEducationalProfiles: string[]; // NEW: PsyAid filter
+  therapyTypes: string[]; // NEW: PsyAid filter
   Image: any;
   showcaseImages: any[];
   link: string;
   youtubeLink: string;
   privacyPolicy: string; // CHANGED: now required
   aiupdateWorkflows?: AiupdateWorkflow[]; // NEW: project-specific workflows for Aiupdate
+  psyaidWorkflows?: any[]; // NEW: project-specific workflows for PSYaid (follow same pattern)
   dateAdded?: string;
   lastChanged?: string;
   // For backward compatibility
@@ -84,10 +96,55 @@ const extractRelationNames = (relation: any): string[] => {
     .filter((val: string) => val.trim() !== '');
 };
 
+/**
+ * Check if a tool has project-specific data filled in
+ * A tool belongs to a project if:
+ * 1. It has workflows for that project, OR
+ * 2. It's marked as a favorite for that project
+ * @param tool - The tool item to check
+ * @param projectId - The project ID to check for
+ * @returns true if the tool has project-specific data for this project
+ */
+export const hasProjectSpecificData = (tool: ToolItem, projectId: string): boolean => {
+  // General project shows all tools
+  if (projectId === 'general') return true;
+  
+  // Check if this tool is marked as favorite for this project
+  const isFavorite = tool.favorites && tool.favorites[projectId];
+  
+  // aiupd8 project - check for workflows OR favorite
+  if (projectId === 'aiupd8') {
+    const hasWorkflows = !!(tool.aiupdateWorkflows && tool.aiupdateWorkflows.length > 0);
+    return isFavorite || hasWorkflows;
+  }
+  
+  // psyaid project - check for workflows OR favorite
+  if (projectId === 'psyaid') {
+    const hasWorkflows = !!(tool.psyaidWorkflows && tool.psyaidWorkflows.length > 0);
+    return isFavorite || hasWorkflows;
+  }
+  
+  // For other projects, implement similar pattern
+  // Check for {projectId}Workflows in the tool OR favorite status
+  const workflowFieldName = `${projectId}Workflows`;
+  const workflows = (tool as any)[workflowFieldName];
+  const hasWorkflows = !!(workflows && Array.isArray(workflows) && workflows.length > 0);
+  return isFavorite || hasWorkflows;
+};
+
 // Reworked mapping function for better compatibility
 export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
   const attrs = item.attributes || item;
   console.log(attrs)
+  
+  // Build project-specific favorites map from schema fields
+  // Automatically maps is{Project}Favourite fields to project IDs
+  const favorites: Record<string, boolean> = {};
+  if (attrs.isAiupdateFavourite) favorites['aiupd8'] = true;
+  if (attrs.isPsyaidFavourite) favorites['psyaid'] = true;
+  // When adding new projects, add their favorite field here:
+  // if (attrs.isNewprojectFavourite) favorites['newproject'] = true;
+  
   const result: ToolItem = {
     id: item.id || item._id || '',
     title: attrs.title || "Untitled",
@@ -95,7 +152,8 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     about: attrs.about || "", // NEW: plain text description
     advantages: attrs.advantages || [], // NEW: array of strings
     disadvantages: attrs.disadvantages || [], // NEW: array of strings
-    isFavourite: !!attrs.isFavourite,
+    favorites: favorites, // NEW: project-specific favorites
+    isFavourite: Object.keys(favorites).length > 0, // For backward compatibility
     isExperimental: !!attrs.isExperimental,
     uses: extractRelationNames(attrs.uses),
     setups: extractRelationNames(attrs.setups),
@@ -107,6 +165,9 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     tasks: extractRelationNames(attrs.tasks),
     profiles: extractRelationNames(attrs.profiles),
     dataStorageLocations: extractRelationNames(attrs.dataStorageLocations), // NEW: required filter
+    // PsyAid project-specific filters
+    psychoEducationalProfiles: extractRelationNames(attrs.psychoEducationalProfiles),
+    therapyTypes: extractRelationNames(attrs.therapyTypes),
     // For backward compatibility
     use: undefined,
     setup: undefined,
@@ -126,6 +187,7 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     privacyPolicy: attrs.privacyPolicy || attrs.privacy_policy || "", // NOW REQUIRED
     // NEW: Project-specific workflows
     aiupdateWorkflows: attrs.aiupdateWorkflows || undefined,
+    psyaidWorkflows: attrs.psyaidWorkflows || undefined,
     dateAdded: attrs.dateAdded || attrs.date_added || attrs.createdAt || attrs._createdAt || "",
     lastChanged: attrs.lastChanged || attrs.last_changed || attrs.updatedAt || attrs._updatedAt || ""
   };

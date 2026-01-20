@@ -172,6 +172,7 @@ import ComparisonModal from "~/components/modals/ComparisonModal.vue";
 import MobileFilterModal from "~/components/filters/MobileFilterModal.vue";
 import ProjectSelector from "~/components/selectors/ProjectSelector.vue";
 import type { ToolItem } from "~/composables/useDatabase";
+import { hasProjectSpecificData } from "~/composables/useDatabase";
 import {
   getFilterParams,
   clearAllFilters,
@@ -269,6 +270,15 @@ function filterItems(filters: any) {
   if (!items.value) return [];
 
   let result = [...items.value];
+
+  // Filter by project-specific data (NEW)
+  // Only show tools that have data for the selected project
+  const { activeProjectId } = useProjectProfile();
+  if (activeProjectId.value && activeProjectId.value !== "general") {
+    result = result.filter((item) =>
+      hasProjectSpecificData(item, activeProjectId.value)
+    );
+  }
 
   // New filter: tool name
   if (filters.name && filters.name.trim() !== "") {
@@ -379,10 +389,17 @@ watch(showOldTools, () => {
   filteredItems.value = filterItems(getFilterParams());
 });
 
+// Watch for changes to active project and reapply filters
+const { activeProjectId } = useProjectProfile();
+watch(activeProjectId, () => {
+  // Re-apply current filters when project changes
+  filteredItems.value = filterItems(getFilterParams());
+});
+
 onMounted(async () => {
   await fetchDatabaseItems();
-  // Initialize filteredItems with all items when first loading
-  filteredItems.value = items.value;
+  // Apply filters on initial load to respect preselected project
+  filteredItems.value = filterItems(getFilterParams());
 
   // Set tool options in the filter handler
   if (toolOptions.value.length > 0) {

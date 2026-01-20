@@ -81,15 +81,15 @@
           />
         </div>
 
-        <!-- Database/Project Selector -->
+        <!-- Profile Selector -->
         <div class="mb-4">
-          <h4 class="font-medium mb-1">Database</h4>
+          <h4 class="font-medium mb-1">Profile</h4>
           <Dropdown
             v-model="localSelectedProject"
             :options="projectOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Select Database"
+            placeholder="Select Profile"
             class="ml-1 w-[90%]"
             @change="handleProjectChange"
           />
@@ -279,12 +279,12 @@ const isAIUpd8Project = computed(() => activeProjectId.value === "aiupd8");
 // Local state for project selection
 const localSelectedProject = ref<string>(activeProjectId.value);
 
-// Create options for dropdown (matching FilterBar style)
+// Create options for dropdown with profile names
 const projectOptions = computed(() => {
   const options = [
-    { label: "All Tools", value: "general" },
+    { label: "General User", value: "general" },
     ...activeProjects.value.map((p) => ({
-      label: p.name,
+      label: p.profile?.name || p.name,
       value: p.id,
     })),
   ];

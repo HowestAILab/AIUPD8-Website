@@ -13,8 +13,8 @@
           </NuxtLink>
         </div>
         <div v-if="item" class="py-2">
-          <div class="rounded-3xl bg-blue-200 p-8">
-            <div class="pb-6 relative">
+          <div class="rounded-3xl bg-blue-200 p-8 relative">
+            <div class="pb-6">
               <img
                 :src="getMediaUrl(item.Image)"
                 alt=""
@@ -37,6 +37,17 @@
                   ⚠️ possibly outdated
                 </div>
               </div>
+
+              <!-- Beta Badge - Bottom Left -->
+              <div class="absolute bottom-8 left-8">
+                <div
+                  v-if="item.isExperimental"
+                  class="bg-blue-500 text-white text-md px-6 py-1 rounded-full cursor-default font-semibold"
+                >
+                  beta
+                </div>
+              </div>
+
               <!-- About section (plain text) -->
               <div class="description mb-6" v-if="item.about">
                 <p class="text-gray-700 text-lg">{{ item.about }}</p>
@@ -356,17 +367,21 @@
               </div>
             </div>
 
-            <!-- Tool Workflows Section -->
-            <!-- Tool Workflows Section -->
-            <div class="mt-12">
-              <ToolWorkflows :aiupdateWorkflows="item.aiupdateWorkflows" />
+            <!-- Workflows Section: Show all or project-specific based on context -->
+            <div class="mt-12" v-if="isGeneralDatabase">
+              <!-- General Database: Show all workflows grouped by project -->
+              <ToolWorkflows
+                :aiupdateWorkflows="item.aiupdateWorkflows"
+                :psyaidWorkflows="item.psyaidWorkflows"
+              />
             </div>
 
-            <!-- Project Workflows Section -->
-            <div v-if="item" class="mt-12">
+            <div v-else-if="item" class="mt-12">
+              <!-- Project-Specific: Show only workflows for current project -->
               <ProjectWorkflows
                 :toolId="item.id"
                 :aiupdateWorkflows="item.aiupdateWorkflows"
+                :psyaidWorkflows="item.psyaidWorkflows"
               />
             </div>
           </div>
@@ -383,14 +398,20 @@ import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
 import Divider from "primevue/divider";
 import ToolWorkflows from "~/components/workflows/ToolWorkflows.vue";
+import ProjectWorkflows from "~/components/workflows/ProjectWorkflows.vue";
 import { useDatabase, type ToolItem } from "~/composables/useDatabase";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
+import { useProjectProfile } from "~/composables/useProjectProfile";
 
 const route = useRoute();
 const item = ref<ToolItem | null>(null);
 const { parseRichText } = useRichText();
 const { getMediaUrl, getYoutubeEmbedUrl } = useMedia();
+const { activeProjectId } = useProjectProfile();
+
+// Check if we're in the general database context
+const isGeneralDatabase = computed(() => activeProjectId.value === "general");
 
 // Format date helper
 function formatDate(dateString: string): string {

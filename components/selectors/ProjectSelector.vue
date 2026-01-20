@@ -28,7 +28,7 @@
               Viewing
             </p>
             <h3 class="font-semibold text-gray-900">
-              {{ currentProjectName }}
+              {{ currentProjectDisplayName }}
             </h3>
           </div>
         </div>
@@ -175,18 +175,28 @@ const {
 const localSelectedProject = ref<string>(activeProjectId.value);
 const showProjectInfo = ref(false);
 
-// Create options for dropdown
+// Create options for dropdown with profile names
 const projectOptions = computed(() => {
   return [
-    { label: "All Tools (General)", value: "general" },
+    { label: "General User", value: "general" },
     ...activeProjects.value.map((project: any) => ({
-      label: `${project.name} Tools`,
+      label: project.profile?.name || project.name,
       value: project.id,
     })),
   ];
 });
 
-// Get current project name
+// Get current project display name (Project Name - Profile Name)
+const currentProjectDisplayName = computed(() => {
+  if (!activeProject.value || activeProject.value.id === "general") {
+    return "General User";
+  }
+  const projectName = activeProject.value.name;
+  const profileName = activeProject.value.profile?.name;
+  return profileName ? `${projectName} - ${profileName}` : projectName;
+});
+
+// Get current project name (kept for backward compatibility)
 const currentProjectName = computed(() => {
   return activeProject.value?.name || "All Tools";
 });

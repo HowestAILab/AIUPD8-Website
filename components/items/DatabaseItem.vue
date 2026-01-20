@@ -12,26 +12,17 @@
             ]"
           />
           <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
-            <div
-              v-if="item.isFavourite"
-              class="bg-accent-extra text-light-page-text-dark text-xs px-4 py-1 rounded-full"
-            >
-              our favourite
-            </div>
-            <div
-              v-if="item.lastChanged && isToolOutdated(item.lastChanged)"
-              class="bg-orange-500 text-white text-xs px-3 py-1 rounded-full"
-            >
-              ⚠️ possibly outdated
-            </div>
+            <FavouriteBadge :favorites="item.favorites" />
           </div>
-          <div class="">
-            <div
-              v-if="item.isExperimental"
-              class="absolute top-2 left-2 bg-accent-extra2 text-light-page-text-dark text-xs px-4 py-1 rounded-full"
-            >
-              experimental
-            </div>
+          <div class="absolute top-2 left-2 flex flex-col gap-1 items-start">
+            <OutdatedBadge
+              v-if="item.lastChanged && isToolOutdated(item.lastChanged)"
+              :last-changed="item.lastChanged"
+              :is-outdated="true"
+            />
+          </div>
+          <div class="absolute bottom-2 left-2 flex flex-col gap-1 items-start">
+            <ExperimentalBadge v-if="item.isExperimental" />
           </div>
         </div>
       </div>
@@ -156,6 +147,9 @@
 import { ref, computed } from "vue";
 import Card from "primevue/card";
 import ToolModal from "~/components/modals/ToolModal.vue";
+import FavouriteBadge from "~/components/ui/FavouriteBadge.vue";
+import OutdatedBadge from "~/components/ui/OutdatedBadge.vue";
+import ExperimentalBadge from "~/components/ui/ExperimentalBadge.vue";
 import SanityPortableText from "~/components/content/SanityPortableText.vue";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";

@@ -1,19 +1,19 @@
 <template>
-  <section class="w-full py-16 px-4 md:px-8 bg-gray-50">
+  <section class="w-full py-16 px-4 md:px-8 bg-transparent">
     <div class="max-w-7xl mx-auto">
       <!-- Section Header -->
       <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Research Projects
+          Research Profiles
         </h2>
         <p class="text-lg text-gray-600 max-w-3xl mx-auto">
           Explore AI tools curated for specific research initiatives and target
-          audiences. Each project offers specialized workflows and examples for
-          different professional profiles.
+          audiences. Each profile offers specialized tools and workflows for
+          different professional groups.
         </p>
       </div>
 
-      <!-- Project Tabs -->
+      <!-- Profile Tabs - Show profile names instead of project names -->
       <div class="flex flex-wrap justify-center gap-4 mb-8">
         <button
           v-for="project in availableProjects"
@@ -26,11 +26,11 @@
               : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200',
           ]"
         >
-          {{ project.name }}
+          {{ project.profile?.name || project.name }}
         </button>
       </div>
 
-      <!-- Selected Project Card -->
+      <!-- Selected Profile Card -->
       <transition name="fade" mode="out-in">
         <div
           v-if="selectedProject"
@@ -61,7 +61,9 @@
                       />
                     </svg>
                   </div>
-                  <h3 class="text-2xl font-bold">{{ selectedProject.name }}</h3>
+                  <h3 class="text-2xl font-bold">
+                    {{ selectedProject.profile?.name || selectedProject.name }}
+                  </h3>
                   <p class="mt-2 opacity-90">
                     {{ selectedProject.shortDescription }}
                   </p>
@@ -73,11 +75,26 @@
             <div class="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-between">
               <div>
                 <h3 class="text-2xl font-bold text-gray-900 mb-4">
-                  {{ selectedProject.name }}
+                  {{ selectedProject.profile?.name || selectedProject.name }}
                 </h3>
                 <p class="text-gray-600 mb-6 leading-relaxed">
                   {{ selectedProject.description }}
                 </p>
+
+                <!-- Profile Description (if available) -->
+                <div
+                  v-if="selectedProject.profile?.description"
+                  class="mb-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded"
+                >
+                  <h4
+                    class="text-sm font-semibold text-blue-900 uppercase tracking-wider mb-2"
+                  >
+                    Profile Target
+                  </h4>
+                  <p class="text-blue-800 text-sm">
+                    {{ selectedProject.profile.description }}
+                  </p>
+                </div>
 
                 <!-- Target Audience -->
                 <div
@@ -151,7 +168,7 @@
                         d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
                       />
                     </svg>
-                    View Project Tools
+                    View Profile Tools
                   </button>
                 </NuxtLink>
                 <NuxtLink

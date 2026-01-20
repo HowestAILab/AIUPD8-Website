@@ -39,7 +39,23 @@ export default defineEventHandler(async (event) => {
       "profiles": profiles[]->{ _id, title },
       image,
       showcaseImages,
+      isAiupdateFavourite,
       "aiupdateWorkflows": aiupdateWorkflows[] {
+        _key,
+        name,
+        "steps": steps[] {
+          _key,
+          stepNumber,
+          title,
+          shortDescription,
+          "image": image.asset->url,
+          imageAlt
+        }
+      },
+      isPsyaidFavourite,
+      "psychoEducationalProfiles": psychoEducationalProfiles[]->{ _id, title },
+      "therapyTypes": therapyTypes[]->{ _id, title },
+      "psyaidWorkflows": psyaidWorkflows[] {
         _key,
         name,
         "steps": steps[] {
@@ -133,6 +149,9 @@ export default defineEventHandler(async (event) => {
               attributes: { name: profile.title || "" } 
             })) || [] 
           },
+          // Project-specific favorite fields
+          isAiupdateFavourite: !!tool.isAiupdateFavourite,
+          isPsyaidFavourite: !!tool.isPsyaidFavourite,
           // Map image to match Strapi format
           image: {
             data: tool.image ? {
@@ -164,7 +183,21 @@ export default defineEventHandler(async (event) => {
           },
           link: tool.link || "",
           youtubeLink: tool.youtubeLink || "",
-          aiupdateWorkflows: tool.aiupdateWorkflows || []
+          aiupdateWorkflows: tool.aiupdateWorkflows || [],
+          // PsyAid project-specific fields
+          psychoEducationalProfiles: {
+            data: tool.psychoEducationalProfiles?.map((profile: any) => ({
+              id: profile._id || 0,
+              attributes: { name: profile.title || "" }
+            })) || []
+          },
+          therapyTypes: {
+            data: tool.therapyTypes?.map((type: any) => ({
+              id: type._id || 0,
+              attributes: { name: type.title || "" }
+            })) || []
+          },
+          psyaidWorkflows: tool.psyaidWorkflows || []
         }
       }))
     }

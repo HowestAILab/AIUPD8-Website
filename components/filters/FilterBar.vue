@@ -42,15 +42,15 @@
         @change="emitInstantFilters"
       />
     </div>
-    <!-- Project/Database Selector -->
+    <!-- Project/Profile Selector -->
     <div class="w-full sm:w-48 flex flex-col">
-      <h3 class="font-semibold">database</h3>
+      <h3 class="font-semibold">profile</h3>
       <Dropdown
         v-model="localSelectedProject"
         :options="projectOptions"
         optionLabel="label"
         optionValue="value"
-        placeholder="Select Database"
+        placeholder="Select Profile"
         class="w-full"
         @change="handleProjectChange"
       />
@@ -96,12 +96,12 @@ const { projects, activeProjects, activeProjectId, setActiveProject } =
 // Local state for project selection
 const localSelectedProject = ref<string>(activeProjectId.value);
 
-// Create options for dropdown (matching ProjectSelector style)
+// Create options for dropdown with profile names
 const projectOptions = computed(() => {
   return [
-    { label: "All Tools (General)", value: "general" },
+    { label: "General User", value: "general" },
     ...activeProjects.value.map((project: any) => ({
-      label: `${project.name} Tools`,
+      label: project.profile?.name || project.name,
       value: project.id,
     })),
   ];
