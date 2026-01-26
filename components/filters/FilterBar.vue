@@ -19,7 +19,8 @@
       <MultiSelect
         v-model="filterState.inputs"
         :options="filterOptions.inputOptions"
-        optionLabel="name"
+        optionLabel="label"
+        optionValue="value"
         placeholder="search"
         :loading="loading"
         filter
@@ -33,7 +34,8 @@
       <MultiSelect
         v-model="filterState.outputs"
         :options="filterOptions.outputOptions"
-        optionLabel="name"
+        optionLabel="label"
+        optionValue="value"
         placeholder="search"
         :loading="loading"
         filter
@@ -77,7 +79,6 @@ import { useRouter, useRoute } from "vue-router";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
-import { useTaxonomyTypes } from "~/composables/useTaxonomyTypes";
 import { useProjectProfile } from "~/composables/useProjectProfile";
 import {
   filterState,
@@ -85,6 +86,7 @@ import {
   loading,
   getFilterParams,
   setProjectFilter,
+  initializeFilterOptions,
 } from "~/config/filterHandler";
 
 const router = useRouter();
@@ -139,32 +141,6 @@ onMounted(() => {
   filterOptions.toolOptions = props.toolOptions;
 });
 
-// Initialize the taxonomy types composable
-const { fetchTaxonomyByType } = useTaxonomyTypes();
-
-// Fetch filter options for non-tool taxonomies
-async function fetchFilterOptions() {
-  try {
-    loading.value = true;
-    const [inputs, outputs] = await Promise.all([
-      fetchTaxonomyByType("input"),
-      fetchTaxonomyByType("output"),
-    ]);
-
-    // Only update if they're not already loaded by AdvancedFilter
-    if (filterOptions.inputOptions.length === 0) {
-      filterOptions.inputOptions = inputs;
-    }
-    if (filterOptions.outputOptions.length === 0) {
-      filterOptions.outputOptions = outputs;
-    }
-  } catch (error) {
-    console.error("Error fetching filter options:", error);
-  } finally {
-    loading.value = false;
-  }
-}
-
 const emits = defineEmits(["toggle-filters", "apply-filters"]);
 
 const toggleFilters = () => {
@@ -177,7 +153,8 @@ const emitInstantFilters = () => {
 };
 
 onMounted(() => {
-  fetchFilterOptions();
+  // Initialize filter options from hardcoded labels (v3.0)
+  initializeFilterOptions();
 
   // Initialize project from URL parameter
   const projectParam = route.query.project as string;

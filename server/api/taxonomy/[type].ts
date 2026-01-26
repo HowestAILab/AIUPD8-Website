@@ -6,6 +6,7 @@ export default defineEventHandler(async (event) => {
     
     // Map of type names to their corresponding Sanity document types
     const typeToSanityType: Record<string, string> = {
+      // General filters
       'use-types': 'useType',
       'setup-types': 'setupType',
       'pricing-types': 'pricingType',
@@ -13,9 +14,23 @@ export default defineEventHandler(async (event) => {
       'generation-times': 'generationTime',
       'input-types': 'inputType',
       'output-types': 'outputType',
+      'data-storage-locations': 'dataStorageLocation',
+      // Aiupdate-specific filters
       'profile-types': 'profileType',
       'task-types': 'taskType',
-      'data-storage-locations': 'dataStorageLocation',
+      // PsyAid-specific filters
+      'psycho-educational-profiles': 'psychoEducationalProfile',
+      'therapy-types': 'therapyType',
+      'data-deletion-capabilities': 'dataDeletionCapability',
+      'eu-accessibility-acts': 'euAccessibilityAct',
+      'ai-transparencies': 'aiTransparency',
+      'wcag-compliances': 'wcagCompliance',
+      'design-qualities': 'designQuality',
+      'onboarding-eases': 'onboardingEase',
+      'offline-functionalities': 'offlineFunctionality',
+      'reading-levels': 'readingLevel',
+      'language-supports': 'languageSupport',
+      'cultural-adaptabilities': 'culturalAdaptability',
     }
     
     const sanityType = typeToSanityType[taxonomyType]

@@ -4,7 +4,7 @@
 
     <!-- Main content area -->
     <main class="flex-grow pb-12">
-      <NuxtPage />
+      <slot />
     </main>
 
     <!-- Footer -->

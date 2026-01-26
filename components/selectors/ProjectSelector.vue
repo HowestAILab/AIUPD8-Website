@@ -239,9 +239,15 @@ function handleProjectChange(): void {
 onMounted(() => {
   const projectParam = route.query.project as string;
   if (projectParam && projects.value.some((p: any) => p.id === projectParam)) {
+    // Query parameter exists, use it
     localSelectedProject.value = projectParam;
     setActiveProject(projectParam);
     setProjectFilter(projectParam);
+  } else if (!projectParam) {
+    // No query parameter, reset to general database
+    localSelectedProject.value = 'general';
+    setActiveProject('general');
+    setProjectFilter('general');
   }
 });
 

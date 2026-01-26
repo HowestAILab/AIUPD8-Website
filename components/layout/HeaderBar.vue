@@ -18,17 +18,17 @@
       <!-- Right side: Nav links (desktop) -->
       <div class="hidden md:flex items-center space-x-4">
         <NuxtLink
-          to="/database"
+          :to="databaseLink"
           class="font-bold hover:underline text-light-page-text-dark"
         >
           database
         </NuxtLink>
-        <NuxtLink
+        <!-- <NuxtLink
           to="/blog"
           class="font-bold hover:underline text-light-page-text-dark"
         >
           blog
-        </NuxtLink>
+        </NuxtLink> -->
         <NuxtLink
           to="/offer"
           class="font-bold hover:underline text-light-page-text-dark bg"
@@ -65,7 +65,7 @@
           role="menu"
         >
           <NuxtLink
-            to="/database"
+            :to="databaseLink"
             class="block px-4 py-2 font-bold text-light-page-text-dark hover:bg-gray-50"
             role="menuitem"
             @click="isMenuOpen = false"
@@ -103,7 +103,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed, ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -125,6 +125,17 @@ const computedClasses = computed(() => {
     return "fixed top-0 left-0 right-0 z-50 bg-white p-4 shadow";
   }
   return "fixed top-0 left-0 right-0 z-50 p-4";
+});
+
+// Get the database link that remembers the last selected project
+const databaseLink = computed(() => {
+  if (typeof window === 'undefined') return '/database';
+  
+  const storedProject = localStorage.getItem('aiupd8-active-project');
+  if (storedProject && storedProject !== 'general') {
+    return `/database?project=${storedProject}`;
+  }
+  return '/database';
 });
 
 const scrollToBottom = () => {

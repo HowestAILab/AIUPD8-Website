@@ -30,16 +30,16 @@ export default defineEventHandler(async (event) => {
       link,
       privacyPolicy,
       youtubeLink,
-      uses[]->{ _id, title },
-      setups[]->{ _id, title },
-      pricings[]->{ _id, title },
-      licenses[]->{ _id, title },
-      generationTimes[]->{ _id, title },
-      inputs[]->{ _id, title },
-      outputs[]->{ _id, title },
-      dataStorageLocations[]->{ _id, title },
-      tasks[]->{ _id, title },
-      profiles[]->{ _id, title },
+      uses,
+      setups,
+      pricings,
+      licenses,
+      generationTimes,
+      inputs,
+      outputs,
+      dataStorageLocations,
+      tasks,
+      profiles,
       image,
       showcaseImages,
       "aiupdateWorkflows": aiupdateWorkflows[] {
@@ -80,67 +80,17 @@ export default defineEventHandler(async (event) => {
           publishedAt: tool._createdAt || "",
           toolsentence: tool.toolsentence,
           privacyPolicy: tool.privacyPolicy || "",
-          // Map relations to match Strapi format with correct name field
-          uses: { 
-            data: tool.uses?.map((use: any) => ({ 
-              id: use._id || 0, 
-              attributes: { name: use.title || "" } 
-            })) || [] 
-          },
-          setups: { 
-            data: tool.setups?.map((setup: any) => ({ 
-              id: setup._id || 0, 
-              attributes: { name: setup.title || "" } 
-            })) || [] 
-          },
-          pricings: { 
-            data: tool.pricings?.map((pricing: any) => ({ 
-              id: pricing._id || 0, 
-              attributes: { name: pricing.title || "" } 
-            })) || [] 
-          },
-          licenses: { 
-            data: tool.licenses?.map((license: any) => ({ 
-              id: license._id || 0, 
-              attributes: { name: license.title || "" } 
-            })) || [] 
-          },
-          generationTimes: { 
-            data: tool.generationTimes?.map((time: any) => ({ 
-              id: time._id || 0, 
-              attributes: { name: time.title || "" } 
-            })) || [] 
-          },
-          inputs: { 
-            data: tool.inputs?.map((input: any) => ({ 
-              id: input._id || 0, 
-              attributes: { name: input.title || "" } 
-            })) || [] 
-          },
-          outputs: { 
-            data: tool.outputs?.map((output: any) => ({ 
-              id: output._id || 0, 
-              attributes: { name: output.title || "" } 
-            })) || [] 
-          },
-          dataStorageLocations: { 
-            data: tool.dataStorageLocations?.map((location: any) => ({ 
-              id: location._id || 0, 
-              attributes: { name: location.title || "" } 
-            })) || [] 
-          },
-          tasks: { 
-            data: tool.tasks?.map((task: any) => ({ 
-              id: task._id || 0, 
-              attributes: { name: task.title || "" } 
-            })) || [] 
-          },
-          profiles: { 
-            data: tool.profiles?.map((profile: any) => ({ 
-              id: profile._id || 0, 
-              attributes: { name: profile.title || "" } 
-            })) || [] 
-          },
+          // v3.0: Filters are now string arrays - pass through and filter nulls
+          uses: (tool.uses || []).filter((v: any) => v !== null),
+          setups: (tool.setups || []).filter((v: any) => v !== null),
+          pricings: (tool.pricings || []).filter((v: any) => v !== null),
+          licenses: (tool.licenses || []).filter((v: any) => v !== null),
+          generationTimes: (tool.generationTimes || []).filter((v: any) => v !== null),
+          inputs: (tool.inputs || []).filter((v: any) => v !== null),
+          outputs: (tool.outputs || []).filter((v: any) => v !== null),
+          dataStorageLocations: (tool.dataStorageLocations || []).filter((v: any) => v !== null),
+          tasks: (tool.tasks || []).filter((v: any) => v !== null),
+          profiles: (tool.profiles || []).filter((v: any) => v !== null),
           // Map image to match Strapi format
           image: {
             data: tool.image ? {

@@ -39,48 +39,6 @@
           />
         </div>
 
-        <!-- Input filter -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">Input</h4>
-          <MultiSelect
-            v-model="filterState.inputs"
-            :options="filterOptions.inputOptions"
-            optionLabel="name"
-            placeholder="Select inputs"
-            class="ml-1 w-[90%]"
-            filter
-            showClear
-          />
-        </div>
-
-        <!-- Output filter -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">Output</h4>
-          <MultiSelect
-            v-model="filterState.outputs"
-            :options="filterOptions.outputOptions"
-            optionLabel="name"
-            placeholder="Select outputs"
-            class="ml-1 w-[90%]"
-            filter
-            showClear
-          />
-        </div>
-
-        <!-- Data Storage Location filter -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">Data Storage Location</h4>
-          <MultiSelect
-            v-model="filterState.dataStorageLocations"
-            :options="filterOptions.dataStorageLocationOptions"
-            optionLabel="name"
-            placeholder="Select storage locations"
-            class="ml-1 w-[90%]"
-            filter
-            showClear
-          />
-        </div>
-
         <!-- Profile Selector -->
         <div class="mb-4">
           <h4 class="font-medium mb-1">Profile</h4>
@@ -94,80 +52,8 @@
             @change="handleProjectChange"
           />
         </div>
-      </div>
-
-      <Divider class="filter-divider" />
-
-      <!-- Advanced Filter Options -->
-      <div class="filter-section">
-        <h3 class="text-lg font-semibold mb-3">Advanced Filters</h3>
-
-        <!-- SETUP -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">Setup</h4>
-          <div class="ml-1 w-[90%]">
-            <ButtonGroup
-              v-model="filterState.setups"
-              :options="filterOptions.setupOptions"
-              optionLabel="name"
-              multiple
-            />
-          </div>
-        </div>
-
-        <!-- USE -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">Use</h4>
-          <div class="ml-1 w-[90%]">
-            <ButtonGroup
-              v-model="filterState.uses"
-              :options="filterOptions.useOptions"
-              optionLabel="name"
-              multiple
-            />
-          </div>
-        </div>
-
-        <!-- PRICING -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">Pricing</h4>
-          <div class="ml-1 w-[90%]">
-            <ButtonGroup
-              v-model="filterState.pricings"
-              :options="filterOptions.pricingOptions"
-              optionLabel="name"
-              multiple
-            />
-          </div>
-        </div>
-
-        <!-- LICENSE -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">License</h4>
-          <div class="ml-1 w-[90%]">
-            <ButtonGroup
-              v-model="filterState.licenses"
-              :options="filterOptions.licenseOptions"
-              optionLabel="name"
-              multiple
-            />
-          </div>
-        </div>
-
-        <!-- GENERATION TIME -->
-        <div class="mb-4">
-          <h4 class="font-medium mb-1">Average Time to Generate</h4>
-          <div class="ml-1 w-[90%]">
-            <ButtonGroup
-              v-model="filterState.generationTimes"
-              :options="filterOptions.generationTimeOptions"
-              optionLabel="name"
-              multiple
-            />
-          </div>
-        </div>
-
-        <!-- SHOW OLD TOOLS TOGGLE -->
+        
+        <!-- Show old tools toggle -->
         <div class="mb-4">
           <label
             class="flex items-center text-sm text-gray-700 cursor-pointer hover:text-gray-900 ml-1"
@@ -182,45 +68,64 @@
         </div>
       </div>
 
-      <!-- PROJECT-SPECIFIC FILTERS (Only for AI-UPD8) -->
-      <template v-if="isAIUpd8Project">
+      <Divider class="filter-divider" />
+
+      <!-- All Filter Options (Dynamic) -->
+      <div class="filter-section">
+        <h3 class="text-lg font-semibold mb-3">All Filters</h3>
+
+        <template v-for="filter in allFilters" :key="filter.id">
+          <!-- Button Group Filters -->
+          <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-4">
+            <h4 class="font-medium mb-1">{{ filter.title }}</h4>
+            <div class="ml-1 w-[90%]">
+              <ButtonGroup
+                :modelValue="getFilterStateValue(filter)"
+                @update:modelValue="(val) => setFilterStateValue(filter, val)"
+                :options="getOptionsForFilter(filter)"
+                optionLabel="label"
+                optionValue="value"
+                multiple
+              />
+            </div>
+          </div>
+
+          <!-- Multi-Select Filters -->
+          <div v-else class="mb-4">
+            <h4 class="font-medium mb-1">
+              {{ filter.title }}
+              <i 
+                v-if="filter.description" 
+                class="pi pi-info-circle text-xs text-gray-500 ml-1 cursor-help" 
+                :title="filter.description"
+              ></i>
+            </h4>
+            <MultiSelect
+              filter
+              :modelValue="getFilterStateValue(filter)"
+              @update:modelValue="(val) => setFilterStateValue(filter, val)"
+              :options="getOptionsForFilter(filter)"
+              optionLabel="label"
+              optionValue="value"
+              :placeholder="`Select ${filter.title.toLowerCase()}`"
+              class="ml-1 w-[90%]"
+              showClear
+            />
+          </div>
+        </template>
+      </div>
+
+      <!-- Project-Specific Filters Badge -->
+      <template v-if="hasSpecificFilters">
         <Divider class="filter-divider" />
-
         <div class="filter-section">
-          <div
-            class="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200"
-          >
+          <div class="mb-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
             <p class="text-sm text-purple-800 font-medium">
-              AI-UPD8 Specific Filters
+              {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} Specific Filters Active
             </p>
-          </div>
-
-          <!-- PROFILE (AI-UPD8 Only) -->
-          <div class="mb-4">
-            <h4 class="font-medium mb-1">Profile</h4>
-            <MultiSelect
-              filter
-              v-model="filterState.profiles"
-              :options="filterOptions.profileOptions"
-              optionLabel="name"
-              placeholder="Select profiles"
-              class="ml-1 w-[90%]"
-              showClear
-            />
-          </div>
-
-          <!-- TASKS (AI-UPD8 Only) -->
-          <div class="mb-4">
-            <h4 class="font-medium mb-1">Specific Task</h4>
-            <MultiSelect
-              filter
-              v-model="filterState.tasks"
-              :options="filterOptions.taskOptions"
-              optionLabel="name"
-              placeholder="Select tasks"
-              class="ml-1 w-[90%]"
-              showClear
-            />
+            <p class="text-xs text-purple-600 mt-1">
+              {{ specificFilters.length }} specialized filter{{ specificFilters.length !== 1 ? 's' : '' }} available
+            </p>
           </div>
         </div>
       </template>
@@ -253,28 +158,35 @@ import Dropdown from "primevue/dropdown";
 import MultiSelect from "primevue/multiselect";
 import Divider from "primevue/divider";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
-import { useTaxonomyTypes } from "~/composables/useTaxonomyTypes";
 import {
   filterState,
   filterOptions,
   loading,
   clearAllFilters,
   getFilterParams,
-  reorderOptions,
   showOldTools,
   setProjectFilter,
+  getFilterOptionsKey,
+  initializeFilterOptions,
 } from "~/config/filterHandler";
-import { defaultSelectionOrder } from "~/config/selectionOrder";
+import { shouldUseButtonGroup } from "~/config/filterLabels";
 import { useProjectProfile } from "~/composables/useProjectProfile";
 import { useRouter } from "vue-router";
+import { 
+  getAllFiltersForProject,
+  getSpecificFiltersForProject,
+  type FilterConfig 
+} from "~/config/projectFilters";
 
 const router = useRouter();
 
 const { projects, activeProjects, activeProjectId, setActiveProject } =
   useProjectProfile();
 
-// Check if current project is AI-UPD8 to show additional filters
-const isAIUpd8Project = computed(() => activeProjectId.value === "aiupd8");
+// Get filters for current project
+const allFilters = computed(() => getAllFiltersForProject(activeProjectId.value));
+const specificFilters = computed(() => getSpecificFiltersForProject(activeProjectId.value));
+const hasSpecificFilters = computed(() => specificFilters.value.length > 0);
 
 // Local state for project selection
 const localSelectedProject = ref<string>(activeProjectId.value);
@@ -307,6 +219,44 @@ const emit = defineEmits(["update:modelValue", "apply-filters"]);
 // Computed property for dialog visibility
 const isVisible = computed(() => props.modelValue);
 
+/**
+ * Get filter component type based on filter ID (v3.0)
+ */
+function getFilterComponentType(filterId: string): 'button-group' | 'multi-select' | 'dropdown' {
+  return shouldUseButtonGroup(filterId) ? 'button-group' : 'multi-select';
+}
+
+/**
+ * Get filter options for a specific filter
+ */
+function getOptionsForFilter(filter: FilterConfig) {
+  const optionsKey = getFilterOptionsKey(filter.id) as keyof typeof filterOptions;
+  return filterOptions[optionsKey] || [];
+}
+
+/**
+ * Get filter state value for a specific filter
+ * Returns empty array if value is null, or ensures array type for components
+ */
+function getFilterStateValue(filter: FilterConfig): string[] {
+  const stateKey = filter.fieldName as keyof typeof filterState;
+  const value = filterState[stateKey];
+  // Handle the name field which is a single string
+  if (stateKey === 'name') {
+    return [];
+  }
+  // Ensure we return an array
+  return (Array.isArray(value) ? value : []) as string[];
+}
+
+/**
+ * Update filter state value for a specific filter
+ */
+function setFilterStateValue(filter: FilterConfig, value: any) {
+  const stateKey = filter.fieldName as keyof typeof filterState;
+  (filterState as any)[stateKey] = value;
+}
+
 // Watch for changes in activeProjectId and sync with localSelectedProject
 watch(
   () => activeProjectId.value,
@@ -328,6 +278,9 @@ const handleProjectChange = () => {
     router.push({ path: "/database", query });
   }
 
+  // Fetch filters for new project
+  fetchFilterOptions();
+  
   // Emit filters to refresh the results
   emit("apply-filters", getFilterParams());
 };
@@ -348,113 +301,9 @@ function updateVisibility(value) {
   emit("update:modelValue", value);
 }
 
-// Initialize the taxonomy types composable
-const { fetchTaxonomyByType } = useTaxonomyTypes();
-
-// Fetch all filter options
-async function fetchFilterOptions() {
-  try {
-    loading.value = true;
-    // Only fetch options that aren't already loaded
-    const promises = [];
-    const results = [];
-
-    // Check each option type and only fetch if needed
-    if (filterOptions.useOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("use"));
-      results.push("use");
-    }
-
-    if (filterOptions.setupOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("setup"));
-      results.push("setup");
-    }
-
-    if (filterOptions.pricingOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("pricing"));
-      results.push("pricing");
-    }
-
-    if (filterOptions.licenseOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("license"));
-      results.push("license");
-    }
-
-    if (filterOptions.generationTimeOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("generationTime"));
-      results.push("generationTime");
-    }
-
-    if (filterOptions.inputOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("input"));
-      results.push("input");
-    }
-
-    if (filterOptions.outputOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("output"));
-      results.push("output");
-    }
-
-    if (filterOptions.profileOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("profile"));
-      results.push("profile");
-    }
-
-    if (filterOptions.taskOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("task"));
-      results.push("task");
-    }
-
-    if (filterOptions.dataStorageLocationOptions.length === 0) {
-      promises.push(fetchTaxonomyByType("dataStorageLocation"));
-      results.push("dataStorageLocation");
-    }
-
-    // Fetch all needed taxonomies
-    if (promises.length > 0) {
-      const data = await Promise.all(promises);
-
-      // Assign fetched data to corresponding filter options
-      data.forEach((items, index) => {
-        const type = results[index];
-
-        if (type === "use") {
-          filterOptions.useOptions = reorderOptions(
-            items,
-            defaultSelectionOrder.use
-          );
-        } else if (type === "setup") {
-          filterOptions.setupOptions = reorderOptions(
-            items,
-            defaultSelectionOrder.setup
-          );
-        } else if (type === "pricing") {
-          filterOptions.pricingOptions = reorderOptions(
-            items,
-            defaultSelectionOrder.pricing
-          );
-        } else if (type === "license") {
-          filterOptions.licenseOptions = items;
-        } else if (type === "generationTime") {
-          filterOptions.generationTimeOptions = items;
-        } else if (type === "input") {
-          filterOptions.inputOptions = items;
-        } else if (type === "output") {
-          filterOptions.outputOptions = items;
-        } else if (type === "profile") {
-          filterOptions.profileOptions = items;
-        } else if (type === "task") {
-          filterOptions.taskOptions = items;
-        } else if (type === "dataStorageLocation") {
-          filterOptions.dataStorageLocationOptions = items;
-        }
-      });
-    }
-  } catch (error) {
-    console.error("Error fetching filter options:", error);
-  } finally {
-    loading.value = false;
-  }
+// Initialize filter options from hardcoded labels (v3.0)
+function fetchFilterOptions() {
+  initializeFilterOptions();
 }
 
 // Function to close the dialog

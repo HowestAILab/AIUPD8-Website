@@ -18,18 +18,33 @@ export function useTaxonomyTypes() {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
-  // Map of type names to their corresponding API endpoint paths (same as before)
+  // Map of type names to their corresponding API endpoint paths
   const typeToEndpoint: Record<string, string> = {
+    // General filters
     'use': 'use-types',
     'setup': 'setup-types',
     'pricing': 'pricing-types',
     'license': 'license-types',
-    'generationTime': 'generation-times',
     'input': 'input-types',
     'output': 'output-types',
+    'dataStorageLocation': 'data-storage-locations',
+    // Aiupdate-specific filters
+    'generationTime': 'generation-times',
     'profile': 'profile-types',
     'task': 'task-types',
-    'dataStorageLocation': 'data-storage-locations',
+    // PsyAid-specific filters
+    'psychoEducationalProfile': 'psycho-educational-profiles',
+    'therapyType': 'therapy-types',
+    'dataDeletionCapability': 'data-deletion-capabilities',
+    'euAccessibilityAct': 'eu-accessibility-acts',
+    'aiTransparency': 'ai-transparencies',
+    'wcagCompliance': 'wcag-compliances',
+    'designQuality': 'design-qualities',
+    'onboardingEase': 'onboarding-eases',
+    'offlineFunctionality': 'offline-functionalities',
+    'readingLevel': 'reading-levels',
+    'languageSupport': 'language-supports',
+    'culturalAdaptability': 'cultural-adaptabilities',
   };
 
   /**

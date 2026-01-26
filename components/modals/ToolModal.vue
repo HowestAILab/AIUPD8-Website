@@ -336,6 +336,16 @@
               formatDate(item.dateAdded)
             }}</span>
           </div>
+
+          <!-- Last Updated -->
+          <div v-if="item.lastChanged" class="mt-4">
+            <div class="font-bold text-sm text-light-page-text-light mb-1">
+              Last Updated
+            </div>
+            <span class="text-sm text-gray-700">{{
+              formatDate(item.lastChanged)
+            }}</span>
+          </div>
         </div>
       </div>
 

@@ -19,110 +19,39 @@
 
     <!-- Scrollable content area -->
     <div class="flex-1 overflow-y-auto min-h-0 px-4 pt-4 pb-6">
-      <!-- BASE FILTERS (Always visible for all projects) -->
+      <!-- GENERAL FILTERS (Always visible for all projects) -->
+      <template v-for="filter in generalFilters" :key="filter.id">
+        <!-- Button Group Filters -->
+        <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-6">
+          <h3 class="text-lg font-bold mb-2">{{ filter.title }}</h3>
+          <div class="flex w-full overflow-x-auto">
+            <ButtonGroup
+              :modelValue="getFilterStateValue(filter)"
+              @update:modelValue="(val) => { setFilterStateValue(filter, val); emitInstantFilters(); }"
+              :options="getOptionsForFilter(filter)"
+              optionLabel="label"
+              optionValue="value"
+              multiple
+            />
+          </div>
+        </div>
 
-      <!-- SETUP -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">Setup</h3>
-        <div class="flex w-full overflow-x-auto">
-          <ButtonGroup
-            v-model="filterState.setups"
-            :options="filterOptions.setupOptions"
-            optionLabel="name"
-            multiple
-            @update:modelValue="emitInstantFilters"
+        <!-- Multi-Select Filters -->
+        <div v-else class="mb-6">
+          <h3 class="text-lg font-bold mb-2">{{ filter.title }}</h3>
+          <MultiSelect
+            filter
+            :modelValue="getFilterStateValue(filter)"
+            @update:modelValue="(val) => { setFilterStateValue(filter, val); emitInstantFilters(); }"
+            :options="getOptionsForFilter(filter)"
+            optionLabel="label"
+            optionValue="value"
+            :placeholder="`Select ${filter.title.toLowerCase()}`"
+            :loading="loading"
+            class="w-full"
           />
         </div>
-      </div>
-
-      <!-- USE -->
-      <div class="mt-8 mb-6">
-        <h3 class="text-lg font-bold mb-2">Use</h3>
-        <div class="flex w-full overflow-x-auto">
-          <ButtonGroup
-            v-model="filterState.uses"
-            :options="filterOptions.useOptions"
-            optionLabel="name"
-            multiple
-            @update:modelValue="emitInstantFilters"
-          />
-        </div>
-      </div>
-
-      <!-- PRICING -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">Pricing</h3>
-        <div class="flex w-full overflow-x-auto">
-          <ButtonGroup
-            v-model="filterState.pricings"
-            :options="filterOptions.pricingOptions"
-            optionLabel="name"
-            multiple
-            @update:modelValue="emitInstantFilters"
-          />
-        </div>
-      </div>
-
-      <!-- LICENSE -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">License</h3>
-        <div class="flex w-full overflow-x-auto">
-          <ButtonGroup
-            v-model="filterState.licenses"
-            :options="filterOptions.licenseOptions"
-            optionLabel="name"
-            multiple
-            @update:modelValue="emitInstantFilters"
-          />
-        </div>
-      </div>
-
-      <Divider class="mb-6" />
-
-      <!-- INPUT TYPE -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">Input type</h3>
-        <MultiSelect
-          filter
-          v-model="filterState.inputs"
-          :options="filterOptions.inputOptions"
-          optionLabel="name"
-          placeholder="Select input types"
-          :loading="loading"
-          class="w-full"
-          @change="emitInstantFilters"
-        />
-      </div>
-
-      <!-- OUTPUT TYPE -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">Output</h3>
-        <MultiSelect
-          filter
-          v-model="filterState.outputs"
-          :options="filterOptions.outputOptions"
-          optionLabel="name"
-          placeholder="Select output types"
-          :loading="loading"
-          class="w-full"
-          @change="emitInstantFilters"
-        />
-      </div>
-
-      <!-- DATA STORAGE LOCATION -->
-      <div class="mb-6">
-        <h3 class="text-lg font-bold mb-2">Data Storage Location</h3>
-        <MultiSelect
-          filter
-          v-model="filterState.dataStorageLocations"
-          :options="filterOptions.dataStorageLocationOptions"
-          optionLabel="name"
-          placeholder="Select storage locations"
-          :loading="loading"
-          class="w-full"
-          @change="emitInstantFilters"
-        />
-      </div>
+      </template>
 
       <!-- SHOW OLD TOOLS TOGGLE -->
       <div class="mb-6">
@@ -139,64 +68,59 @@
         </label>
       </div>
 
-      <!-- PROJECT-SPECIFIC FILTERS (Only for AI-UPD8) -->
-      <template v-if="isAIUpd8Project">
+      <!-- PROJECT-SPECIFIC FILTERS -->
+      <template v-if="hasSpecificFilters">
         <Divider class="mb-6" />
 
-        <div class="mb-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
-          <p class="text-sm text-purple-800 font-medium">
-            AI-UPD8 Specific Filters
+        <div class="mb-4 p-3 rounded-lg border" :style="badgeStyles">
+          <p class="text-sm font-medium">
+            {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} Specific Filters
           </p>
         </div>
 
-        <!-- PROFILE (AI-UPD8 Only) -->
-        <div class="mb-6">
-          <h3 class="text-lg font-bold mb-2">Profile</h3>
-          <MultiSelect
-            filter
-            v-model="filterState.profiles"
-            :options="filterOptions.profileOptions"
-            optionLabel="name"
-            placeholder="Select profiles"
-            :loading="loading"
-            class="w-full"
-            @change="emitInstantFilters"
-          />
-        </div>
+        <template v-for="filter in specificFilters" :key="filter.id">
+          <!-- Button Group Filters -->
+          <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-6">
+            <h3 class="text-lg font-bold mb-2">{{ filter.title }}</h3>
+            <div class="flex w-full overflow-x-auto">
+              <ButtonGroup
+                :modelValue="getFilterStateValue(filter)"
+                @update:modelValue="(val) => { setFilterStateValue(filter, val); emitInstantFilters(); }"
+                :options="getOptionsForFilter(filter)"
+                optionLabel="label"
+                optionValue="value"
+                multiple
+              />
+            </div>
+          </div>
 
-        <!-- SPECIFIC TASK (AI-UPD8 Only) -->
-        <div class="mb-6">
-          <h3 class="text-lg font-bold mb-2">Specific task</h3>
-          <MultiSelect
-            filter
-            v-model="filterState.tasks"
-            :options="filterOptions.taskOptions"
-            optionLabel="name"
-            placeholder="Select tasks"
-            :loading="loading"
-            class="w-full"
-            showClear
-            @change="emitInstantFilters"
-          />
-        </div>
-
-        <!-- AVERAGE TIME TO GENERATE (AI-UPD8 Only) -->
-        <div class="mb-6">
-          <h3 class="text-lg font-bold mb-2">Average time to generate</h3>
-          <div class="flex w-full overflow-x-auto">
-            <ButtonGroup
-              v-model="filterState.generationTimes"
-              :options="filterOptions.generationTimeOptions"
-              optionLabel="name"
-              multiple
-              @update:modelValue="emitInstantFilters"
+          <!-- Multi-Select Filters -->
+          <div v-else class="mb-6">
+            <h3 class="text-lg font-bold mb-2">
+              {{ filter.title }}
+              <i 
+                v-if="filter.description" 
+                class="pi pi-info-circle text-sm text-gray-500 ml-1 cursor-help" 
+                :title="filter.description"
+              ></i>
+            </h3>
+            <MultiSelect
+              filter
+              :modelValue="getFilterStateValue(filter)"
+              @update:modelValue="(val) => { setFilterStateValue(filter, val); emitInstantFilters(); }"
+              :options="getOptionsForFilter(filter)"
+              optionLabel="label"
+              optionValue="value"
+              :placeholder="`Select ${filter.title.toLowerCase()}`"
+              :loading="loading"
+              class="w-full"
+              showClear
             />
           </div>
-        </div>
+        </template>
       </template>
 
-      <!-- APPLY FILTERS BUTTON -->
-      <!-- Removed Apply Filters button for web -->
+      <!-- CLEAR FILTERS BUTTON -->
       <div class="w-full mb-2 sm:mb-0 flex flex-col gap-2">
         <Button
           label="Clear Filters"
@@ -210,10 +134,9 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, onBeforeUnmount } from "vue";
+import { onMounted, computed, onBeforeUnmount, watch } from "vue";
 import MultiSelect from "primevue/multiselect";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
-import { useTaxonomyTypes } from "~/composables/useTaxonomyTypes";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
 import {
   filterState,
@@ -223,13 +146,37 @@ import {
   reorderOptions,
   getFilterParams,
   showOldTools,
+  getFilterOptionsKey,
+  initializeFilterOptions,
 } from "~/config/filterHandler";
 import { useProjectProfile } from "~/composables/useProjectProfile";
+import { shouldUseButtonGroup } from "~/config/filterLabels";
+import { 
+  getAllFiltersForProject, 
+  getGeneralFilters,
+  getSpecificFiltersForProject,
+  type FilterConfig 
+} from "~/config/projectFilters";
 
-const { activeProjectId } = useProjectProfile();
+const { activeProjectId, activeProject } = useProjectProfile();
 
-// Check if current project is AI-UPD8 to show additional filters
-const isAIUpd8Project = computed(() => activeProjectId.value === "aiupd8");
+// Get filters for current project
+const generalFilters = computed(() => getGeneralFilters());
+const specificFilters = computed(() => getSpecificFiltersForProject(activeProjectId.value));
+const hasSpecificFilters = computed(() => specificFilters.value.length > 0);
+
+// Get project-specific color for the badge
+const projectColor = computed(() => activeProject.value?.color || '#8B5CF6'); // Default to purple if no project
+
+// Helper to convert hex to Tailwind-compatible background and text colors
+const badgeStyles = computed(() => {
+  const color = projectColor.value;
+  return {
+    backgroundColor: `${color}15`, // 15 is roughly 8% opacity in hex
+    borderColor: `${color}40`, // 40 is roughly 25% opacity in hex
+    color: color,
+  };
+});
 
 const props = defineProps({
   isVisible: {
@@ -240,62 +187,45 @@ const props = defineProps({
 
 const emits = defineEmits(["apply-filters", "update:isVisible"]);
 
-// Initialize the taxonomy types composable
-const { fetchTaxonomyByType } = useTaxonomyTypes();
+/**
+ * Get filter component type based on filter ID and option count (v3.0)
+ * Returns 'button-group' for filters with 3 or fewer options, 'multi-select' for others
+ */
+function getFilterComponentType(filterId: string): 'button-group' | 'multi-select' {
+  const options = getOptionsForFilter({ id: filterId } as FilterConfig);
+  const optionCount = options.length;
+  return shouldUseButtonGroup(filterId, optionCount) ? 'button-group' : 'multi-select';
+}
 
-// Fetch all filter options using the dynamic route
-async function fetchFilterOptions() {
-  try {
-    loading.value = true;
-    // Fetch all taxonomy types in parallel for better performance
-    const [
-      uses,
-      setups,
-      pricings,
-      licenses,
-      generationTimes,
-      inputs,
-      outputs,
-      profiles,
-      tasks,
-      dataStorageLocations,
-    ] = await Promise.all([
-      fetchTaxonomyByType("use"),
-      fetchTaxonomyByType("setup"),
-      fetchTaxonomyByType("pricing"),
-      fetchTaxonomyByType("license"),
-      fetchTaxonomyByType("generationTime"),
-      fetchTaxonomyByType("input"),
-      fetchTaxonomyByType("output"),
-      fetchTaxonomyByType("profile"),
-      fetchTaxonomyByType("task"),
-      fetchTaxonomyByType("dataStorageLocation"),
-    ]);
+/**
+ * Get filter options for a specific filter
+ */
+function getOptionsForFilter(filter: FilterConfig) {
+  const optionsKey = getFilterOptionsKey(filter.id) as keyof typeof filterOptions;
+  return filterOptions[optionsKey] || [];
+}
 
-    // Reorder options for use, setup and pricing using defaultSelectionOrder
-    filterOptions.useOptions = reorderOptions(uses, defaultSelectionOrder.use);
-    filterOptions.setupOptions = reorderOptions(
-      setups,
-      defaultSelectionOrder.setup
-    );
-    filterOptions.pricingOptions = reorderOptions(
-      pricings,
-      defaultSelectionOrder.pricing
-    );
-
-    // Other options remain unchanged
-    filterOptions.licenseOptions = licenses;
-    filterOptions.generationTimeOptions = generationTimes;
-    filterOptions.inputOptions = inputs;
-    filterOptions.outputOptions = outputs;
-    filterOptions.profileOptions = profiles;
-    filterOptions.taskOptions = tasks;
-    filterOptions.dataStorageLocationOptions = dataStorageLocations;
-  } catch (error) {
-    console.error("Error fetching filter options:", error);
-  } finally {
-    loading.value = false;
+/**
+ * Get filter state value for a specific filter
+ * Returns empty array if value is null, or ensures array type for components
+ */
+function getFilterStateValue(filter: FilterConfig): string[] {
+  const stateKey = filter.fieldName as keyof typeof filterState;
+  const value = filterState[stateKey];
+  // Handle the name field which is a single string
+  if (stateKey === 'name') {
+    return [];
   }
+  // Ensure we return an array
+  return (Array.isArray(value) ? value : []) as string[];
+}
+
+/**
+ * Update filter state value for a specific filter
+ */
+function setFilterStateValue(filter: FilterConfig, value: any) {
+  const stateKey = filter.fieldName as keyof typeof filterState;
+  (filterState as any)[stateKey] = value;
 }
 
 function emitInstantFilters() {
@@ -317,11 +247,17 @@ function handleKeydown(e: KeyboardEvent) {
 }
 
 onMounted(() => {
-  fetchFilterOptions();
+  // Initialize filter options from hardcoded labels (v3.0)
+  initializeFilterOptions();
   window.addEventListener("keydown", handleKeydown);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeydown);
 });
+
+// Watch for project changes and clear filters
+watch(() => activeProjectId.value, () => {
+  clearFilters(); // Clear filters when switching projects
+}, { immediate: false });
 </script>

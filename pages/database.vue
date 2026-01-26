@@ -179,6 +179,7 @@ import {
   setToolOptions,
   activeProjectFilter,
   showOldTools,
+  initializeFilterOptions,
 } from "~/config/filterHandler";
 import { useProjectProfile } from "~/composables/useProjectProfile";
 
@@ -286,79 +287,30 @@ function filterItems(filters: any) {
     result = result.filter((item) => item.title.toLowerCase().includes(search));
   }
 
-  // Filter by uses if selected
-  if (filters.uses && filters.uses.length > 0) {
-    result = result.filter((item) =>
-      item.uses.some((use) => filters.uses.includes(use))
-    );
-  }
+  // Dynamic filtering based on filter configuration
+  // This handles all general and project-specific filters automatically
+  const filterFields = [
+    'uses', 'setups', 'pricings', 'licenses', 'generationTimes',
+    'inputs', 'outputs', 'profiles', 'tasks', 'dataStorageLocations',
+    // PsyAid filters
+    'psychoEducationalProfiles', 'therapyTypes', 'dataDeletionCapabilities',
+    'euAccessibilityActs', 'aiTransparencies', 'wcagCompliances',
+    'designQualities', 'onboardingEases', 'offlineFunctionalities',
+    'readingLevels', 'languageSupports', 'culturalAdaptabilities'
+  ];
 
-  // Filter by setups if selected
-  if (filters.setups && filters.setups.length > 0) {
-    result = result.filter((item) =>
-      item.setups.some((setup) => filters.setups.includes(setup))
-    );
-  }
-
-  // Filter by pricings if selected
-  if (filters.pricings && filters.pricings.length > 0) {
-    result = result.filter((item) =>
-      item.pricings.some((pricing) => filters.pricings.includes(pricing))
-    );
-  }
-
-  // Filter by licenses if selected
-  if (filters.licenses && filters.licenses.length > 0) {
-    result = result.filter((item) =>
-      item.licenses.some((license) => filters.licenses.includes(license))
-    );
-  }
-
-  // Filter by generation times if selected
-  if (filters.generationTimes && filters.generationTimes.length > 0) {
-    result = result.filter((item) =>
-      item.generationTimes.some((time) =>
-        filters.generationTimes.includes(time)
-      )
-    );
-  }
-
-  // Filter by inputs if selected
-  if (filters.inputs && filters.inputs.length > 0) {
-    result = result.filter((item) =>
-      item.inputs.some((input) => filters.inputs.includes(input))
-    );
-  }
-
-  // Filter by outputs if selected
-  if (filters.outputs && filters.outputs.length > 0) {
-    result = result.filter((item) =>
-      item.outputs.some((output) => filters.outputs.includes(output))
-    );
-  }
-
-  // Filter by profiles if selected
-  if (filters.profiles && filters.profiles.length > 0) {
-    result = result.filter((item) =>
-      item.profiles.some((profile) => filters.profiles.includes(profile))
-    );
-  }
-
-  // Filter by tasks if selected
-  if (filters.tasks && filters.tasks.length > 0) {
-    result = result.filter((item) =>
-      item.tasks.some((task) => filters.tasks.includes(task))
-    );
-  }
-
-  // Filter by data storage locations if selected
-  if (filters.dataStorageLocations && filters.dataStorageLocations.length > 0) {
-    result = result.filter((item) =>
-      item.dataStorageLocations.some((location: string) =>
-        filters.dataStorageLocations.includes(location)
-      )
-    );
-  }
+  filterFields.forEach(fieldName => {
+    if (filters[fieldName] && filters[fieldName].length > 0) {
+      result = result.filter((item) => {
+        const itemValues = (item as any)[fieldName];
+        if (!itemValues || !Array.isArray(itemValues)) return false;
+        
+        return itemValues.some((value: string) =>
+          filters[fieldName].includes(value)
+        );
+      });
+    }
+  });
 
   // Filter out tools older than 1 year unless showOldTools is true
   if (!showOldTools.value) {
@@ -397,6 +349,9 @@ watch(activeProjectId, () => {
 });
 
 onMounted(async () => {
+  // Initialize filter options from hardcoded labels (v3.0)
+  initializeFilterOptions();
+  
   await fetchDatabaseItems();
   // Apply filters on initial load to respect preselected project
   filteredItems.value = filterItems(getFilterParams());

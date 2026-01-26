@@ -54,6 +54,16 @@ export interface ToolItem {
   // PsyAid project-specific filters
   psychoEducationalProfiles: string[]; // NEW: PsyAid filter
   therapyTypes: string[]; // NEW: PsyAid filter
+  dataDeletionCapabilities: string[]; // NEW: PsyAid filter
+  euAccessibilityActs: string[]; // NEW: PsyAid filter
+  aiTransparencies: string[]; // NEW: PsyAid filter
+  wcagCompliances: string[]; // NEW: PsyAid filter
+  designQualities: string[]; // NEW: PsyAid filter
+  onboardingEases: string[]; // NEW: PsyAid filter
+  offlineFunctionalities: string[]; // NEW: PsyAid filter
+  readingLevels: string[]; // NEW: PsyAid filter
+  languageSupports: string[]; // NEW: PsyAid filter
+  culturalAdaptabilities: string[]; // NEW: PsyAid filter
   Image: any;
   showcaseImages: any[];
   link: string;
@@ -73,27 +83,39 @@ export interface ToolItem {
   dataStorageLocation?: string; // DEPRECATED: use dataStorageLocations array
 }
 
-// Updated helper to extract relation names:
+// Updated helper to extract filter strings (v3.0 - now direct strings, not references)
+// Backend API now returns filter fields as string arrays directly (e.g., ["no-code", "low-code"])
+// This function ensures we always return a clean string array, filtering out any null values
 const extractRelationNames = (relation: any): string[] => {
   if (!relation) return [];
   
-  let arr = [];
-  if (relation.data) {
-    arr = Array.isArray(relation.data) ? relation.data : [relation.data];
-  } else if (Array.isArray(relation)) {
-    arr = relation;
+  // If it's already an array, clean it up
+  if (Array.isArray(relation)) {
+    return relation
+      .filter((item: any) => item !== null && item !== undefined)
+      .map((item: any) => {
+        // Handle strings directly (v3.0 format)
+        if (typeof item === 'string') {
+          return item;
+        }
+        // Fallback for any old Strapi format that might still exist
+        if (typeof item === 'object' && item !== null) {
+          if (item.attributes && (item.attributes.name || item.attributes.title)) {
+            return item.attributes.name || item.attributes.title;
+          }
+          return item.name || item.title || '';
+        }
+        return '';
+      })
+      .filter((val: string) => val && val.trim() !== '');
   }
   
-  return arr
-    .map((r: any) => {
-      // First try to get name from attributes
-      if (r.attributes && (r.attributes.name || r.attributes.title)) {
-        return r.attributes.name || r.attributes.title;
-      }
-      // Then try direct properties
-      return r.name || r.title || '';
-    })
-    .filter((val: string) => val.trim() !== '');
+  // Single string value
+  if (typeof relation === 'string') {
+    return relation.trim() ? [relation] : [];
+  }
+  
+  return [];
 };
 
 /**
@@ -168,6 +190,16 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     // PsyAid project-specific filters
     psychoEducationalProfiles: extractRelationNames(attrs.psychoEducationalProfiles),
     therapyTypes: extractRelationNames(attrs.therapyTypes),
+    dataDeletionCapabilities: extractRelationNames(attrs.dataDeletionCapabilities),
+    euAccessibilityActs: extractRelationNames(attrs.euAccessibilityActs),
+    aiTransparencies: extractRelationNames(attrs.aiTransparencies),
+    wcagCompliances: extractRelationNames(attrs.wcagCompliances),
+    designQualities: extractRelationNames(attrs.designQualities),
+    onboardingEases: extractRelationNames(attrs.onboardingEases),
+    offlineFunctionalities: extractRelationNames(attrs.offlineFunctionalities),
+    readingLevels: extractRelationNames(attrs.readingLevels),
+    languageSupports: extractRelationNames(attrs.languageSupports),
+    culturalAdaptabilities: extractRelationNames(attrs.culturalAdaptabilities),
     // For backward compatibility
     use: undefined,
     setup: undefined,

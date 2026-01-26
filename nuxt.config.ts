@@ -666,7 +666,7 @@ const AIUPD8 = definePreset(Material, {
 export default defineNuxtConfig({
   // Optional date or versioning
   devtools: { enabled: true },
-
+    
   runtimeConfig: {
     // Server-side private config (not exposed to client)
     sanityToken: process.env.SANITY_TOKEN,
@@ -678,8 +678,8 @@ export default defineNuxtConfig({
         apiVersion: '2023-05-03',
         useCdn: false, // Disable CDN for local development
       },
-      // Use local Sanity server for testing - set this via API_BASE_URL env var
-      apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3333',
+      // Use local Nuxt server API routes
+      apiBaseUrl: process.env.API_BASE_URL || '',
       cloudflareBeaconToken: process.env.CLOUDFLARE_BEACON_TOKEN || ''
     }
   },

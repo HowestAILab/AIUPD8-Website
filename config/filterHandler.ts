@@ -1,22 +1,48 @@
 import { reactive, ref } from 'vue';
-import { TaxonomyItem } from '~/composables/useTaxonomyTypes';
+import { getAllFiltersForProject, getProjectFilters, type FilterConfig } from './projectFilters';
+import { getFilterLabel, getFilterOptions, shouldUseButtonGroup } from './filterLabels';
 
-// Define the filter state interface
-export interface FilterState {
-  name: TaxonomyItem | null;
-  uses: TaxonomyItem[];
-  setups: TaxonomyItem[];
-  pricings: TaxonomyItem[];
-  licenses: TaxonomyItem[];
-  generationTimes: TaxonomyItem[];
-  inputs: TaxonomyItem[];
-  outputs: TaxonomyItem[];
-  profiles: TaxonomyItem[];
-  tasks: TaxonomyItem[];
-  dataStorageLocations: TaxonomyItem[]; // NEW
+// Filter option interface - simplified for string-based filters
+export interface FilterOption {
+  value: string;
+  label: string;
 }
 
-// Create a reactive filter state
+// Dynamic filter state that adapts to current project
+export interface DynamicFilterState {
+  name: string | null;
+  [key: string]: string | string[] | null;
+}
+
+// Base filter state for general filters (v3.0 - all string arrays)
+export interface FilterState {
+  name: string | null;
+  uses: string[];
+  setups: string[];
+  pricings: string[];
+  licenses: string[];
+  generationTimes: string[];
+  inputs: string[];
+  outputs: string[];
+  profiles: string[];
+  tasks: string[];
+  dataStorageLocations: string[];
+  // PsyAid-specific filters
+  psychoEducationalProfiles: string[];
+  therapyTypes: string[];
+  dataDeletionCapabilities: string[];
+  euAccessibilityActs: string[];
+  aiTransparencies: string[];
+  wcagCompliances: string[];
+  designQualities: string[];
+  onboardingEases: string[];
+  offlineFunctionalities: string[];
+  readingLevels: string[];
+  languageSupports: string[];
+  culturalAdaptabilities: string[];
+}
+
+// Create a reactive filter state with all possible filters (v3.0 - string arrays)
 export const filterState = reactive<FilterState>({
   name: null,
   uses: [],
@@ -28,7 +54,20 @@ export const filterState = reactive<FilterState>({
   outputs: [],
   profiles: [],
   tasks: [],
-  dataStorageLocations: [], // NEW
+  dataStorageLocations: [],
+  // PsyAid-specific filters
+  psychoEducationalProfiles: [],
+  therapyTypes: [],
+  dataDeletionCapabilities: [],
+  euAccessibilityActs: [],
+  aiTransparencies: [],
+  wcagCompliances: [],
+  designQualities: [],
+  onboardingEases: [],
+  offlineFunctionalities: [],
+  readingLevels: [],
+  languageSupports: [],
+  culturalAdaptabilities: [],
 });
 
 // Loading state for taxonomy data
@@ -37,30 +76,43 @@ export const loading = ref(false);
 // Show old tools toggle (tools older than 1 year)
 export const showOldTools = ref(false);
 
-// Option stores for each filter type
+// Option stores for each filter type - now using FilterOption[] with labels
 export const filterOptions = reactive({
-  useOptions: [] as TaxonomyItem[],
-  setupOptions: [] as TaxonomyItem[],
-  pricingOptions: [] as TaxonomyItem[],
-  licenseOptions: [] as TaxonomyItem[],
-  generationTimeOptions: [] as TaxonomyItem[],
-  inputOptions: [] as TaxonomyItem[],
-  outputOptions: [] as TaxonomyItem[],
-  profileOptions: [] as TaxonomyItem[],
-  taskOptions: [] as TaxonomyItem[],
-  dataStorageLocationOptions: [] as TaxonomyItem[], // NEW
-  toolOptions: [] as TaxonomyItem[],
+  useOptions: [] as FilterOption[],
+  setupOptions: [] as FilterOption[],
+  pricingOptions: [] as FilterOption[],
+  licenseOptions: [] as FilterOption[],
+  generationTimeOptions: [] as FilterOption[],
+  inputOptions: [] as FilterOption[],
+  outputOptions: [] as FilterOption[],
+  profileOptions: [] as FilterOption[],
+  taskOptions: [] as FilterOption[],
+  dataStorageLocationOptions: [] as FilterOption[],
+  toolOptions: [] as { name: string }[],
+  // PsyAid-specific filter options
+  psychoEducationalProfileOptions: [] as FilterOption[],
+  therapyTypeOptions: [] as FilterOption[],
+  dataDeletionCapabilityOptions: [] as FilterOption[],
+  euAccessibilityActOptions: [] as FilterOption[],
+  aiTransparencyOptions: [] as FilterOption[],
+  wcagComplianceOptions: [] as FilterOption[],
+  designQualityOptions: [] as FilterOption[],
+  onboardingEaseOptions: [] as FilterOption[],
+  offlineFunctionalityOptions: [] as FilterOption[],
+  readingLevelOptions: [] as FilterOption[],
+  languageSupportOptions: [] as FilterOption[],
+  culturalAdaptabilityOptions: [] as FilterOption[],
 });
 
-// Helper function to reorder taxonomy options based on provided order
+// Helper function to reorder filter options based on provided order
 export function reorderOptions(
-  options: TaxonomyItem[],
+  options: FilterOption[],
   order: string[]
-): TaxonomyItem[] {
+): FilterOption[] {
   return options.sort((a, b) => {
-    const idxA = order.indexOf(a.name.toLowerCase());
-    const idxB = order.indexOf(b.name.toLowerCase());
-    if (idxA === -1 && idxB === -1) return b.name.localeCompare(a.name); // fallback: reversed alphabetical
+    const idxA = order.indexOf(a.value.toLowerCase());
+    const idxB = order.indexOf(b.value.toLowerCase());
+    if (idxA === -1 && idxB === -1) return b.label.localeCompare(a.label); // fallback: reversed alphabetical
     if (idxA === -1) return 1;
     if (idxB === -1) return -1;
     return idxA - idxB;
@@ -79,53 +131,79 @@ export function clearAllFilters() {
   filterState.outputs = [];
   filterState.profiles = [];
   filterState.tasks = [];
-  filterState.dataStorageLocations = []; // NEW
+  filterState.dataStorageLocations = [];
+  // PsyAid filters
+  filterState.psychoEducationalProfiles = [];
+  filterState.therapyTypes = [];
+  filterState.dataDeletionCapabilities = [];
+  filterState.euAccessibilityActs = [];
+  filterState.aiTransparencies = [];
+  filterState.wcagCompliances = [];
+  filterState.designQualities = [];
+  filterState.onboardingEases = [];
+  filterState.offlineFunctionalities = [];
+  filterState.readingLevels = [];
+  filterState.languageSupports = [];
+  filterState.culturalAdaptabilities = [];
 }
 
-// Function to add a filter item
-export function addFilter(type: keyof FilterState, item: TaxonomyItem) {
+// Function to add a filter item (v3.0 - now working with strings)
+export function addFilter(type: keyof FilterState, value: string) {
   if (type === 'name') {
-    filterState.name = item;
+    filterState.name = value;
   } else if (Array.isArray(filterState[type])) {
-    const array = filterState[type] as TaxonomyItem[];
-    if (!array.some(i => i.name === item.name)) {
-      array.push(item);
+    const array = filterState[type] as string[];
+    if (!array.includes(value)) {
+      array.push(value);
     }
   }
 }
 
-// Function to remove a filter item
-export function removeFilter(type: keyof FilterState, item: TaxonomyItem) {
-  if (type === 'name' && filterState.name?.name === item.name) {
+// Function to remove a filter item (v3.0 - now working with strings)
+export function removeFilter(type: keyof FilterState, value: string) {
+  if (type === 'name' && filterState.name === value) {
     filterState.name = null;
   } else if (Array.isArray(filterState[type])) {
-    const array = filterState[type] as TaxonomyItem[];
-    const index = array.findIndex(i => i.name === item.name);
+    const array = filterState[type] as string[];
+    const index = array.indexOf(value);
     if (index !== -1) {
       array.splice(index, 1);
     }
   }
 }
 
-// Function to get filter params for API/filtering
+// Function to get filter params for API/filtering (v3.0 - now returns string values directly)
 export function getFilterParams() {
   return {
-    name: filterState.name ? filterState.name.name : "",
-    uses: filterState.uses.map(item => item.name),
-    setups: filterState.setups.map(item => item.name),
-    pricings: filterState.pricings.map(item => item.name),
-    licenses: filterState.licenses.map(item => item.name),
-    generationTimes: filterState.generationTimes.map(item => item.name),
-    inputs: filterState.inputs.map(item => item.name),
-    outputs: filterState.outputs.map(item => item.name),
-    profiles: filterState.profiles.map(item => item.name),
-    tasks: filterState.tasks.map(item => item.name),
-    dataStorageLocations: filterState.dataStorageLocations.map(item => item.name), // NEW
+    name: filterState.name || "",
+    uses: filterState.uses,
+    setups: filterState.setups,
+    pricings: filterState.pricings,
+    licenses: filterState.licenses,
+    generationTimes: filterState.generationTimes,
+    inputs: filterState.inputs,
+    outputs: filterState.outputs,
+    profiles: filterState.profiles,
+    tasks: filterState.tasks,
+    dataStorageLocations: filterState.dataStorageLocations,
+    // PsyAid filters
+    psychoEducationalProfiles: filterState.psychoEducationalProfiles,
+    therapyTypes: filterState.therapyTypes,
+    dataDeletionCapabilities: filterState.dataDeletionCapabilities,
+    euAccessibilityActs: filterState.euAccessibilityActs,
+    aiTransparencies: filterState.aiTransparencies,
+    wcagCompliances: filterState.wcagCompliances,
+    designQualities: filterState.designQualities,
+    onboardingEases: filterState.onboardingEases,
+    offlineFunctionalities: filterState.offlineFunctionalities,
+    readingLevels: filterState.readingLevels,
+    languageSupports: filterState.languageSupports,
+    culturalAdaptabilities: filterState.culturalAdaptabilities,
   };
 }
 
 // Function to set tool options from database items
-export function setToolOptions(tools: TaxonomyItem[]) {
+export function setToolOptions(tools: Array<{ name: string }>) {
   if (tools && Array.isArray(tools)) {
     filterOptions.toolOptions = tools;
   }
@@ -192,4 +270,91 @@ export function getFullFilterParams() {
  */
 export function shouldShowFilter(filterId: string, hiddenFilters: string[]): boolean {
   return !hiddenFilters.includes(filterId);
+}
+
+/**
+ * Get the filter options key for a given filter config
+ * Maps filter IDs to their corresponding option store keys
+ */
+export function getFilterOptionsKey(filterId: string): string {
+  const mapping: Record<string, string> = {
+    'uses': 'useOptions',
+    'setups': 'setupOptions',
+    'pricings': 'pricingOptions',
+    'licenses': 'licenseOptions',
+    'inputs': 'inputOptions',
+    'outputs': 'outputOptions',
+    'dataStorageLocations': 'dataStorageLocationOptions',
+    'generationTimes': 'generationTimeOptions',
+    'tasks': 'taskOptions',
+    'profiles': 'profileOptions',
+    'psychoEducationalProfiles': 'psychoEducationalProfileOptions',
+    'therapyTypes': 'therapyTypeOptions',
+    'dataDeletionCapabilities': 'dataDeletionCapabilityOptions',
+    'euAccessibilityActs': 'euAccessibilityActOptions',
+    'aiTransparencies': 'aiTransparencyOptions',
+    'wcagCompliances': 'wcagComplianceOptions',
+    'designQualities': 'designQualityOptions',
+    'onboardingEases': 'onboardingEaseOptions',
+    'offlineFunctionalities': 'offlineFunctionalityOptions',
+    'readingLevels': 'readingLevelOptions',
+    'languageSupports': 'languageSupportOptions',
+    'culturalAdaptabilities': 'culturalAdaptabilityOptions',
+  };
+  
+  return mapping[filterId] || `${filterId}Options`;
+}
+
+/**
+ * Get active filters for current project
+ * Only returns filters that have values and are relevant to the project
+ */
+export function getActiveFiltersForProject(projectId: string): Record<string, string[]> {
+  const projectFilters = getAllFiltersForProject(projectId);
+  const activeFilters: Record<string, string[]> = {};
+  
+  projectFilters.forEach(filter => {
+    const stateKey = filter.fieldName;
+    const value = filterState[stateKey as keyof FilterState];
+    
+    if (Array.isArray(value) && value.length > 0) {
+      activeFilters[stateKey] = value;
+    }
+  });
+  
+  return activeFilters;
+}
+
+/**
+ * Initialize filter options for all filter types (v3.0)
+ * This creates FilterOption objects with labels from the filterLabels configuration
+ */
+export function initializeFilterOptions() {
+  // General filters
+  filterOptions.useOptions = getFilterOptions('uses');
+  filterOptions.setupOptions = getFilterOptions('setups');
+  filterOptions.pricingOptions = getFilterOptions('pricings');
+  filterOptions.licenseOptions = getFilterOptions('licenses');
+  filterOptions.inputOptions = getFilterOptions('inputs');
+  filterOptions.outputOptions = getFilterOptions('outputs');
+  filterOptions.dataStorageLocationOptions = getFilterOptions('dataStorageLocations');
+  
+  // Aiupdate filters
+  filterOptions.generationTimeOptions = getFilterOptions('generationTimes');
+  filterOptions.taskOptions = getFilterOptions('tasks');
+  filterOptions.profileOptions = getFilterOptions('profiles');
+  
+  // PsyAid filters
+  filterOptions.psychoEducationalProfileOptions = getFilterOptions('psychoEducationalProfiles');
+  filterOptions.therapyTypeOptions = getFilterOptions('therapyTypes');
+  filterOptions.dataDeletionCapabilityOptions = getFilterOptions('dataDeletionCapabilities');
+  filterOptions.euAccessibilityActOptions = getFilterOptions('euAccessibilityActs');
+  filterOptions.aiTransparencyOptions = getFilterOptions('aiTransparencies');
+  filterOptions.wcagComplianceOptions = getFilterOptions('wcagCompliances');
+  filterOptions.designQualityOptions = getFilterOptions('designQualities');
+  filterOptions.onboardingEaseOptions = getFilterOptions('onboardingEases');
+  filterOptions.offlineFunctionalityOptions = getFilterOptions('offlineFunctionalities');
+  filterOptions.readingLevelOptions = getFilterOptions('readingLevels');
+  filterOptions.languageSupportOptions = getFilterOptions('languageSupports');
+  filterOptions.culturalAdaptabilityOptions = getFilterOptions('culturalAdaptabilities');
 }
