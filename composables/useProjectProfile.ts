@@ -1,6 +1,8 @@
 import { ref, reactive, computed } from 'vue';
 import { projectConfigs } from '~/config/projects';
 import type { ProjectConfig } from '~/config/projects';
+import { useLocale } from '~/composables/i18n';
+import { localizeProject } from '~/composables/i18n/projectTranslations';
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -408,6 +410,19 @@ function registerWorkflows(newWorkflows: ProjectWorkflow[]): void {
 export function useProjectProfile() {
   // Initialize on first use
   initializeProject();
+
+  // Locale-aware project data
+  const { locale } = useLocale();
+  const localizedProjects = computed<ResearchProject[]>(() =>
+    projects.value.map(p => localizeProject(p, locale.value))
+  );
+  const localizedActiveProject = computed<ResearchProject | undefined>(() => {
+    const p = activeProject.value;
+    return p ? localizeProject(p, locale.value) : undefined;
+  });
+  const localizedActiveProjects = computed<ResearchProject[]>(() =>
+    localizedProjects.value.filter(p => p.id !== 'general' && p.isActive)
+  );
   
   return {
     // State (use regular refs for component compatibility)
@@ -415,7 +430,12 @@ export function useProjectProfile() {
     projects,
     isLoading,
     error,
-    
+
+    // Localized (reactive to locale changes)
+    localizedProjects,
+    localizedActiveProject,
+    localizedActiveProjects,
+
     // Computed
     activeProject,
     activeFilterConfig,

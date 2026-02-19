@@ -21,7 +21,7 @@
           :to="databaseLink"
           class="font-bold hover:underline text-light-page-text-dark"
         >
-          database
+          {{ t('nav.database') }}
         </NuxtLink>
         <!-- <NuxtLink
           to="/blog"
@@ -33,7 +33,7 @@
           to="/offer"
           class="font-bold hover:underline text-light-page-text-dark bg"
         >
-          our offer
+          {{ t('nav.offer') }}
         </NuxtLink>
 
         <a
@@ -41,8 +41,10 @@
           @click.prevent="scrollToBottom"
           class="font-bold hover:underline text-light-page-text-dark"
         >
-          contact
+          {{ t('nav.contact') }}
         </a>
+
+        <LanguageSwitcher />
       </div>
 
       <!-- Right side: Mobile menu button and dropdown -->
@@ -70,7 +72,7 @@
             role="menuitem"
             @click="isMenuOpen = false"
           >
-            database
+            {{ t('nav.database') }}
           </NuxtLink>
           <NuxtLink
             to="/blog"
@@ -78,7 +80,7 @@
             role="menuitem"
             @click="isMenuOpen = false"
           >
-            blog
+            {{ t('nav.blog') }}
           </NuxtLink>
           <NuxtLink
             to="/offer"
@@ -86,7 +88,7 @@
             role="menuitem"
             @click="isMenuOpen = false"
           >
-            our offer
+            {{ t('nav.offer') }}
           </NuxtLink>
           <a
             href="#"
@@ -94,8 +96,11 @@
             role="menuitem"
             @click.prevent="handleContactClick"
           >
-            contact
+            {{ t('nav.contact') }}
           </a>
+          <div class="px-4 py-2">
+            <LanguageSwitcher />
+          </div>
         </div>
       </div>
     </nav>
@@ -105,6 +110,10 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
+import LanguageSwitcher from "~/components/ui/LanguageSwitcher.vue";
+import { useTranslations } from "~/composables/i18n";
+
+const { t } = useTranslations();
 
 const route = useRoute();
 const isHomePage = computed(() => route.path === "/");

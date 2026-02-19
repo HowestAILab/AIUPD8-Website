@@ -13,6 +13,8 @@ export default defineEventHandler(async (event) => {
       useCdn: config.public.sanity.useCdn,
     })
 
+    // title, excerpt, body, outro are now internationalizedArray fields.
+    // We fetch them as-is so the frontend can pick the right locale.
     const query = `*[_type == "blogPost" && slug.current == $slug][0]{
       _id,
       title,
@@ -22,28 +24,14 @@ export default defineEventHandler(async (event) => {
       excerpt,
       body[]{
         ...,
-        _type == "youtube" => {
-          url
-        },
+        _type == "youtube" => { url },
         _type == "toolEmbed" => {
           "tool": tool->{
             _id,
             title,
-            description,
-            isFavourite,
-            isExperimental,
-            link,
             toolsentence,
+            link,
             youtubeLink,
-            "uses": uses[]->{ _id, title },
-            "setups": setups[]->{ _id, title },
-            "pricings": pricings[]->{ _id, title },
-            "licenses": licenses[]->{ _id, title },
-            "generationTimes": generationTimes[]->{ _id, title },
-            "inputs": inputs[]->{ _id, title },
-            "outputs": outputs[]->{ _id, title },
-            "tasks": tasks[]->{ _id, title },
-            "profiles": profiles[]->{ _id, title },
             image,
             showcaseImages
           }
@@ -64,23 +52,15 @@ export default defineEventHandler(async (event) => {
     return {
       data: {
         id: post._id,
-        attributes: {
-          title: post.title || "Untitled",
-          slug: post.slug || "",
-          publishedAt: post.publishedAt,
-          excerpt: post.excerpt || "",
-          body: post.body || [],
-          outro: post.outro || [],
-          mainImage: {
-            data: post.mainImage ? {
-              id: 0,
-              attributes: {
-                url: '',
-                _sanityAsset: post.mainImage
-              }
-            } : null
-          },
-        }
+        // i18n arrays passed through unchanged
+        title: post.title ?? [],
+        slug: post.slug ?? '',
+        publishedAt: post.publishedAt ?? null,
+        excerpt: post.excerpt ?? [],
+        // body / outro: each entry is { _key: 'nl'|'en', value: blockContent[] }
+        body: post.body ?? [],
+        outro: post.outro ?? [],
+        mainImage: post.mainImage ?? null,
       }
     }
   } catch (error: any) {

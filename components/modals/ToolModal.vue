@@ -7,13 +7,13 @@
   >
     <template #header>
       <div class="flex justify-between items-center w-full">
-        <h2 class="font-semibold text-xl">Review</h2>
+        <h2 class="font-semibold text-xl">{{ t('modal.review') }}</h2>
         <NuxtLink
           v-if="item"
           :to="`/tools/${item.title}`"
           class="bg-black text-white text-sm font-semibold rounded-full px-4 py-2 mr-2 hover:bg-gray-800"
         >
-          Open in Full Page
+          {{ t('modal.openFullPage') }}
         </NuxtLink>
       </div>
     </template>
@@ -30,13 +30,13 @@
               v-if="item.isFavourite"
               class="bg-accent-extra text-light-page-text-dark text-sm px-4 py-1 rounded-full"
             >
-              our favourite
+              {{ t('tool.favourite') }}
             </div>
             <div
               v-if="item.lastChanged && isToolOutdated(item.lastChanged)"
               class="bg-orange-500 text-white text-sm px-4 py-1 rounded-full"
             >
-              ⚠️ possibly outdated
+              {{ t('tool.outdated') }}
             </div>
           </div>
 
@@ -46,7 +46,7 @@
               v-if="item.isExperimental"
               class="bg-blue-500 text-white text-sm px-4 py-1 rounded-full font-semibold"
             >
-              beta
+              {{ t('tool.beta') }}
             </div>
           </div>
 
@@ -61,7 +61,7 @@
             class="mb-6"
           >
             <h3 class="font-semibold text-lg mb-2 text-green-700">
-              ✓ Advantages
+              {{ t('tool.advantages') }}
             </h3>
             <ul class="list-disc list-inside space-y-1">
               <li
@@ -80,7 +80,7 @@
             class="mb-6"
           >
             <h3 class="font-semibold text-lg mb-2 text-red-700">
-              ✗ Disadvantages
+              {{ t('tool.disadvantages') }}
             </h3>
             <ul class="list-disc list-inside space-y-1">
               <li
@@ -101,7 +101,7 @@
               target="_blank"
               class="inline-flex items-center bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600"
             >
-              Go to Tool Website
+              {{ t('tool.goToWebsite') }}
             </NuxtLink>
             <NuxtLink
               v-if="item.privacyPolicy"
@@ -109,7 +109,7 @@
               target="_blank"
               class="inline-flex items-center bg-gray-500 text-white px-4 py-2 rounded-full hover:bg-gray-600"
             >
-              Privacy Policy
+              {{ t('tool.privacyPolicy') }}
             </NuxtLink>
           </div>
         </div>
@@ -119,7 +119,7 @@
         <!-- Input/Output information -->
         <div class="grid grid-cols-2 pt-8">
           <div v-if="item.inputs && item.inputs.length > 0">
-            <div class="mb-2 font-semibold text-black">input type</div>
+            <div class="mb-2 font-semibold text-black">{{ t('tool.inputType') }}</div>
             <div class="flex flex-wrap gap-2">
               <span
                 v-for="input in item.inputs"
@@ -131,7 +131,7 @@
             </div>
           </div>
           <div v-if="item.tasks && item.tasks.length > 0">
-            <div class="mb-2 font-semibold text-black">specific task</div>
+            <div class="mb-2 font-semibold text-black">{{ t('tool.specificTask') }}</div>
             <div class="flex flex-wrap gap-2">
               <span
                 v-for="task in item.tasks"
@@ -146,7 +146,7 @@
 
         <div class="grid grid-cols-2 pt-8">
           <div v-if="item.outputs && item.outputs.length > 0">
-            <div class="mb-2 font-semibold text-black">output type</div>
+            <div class="mb-2 font-semibold text-black">{{ t('tool.outputType') }}</div>
             <div class="flex flex-wrap gap-2">
               <span
                 v-for="output in item.outputs"
@@ -158,7 +158,7 @@
             </div>
           </div>
           <div v-if="item.profiles && item.profiles.length > 0">
-            <div class="mb-2 font-semibold text-black">profile</div>
+            <div class="mb-2 font-semibold text-black">{{ t('tool.profile') }}</div>
             <div class="flex flex-wrap gap-2">
               <span
                 v-for="profile in item.profiles"
@@ -180,7 +180,7 @@
               v-model="compareChecked"
               @change="handleCompareChange"
             />
-            <span class="text-black font-semibold">add to comparison</span>
+            <span class="text-black font-semibold">{{ t('modal.addToComparison') }}</span>
           </label>
         </div>
       </div>
@@ -195,7 +195,7 @@
       </div>
       <div class="p-8 bg-gray-100 rounded-3xl">
         <div>
-          <h2 class="text-lg font-semibold">Specifications</h2>
+          <h2 class="text-lg font-semibold">{{ t('tool.specifications') }}</h2>
         </div>
         <Divider />
         <div class="flex flex-col gap-4 pt-4">
@@ -203,7 +203,7 @@
             <div
               class="font-bold text-sm rounded-lg text-light-page-text-light"
             >
-              use
+              {{ t('tool.use') }}
             </div>
             <div
               class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -224,7 +224,7 @@
 
           <div v-if="item.setups && item.setups.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
-              setup
+              {{ t('tool.setup') }}
             </div>
             <div
               class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -245,7 +245,7 @@
 
           <div v-if="item.pricings && item.pricings.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
-              pricing
+              {{ t('tool.pricing') }}
             </div>
             <div
               class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -266,7 +266,7 @@
 
           <div v-if="item.licenses && item.licenses.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
-              license
+              {{ t('tool.license') }}
             </div>
             <div
               class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -287,7 +287,7 @@
 
           <div v-if="item.generationTimes && item.generationTimes.length > 0">
             <div class="font-bold text-sm text-light-page-text-light">
-              average time
+              {{ t('tool.averageTime') }}
             </div>
             <div
               class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -314,7 +314,7 @@
             class="mt-4"
           >
             <div class="font-bold text-sm text-light-page-text-light mb-1">
-              Data Storage Locations
+              {{ t('tool.dataStorage') }}
             </div>
             <div class="flex flex-wrap gap-2">
               <span
@@ -330,7 +330,7 @@
           <!-- Date Added -->
           <div v-if="item.dateAdded" class="mt-4">
             <div class="font-bold text-sm text-light-page-text-light mb-1">
-              Date Added
+              {{ t('tool.dateAdded') }}
             </div>
             <span class="text-sm text-gray-700">{{
               formatDate(item.dateAdded)
@@ -340,7 +340,7 @@
           <!-- Last Updated -->
           <div v-if="item.lastChanged" class="mt-4">
             <div class="font-bold text-sm text-light-page-text-light mb-1">
-              Last Updated
+              {{ t('tool.lastUpdated') }}
             </div>
             <span class="text-sm text-gray-700">{{
               formatDate(item.lastChanged)
@@ -354,12 +354,12 @@
         <div class="bg-gray-50 rounded-2xl p-6">
           <!-- Header with Project Selector -->
           <div class="flex items-center justify-between mb-6">
-            <h3 class="text-2xl font-semibold text-gray-900">Workflows</h3>
+            <h3 class="text-2xl font-semibold text-gray-900">{{ t('workflows.title') }}</h3>
             <div
               v-if="availableWorkflowProjects.length > 0"
               class="flex items-center gap-2"
             >
-              <span class="text-sm text-gray-500">View for:</span>
+              <span class="text-sm text-gray-500">{{ t('workflows.viewFor') }}</span>
               <select
                 v-model="selectedWorkflowProjectId"
                 class="px-3 py-1.5 border border-gray-300 rounded-full text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
@@ -368,7 +368,7 @@
                   color: getCurrentWorkflowProjectColor(),
                 }"
               >
-                <option value="all">All Profiles</option>
+                <option value="all">{{ t('workflows.allProfiles') }}</option>
                 <option
                   v-for="project in availableWorkflowProjects"
                   :key="project.id"
@@ -405,7 +405,7 @@
                 </svg>
               </div>
               <p class="text-gray-600">
-                No workflows available for this tool yet.
+                {{ t('workflows.noWorkflows') }}
               </p>
             </div>
 
@@ -526,7 +526,7 @@
                             </h4>
                             <div class="flex items-center gap-2 mt-1">
                               <span class="text-xs text-gray-500">
-                                {{ workflow.steps?.length || 0 }} steps
+                                {{ workflow.steps?.length || 0 }} {{ (workflow.steps?.length || 0) !== 1 ? t('tool.steps') : t('tool.step') }}
                               </span>
                             </div>
                           </div>
@@ -629,6 +629,10 @@ import SanityPortableText from "~/components/content/SanityPortableText.vue";
 import ToolCarousel from "~/components/media/ToolCarousel.vue";
 import ToolWorkflows from "~/components/workflows/ToolWorkflows.vue";
 import ProjectWorkflows from "~/components/workflows/ProjectWorkflows.vue";
+import { useLocale, useTranslations } from "~/composables/i18n";
+
+const { locale } = useLocale();
+const { t } = useTranslations();
 
 const { parseRichText } = useRichText();
 const { getMediaUrl, getCarouselImageUrl, getYoutubeEmbedUrl } = useMedia();
@@ -733,7 +737,7 @@ const getSortedSteps = (workflow: any) => {
 function formatDate(dateString: string): string {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(locale.value === 'nl' ? 'nl-BE' : 'en-GB', {
     year: "numeric",
     month: "long",
     day: "numeric",

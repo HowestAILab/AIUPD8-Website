@@ -1,15 +1,22 @@
 import { ref } from 'vue';
-import { useSanity } from '#imports';
 import { useRuntimeConfig } from '#app';
+import type { I18nArray } from '~/composables/i18n';
 
+/**
+ * An offer item as returned by the server API.
+ * All translatable text fields are InternationalizedArray values.
+ */
 export interface OfferItem {
   id: string;
-  heading: string;
-  subtitle?: string;
-  body: any[];
+  heading: I18nArray<string>;
+  subtitle: I18nArray<string>;
+  body: I18nArray<any[]>;
   image?: any;
   imageAlt?: string;
-  variants?: Array<{ name: string; description?: string }>;
+  variants?: Array<{
+    name: I18nArray<string>;
+    description: I18nArray<string>;
+  }>;
 }
 
 export function useOffer() {
@@ -22,14 +29,17 @@ export function useOffer() {
   async function fetchOfferItems() {
     try {
       const res = await $fetch<{ data: any[] }>(`${config.public.apiBaseUrl}/api/offer`)
-      items.value = (res?.data || []).map((row: any) => ({
+      items.value = (res?.data ?? []).map((row: any) => ({
         id: row.id,
-        heading: row.attributes.heading,
-        subtitle: row.attributes.subtitle,
-        body: row.attributes.body,
-        image: row.attributes.image,
-        imageAlt: row.attributes.imageAlt,
-        variants: row.attributes.variants,
+        heading: row.heading ?? [],
+        subtitle: row.subtitle ?? [],
+        body: row.body ?? [],
+        image: row.image ?? null,
+        imageAlt: row.imageAlt ?? '',
+        variants: (row.variants ?? []).map((v: any) => ({
+          name: v.name ?? [],
+          description: v.description ?? [],
+        })),
       }))
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Failed to fetch offer items';
@@ -40,7 +50,7 @@ export function useOffer() {
     loading.value = true;
     error.value = null;
     try {
-      await Promise.all([fetchOfferItems()]);
+      await fetchOfferItems();
     } finally {
       loading.value = false;
     }

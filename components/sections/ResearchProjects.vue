@@ -4,12 +4,10 @@
       <!-- Section Header -->
       <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-          Research Profiles
+          {{ t('research.heading') }}
         </h2>
         <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-          Explore AI tools curated for specific research initiatives and target
-          audiences. Each profile offers specialized tools and workflows for
-          different professional groups.
+          {{ t('research.subtitle') }}
         </p>
       </div>
 
@@ -89,7 +87,7 @@
                   <h4
                     class="text-sm font-semibold text-blue-900 uppercase tracking-wider mb-2"
                   >
-                    Profile Target
+                    {{ t('research.profileTarget') }}
                   </h4>
                   <p class="text-blue-800 text-sm">
                     {{ selectedProject.profile.description }}
@@ -104,7 +102,7 @@
                   <h4
                     class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3"
                   >
-                    Target Audience
+                    {{ t('research.targetAudience') }}
                   </h4>
                   <div class="flex flex-wrap gap-2">
                     <span
@@ -122,7 +120,7 @@
                   <h4
                     class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4"
                   >
-                    Partners & Sponsors
+                    {{ t('research.partners') }}
                   </h4>
                   <div class="flex flex-wrap items-center gap-6">
                     <a
@@ -168,7 +166,7 @@
                         d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"
                       />
                     </svg>
-                    View Profile Tools
+                    {{ t('research.viewProfileTools') }}
                   </button>
                 </NuxtLink>
                 <NuxtLink
@@ -192,7 +190,7 @@
                         d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                       />
                     </svg>
-                    View All Tools
+                    {{ t('research.viewAllTools') }}
                   </button>
                 </NuxtLink>
               </div>
@@ -207,20 +205,23 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue";
 import { useProjectProfile } from "~/composables/useProjectProfile";
+import { useTranslations } from "~/composables/i18n";
 
-const { projects, setActiveProject } = useProjectProfile();
+const { t } = useTranslations();
+
+const { localizedProjects, setActiveProject } = useProjectProfile();
 
 // Local state for selected project in this component
 const selectedProjectId = ref<string>("aiupd8");
 
 // Get available projects (active ones for display)
 const availableProjects = computed(() => {
-  return projects.value.filter((p: any) => p.isActive);
+  return localizedProjects.value.filter((p: any) => p.isActive);
 });
 
 // Get the currently selected project
 const selectedProject = computed(() => {
-  return projects.value.find((p: any) => p.id === selectedProjectId.value);
+  return localizedProjects.value.find((p: any) => p.id === selectedProjectId.value);
 });
 
 // Select a project tab
@@ -243,7 +244,7 @@ function navigateToProject(projectId: string): void {
 
 // Set initial selection to first active non-general project
 onMounted(() => {
-  const nonGeneralProjects = projects.value.filter(
+  const nonGeneralProjects = localizedProjects.value.filter(
     (p: any) => p.id !== "general" && p.isActive
   );
   if (nonGeneralProjects.length > 0) {

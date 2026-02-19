@@ -4,7 +4,7 @@
     <div class="pt-16 min-h-screen bg-light-page-background">
       <div class="container mx-auto p-4">
         <div v-if="loading" class="text-center py-8">
-          <p>Loading post...</p>
+          <p>{{ t('blog.postLoading') }}</p>
         </div>
         <div v-else-if="error" class="text-center text-red-500 py-8">
           {{ error }}
@@ -13,25 +13,35 @@
           v-else-if="post"
           class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md"
         >
-          <h1 class="text-4xl font-bold mb-4">{{ post.title }}</h1>
+          <h1 class="text-4xl font-bold mb-4">{{ postTitle }}</h1>
           <p class="text-gray-500 mb-4">{{ formatDate(post.publishedAt) }}</p>
           <img
             v-if="post.mainImage"
             :src="getMediaUrl(post.mainImage)"
-            :alt="post.title"
+            :alt="postTitle"
             class="w-full h-auto object-cover rounded-lg mb-8"
           />
-          <SanityPortableText :blocks="post.body" />
 
-          <!-- Outro Section -->
-          <div
-            v-if="post.outro && post.outro.length > 0"
-            class="mt-8 p-8 bg-blue-200 rounded-3xl text-black"
-          >
-            <div class="prose max-w-none">
-              <SanityPortableText :blocks="post.outro" />
+          <!-- Content not available notice -->
+          <ContentNotAvailable
+            v-if="!hasBody"
+            :locale="locale"
+            kind="post"
+          />
+
+          <template v-else>
+            <SanityPortableText :blocks="postBody" />
+
+            <!-- Outro Section -->
+            <div
+              v-if="postOutro.length"
+              class="mt-8 p-8 bg-blue-200 rounded-3xl text-black"
+            >
+              <div class="prose max-w-none">
+                <SanityPortableText :blocks="postOutro" />
+              </div>
             </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -39,17 +49,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
 import SanityPortableText from "~/components/content/SanityPortableText.vue";
+import ContentNotAvailable from "~/components/ui/ContentNotAvailable.vue";
 import { useBlog, type BlogPost } from "~/composables/useBlog";
 import { useMedia } from "~/composables/useMedia";
+import { useLocale, getI18n, hasI18n, useTranslations } from "~/composables/i18n";
+
+const { t } = useTranslations();
 
 const route = useRoute();
 const { loading, error, fetchBlogPostBySlug } = useBlog();
 const { getMediaUrl } = useMedia();
+const { locale } = useLocale();
 const post = ref<BlogPost | null>(null);
+
+const postTitle = computed(() =>
+  post.value ? (getI18n(post.value.title, locale.value) ?? '—') : ''
+)
+
+const hasBody = computed(() =>
+  post.value ? hasI18n(post.value.body, locale.value) : false
+)
+
+const postBody = computed(() =>
+  post.value ? (getI18n(post.value.body, locale.value) ?? []) : []
+)
+
+const postOutro = computed(() =>
+  post.value ? (getI18n(post.value.outro, locale.value) ?? []) : []
+)
 
 const formatDate = (dateString: string) => {
   if (!dateString) return "";
@@ -58,7 +89,10 @@ const formatDate = (dateString: string) => {
     month: "long",
     day: "numeric",
   };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+  return new Date(dateString).toLocaleDateString(
+    locale.value === 'nl' ? 'nl-BE' : 'en-GB',
+    options,
+  );
 };
 
 onMounted(async () => {

@@ -21,7 +21,7 @@
             class="relative z-10 flex items-center justify-center h-full text-center"
           >
             <h1 class="text-5xl md:text-6xl font-bold text-white">
-              ONS AANBOD
+              {{ t('offer.heading') }}
             </h1>
           </div>
         </div>
@@ -30,19 +30,13 @@
       <!-- Info and button section -->
       <section class="max-w-6xl mx-auto px-4 py-8 text-center">
         <p class="text-base font-bold text-black-700 max-w-3xl mx-auto mb-6">
-          Aiupdate helpt creatieve professionals AI praktisch en duidelijk te
-          gebruiken. We kiezen <br />
-          samen de juiste tools, zetten slimme workflows op en geven training
-          zodat je vlot aan de <br />
-          slag kan. Alles stemmen we af op jouw doelen en mogelijkheden, zodat
-          je stap voor stap <br />
-          AI kan invoeren en uitbreiden zonder verrassingen.
+          {{ t('offer.intro') }}
         </p>
         <a
           :href="contactEmail"
           class="inline-flex items-center justify-center px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors"
         >
-          Contacteer ons
+          {{ t('offer.contact') }}
         </a>
       </section>
 
@@ -72,6 +66,9 @@ import HeaderBar from "~/components/layout/HeaderBar.vue";
 import { onMounted } from "vue";
 import { useOffer } from "~/composables/useOffer";
 import OfferCard from "~/components/sections/OfferCard.vue";
+import { useTranslations } from "~/composables/i18n";
+
+const { t } = useTranslations();
 
 const { items, loading, fetchAll } = useOffer();
 

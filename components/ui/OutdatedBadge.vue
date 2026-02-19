@@ -32,12 +32,12 @@
         <div
           class="bg-gray-100 text-black text-xs rounded-lg px-3 py-2 shadow-lg whitespace-nowrap relative"
         >
-          <div class="font-semibold mb-1">⚠️ Possibly Outdated</div>
+          <div class="font-semibold mb-1">{{ t('badge.outdatedTitle') }}</div>
           <div class="text-gray-800">
-            This tool hasn't been updated in a while
+            {{ t('badge.outdatedDesc') }}
           </div>
           <div v-if="lastChanged" class="text-gray-700 text-[10px] mt-1">
-            Last updated: {{ formatDate(lastChanged) }}
+            {{ t('badge.lastUpdated') }} {{ formatDate(lastChanged) }}
           </div>
         </div>
       </div>
@@ -47,6 +47,10 @@
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useLocale, useTranslations } from "~/composables/i18n";
+
+const { locale } = useLocale();
+const { t } = useTranslations();
 
 interface Props {
   lastChanged?: string;
@@ -65,7 +69,7 @@ function formatDate(dateString: string): string {
   if (!dateString) return "";
   try {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString(locale.value === 'nl' ? 'nl-BE' : 'en-GB', {
       year: "numeric",
       month: "short",
       day: "numeric",

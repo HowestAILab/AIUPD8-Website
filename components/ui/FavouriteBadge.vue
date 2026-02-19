@@ -5,7 +5,7 @@
     :style="{ background: generateGradient() }"
     :title="tooltipText"
   >
-     favorite
+    {{ t('tool.favourite') }}
   </div>
 </template>
 
@@ -13,6 +13,9 @@
 import { computed } from "vue";
 import { projectConfigs, getProjectColor } from "~/config/projects";
 import { useProjectProfile } from "~/composables/useProjectProfile";
+import { useTranslations } from "~/composables/i18n";
+
+const { t } = useTranslations();
 
 interface Props {
   favorites?: Record<string, boolean>;

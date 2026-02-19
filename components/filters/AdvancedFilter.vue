@@ -4,7 +4,7 @@
     <div
       class="flex-shrink-0 bg-white px-4 py-4 flex items-center justify-between border-b border-gray-200 shadow-sm"
     >
-      <h2 class="text-2xl font-bold">Advanced Filters</h2>
+      <h2 class="text-2xl font-bold">{{ t('filter.advancedTitle') }}</h2>
 
       <!-- Close button next to title -->
       <button
@@ -64,7 +64,7 @@
             class="mr-2 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
             @change="emitInstantFilters"
           />
-          <span>Show tools older than 1 year</span>
+          <span>{{ t('filter.showOldTools') }}</span>
         </label>
       </div>
 
@@ -74,7 +74,7 @@
 
         <div class="mb-4 p-3 rounded-lg border" :style="badgeStyles">
           <p class="text-sm font-medium">
-            {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} Specific Filters
+            {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} {{ t('filter.specificFilters') }}
           </p>
         </div>
 
@@ -123,7 +123,7 @@
       <!-- CLEAR FILTERS BUTTON -->
       <div class="w-full mb-2 sm:mb-0 flex flex-col gap-2">
         <Button
-          label="Clear Filters"
+          :label="t('filter.clearFilters')"
           icon="pi pi-trash"
           class="p-button-outlined p-button-danger w-full pd-2"
           @click="clearFilters"
@@ -138,6 +138,7 @@ import { onMounted, computed, onBeforeUnmount, watch } from "vue";
 import MultiSelect from "primevue/multiselect";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
+import { useTranslations } from "~/composables/i18n";
 import {
   filterState,
   filterOptions,
@@ -159,6 +160,7 @@ import {
 } from "~/config/projectFilters";
 
 const { activeProjectId, activeProject } = useProjectProfile();
+const { t } = useTranslations();
 
 // Get filters for current project
 const generalFilters = computed(() => getGeneralFilters());

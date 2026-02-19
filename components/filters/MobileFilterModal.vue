@@ -11,7 +11,7 @@
   >
     <template #header>
       <div class="flex items-center justify-between w-full">
-        <h2 class="text-2xl font-bold">Filters</h2>
+        <h2 class="text-2xl font-bold">{{ t('database.filters') }}</h2>
         <Button
           icon="pi pi-times"
           @click="close"
@@ -23,16 +23,16 @@
     <div class="filter-sections">
       <!-- Basic Filter Options -->
       <div class="filter-section">
-        <h3 class="text-lg font-semibold mb-3">Quick Filters</h3>
+        <h3 class="text-lg font-semibold mb-3">{{ t('filter.quickFilters') }}</h3>
 
         <!-- Tool name filter -->
         <div class="mb-4">
-          <h4 class="font-medium mb-1">Tool Name</h4>
+          <h4 class="font-medium mb-1">{{ t('filter.toolName') }}</h4>
           <Dropdown
             v-model="filterState.name"
             :options="filterOptions.toolOptions"
             optionLabel="name"
-            placeholder="Select tool"
+            :placeholder="t('filter.selectTool')"
             class="ml-1 w-[90%]"
             filter
             showClear
@@ -41,13 +41,13 @@
 
         <!-- Profile Selector -->
         <div class="mb-4">
-          <h4 class="font-medium mb-1">Profile</h4>
+          <h4 class="font-medium mb-1">{{ t('filter.profile') }}</h4>
           <Dropdown
             v-model="localSelectedProject"
             :options="projectOptions"
             optionLabel="label"
             optionValue="value"
-            placeholder="Select Profile"
+            :placeholder="t('filter.selectProfile')"
             class="ml-1 w-[90%]"
             @change="handleProjectChange"
           />
@@ -63,7 +63,7 @@
               v-model="showOldTools"
               class="mr-2 h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
             />
-            <span>Show tools older than 1 year</span>
+            <span>{{ t('filter.showOldTools') }}</span>
           </label>
         </div>
       </div>
@@ -72,7 +72,7 @@
 
       <!-- All Filter Options (Dynamic) -->
       <div class="filter-section">
-        <h3 class="text-lg font-semibold mb-3">All Filters</h3>
+        <h3 class="text-lg font-semibold mb-3">{{ t('filter.allFilters') }}</h3>
 
         <template v-for="filter in allFilters" :key="filter.id">
           <!-- Button Group Filters -->
@@ -121,10 +121,10 @@
         <div class="filter-section">
           <div class="mb-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
             <p class="text-sm text-purple-800 font-medium">
-              {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} Specific Filters Active
+              {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} {{ t('filter.specificFilters') }}
             </p>
             <p class="text-xs text-purple-600 mt-1">
-              {{ specificFilters.length }} specialized filter{{ specificFilters.length !== 1 ? 's' : '' }} available
+              {{ specificFilters.length }} {{ t('filter.specializedFilters') }}
             </p>
           </div>
         </div>
@@ -134,13 +134,13 @@
     <template #footer>
       <div class="flex flex-col w-full gap-3 mt-4">
         <Button
-          label="Apply Filters"
+          :label="t('filter.applyFilters')"
           icon="pi pi-search"
           @click="applyFilters"
           class="w-full"
         />
         <Button
-          label="Clear Filters"
+          :label="t('filter.clearFilters')"
           icon="pi pi-trash"
           class="p-button-outlined p-button-danger w-full"
           @click="clearFilters"
@@ -171,6 +171,7 @@ import {
 } from "~/config/filterHandler";
 import { shouldUseButtonGroup } from "~/config/filterLabels";
 import { useProjectProfile } from "~/composables/useProjectProfile";
+import { useTranslations } from "~/composables/i18n";
 import { useRouter } from "vue-router";
 import { 
   getAllFiltersForProject,
@@ -179,6 +180,7 @@ import {
 } from "~/config/projectFilters";
 
 const router = useRouter();
+const { t } = useTranslations();
 
 const { projects, activeProjects, activeProjectId, setActiveProject } =
   useProjectProfile();
@@ -194,7 +196,7 @@ const localSelectedProject = ref<string>(activeProjectId.value);
 // Create options for dropdown with profile names
 const projectOptions = computed(() => {
   const options = [
-    { label: "General User", value: "general" },
+    { label: t('filter.generalUser'), value: "general" },
     ...activeProjects.value.map((p) => ({
       label: p.profile?.name || p.name,
       value: p.id,

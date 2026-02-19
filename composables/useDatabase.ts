@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import axios from 'axios';
 import { useRuntimeConfig } from '#app';
+import type { ToolI18n } from '~/composables/i18n/useToolI18n';
 
 // ============================================
 // PROJECT-SPECIFIC WORKFLOW TYPES
@@ -36,6 +37,9 @@ export interface ToolItem {
   about: string; // CHANGED: was description (BlockContent), now plain text
   advantages: string[]; // NEW: required, min 3 items
   disadvantages: string[]; // NEW: required, min 2 items
+  limitations: string[]; // Technical limitations
+  /** Raw i18n arrays from Sanity – use useToolI18n() to resolve per locale. */
+  i18n?: ToolI18n | null;
   // NEW: Project-specific favorites instead of single isFavourite
   // Map of projectId -> boolean indicating if favorite for that project
   favorites?: Record<string, boolean>;
@@ -174,6 +178,8 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     about: attrs.about || "", // NEW: plain text description
     advantages: attrs.advantages || [], // NEW: array of strings
     disadvantages: attrs.disadvantages || [], // NEW: array of strings
+    limitations: attrs.limitations || [],
+    i18n: attrs.i18n || null,
     favorites: favorites, // NEW: project-specific favorites
     isFavourite: Object.keys(favorites).length > 0, // For backward compatibility
     isExperimental: !!attrs.isExperimental,
@@ -234,6 +240,17 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
   
   return result;
 };
+
+/**
+ * Module-level language display mode.
+ * 'localized' → only show tools that have content in the active locale.
+ * 'all'        → show all tools regardless of language coverage.
+ *
+ * Shared across all instances of useDatabase() so the toggle persists
+ * while navigating between the database list and tool detail pages.
+ */
+export type ToolLangFilter = 'localized' | 'all';
+const toolLangFilter = ref<ToolLangFilter>('localized');
 
 export function useDatabase() {
   const config = useRuntimeConfig();
@@ -331,5 +348,7 @@ export function useDatabase() {
     connected,
     fetchDatabaseItems,
     fetchToolById,
+    // Language filter mode – shared across instances
+    toolLangFilter,
   };
 }

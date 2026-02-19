@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
       useCdn: config.public.sanity.useCdn,
     })
 
-    // Query to get all published blog posts
+    // title and excerpt are now internationalizedArrayString / internationalizedArrayText
     const query = `*[_type == "blogPost" && !(_id in path("drafts.**"))]{
       _id,
       title,
@@ -25,26 +25,17 @@ export default defineEventHandler(async (event) => {
     const posts = await client.fetch(query)
     
     return {
-      data: posts.map(post => ({
+      data: posts.map((post: any) => ({
         id: post._id,
-        attributes: {
-          title: post.title || "Untitled",
-          slug: post.slug || "",
-          publishedAt: post.publishedAt,
-          excerpt: post.excerpt || "",
-          mainImage: {
-            data: post.mainImage ? {
-              id: 0, // Not a real ID, just for format consistency
-              attributes: {
-                url: '', // URL is constructed on the frontend
-                _sanityAsset: post.mainImage
-              }
-            } : null
-          },
-        }
+        // Pass i18n arrays through as-is; the frontend resolves them
+        title: post.title ?? [],
+        slug: post.slug ?? '',
+        publishedAt: post.publishedAt ?? null,
+        excerpt: post.excerpt ?? [],
+        mainImage: post.mainImage ?? null,
       }))
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching blog posts from Sanity:', error)
     throw createError({
       statusCode: 500,

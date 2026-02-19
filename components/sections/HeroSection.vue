@@ -28,7 +28,7 @@
     </p>
     <NuxtLink to="/database" class="hover:underline">
       <RecurringButton variant="neutral" class="mt-4">
-        Go to the database
+        {{ t('hero.cta') }}
       </RecurringButton>
     </NuxtLink>
   </section>
@@ -36,6 +36,9 @@
 
 <script setup lang="ts">
 import RecurringButton from "~/components/ui/RecurringButton.vue";
+import { useTranslations } from "~/composables/i18n";
+
+const { t } = useTranslations();
 
 const props = defineProps({
   heading: {

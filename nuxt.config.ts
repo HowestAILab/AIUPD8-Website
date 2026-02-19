@@ -670,6 +670,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // Server-side private config (not exposed to client)
     sanityToken: process.env.SANITY_TOKEN,
+    // OpenAI key – server-side ONLY, never accessible in the browser
+    openaiApiKey: process.env.OPENAI_API_KEY,
     public: {
       // Public config exposed to the client
       sanity: {
@@ -678,9 +680,12 @@ export default defineNuxtConfig({
         apiVersion: '2023-05-03',
         useCdn: false, // Disable CDN for local development
       },
-      // Use local Nuxt server API routes
+      // Base URL for server API routes. Leave empty – browser resolves /api/* relative
+      // to the current host automatically in both dev and production.
       apiBaseUrl: process.env.API_BASE_URL || '',
-      cloudflareBeaconToken: process.env.CLOUDFLARE_BEACON_TOKEN || ''
+      cloudflareBeaconToken: process.env.CLOUDFLARE_BEACON_TOKEN || '',
+      // Default locale for the application (Dutch)
+      defaultLocale: 'nl',
     }
   },
   compatibilityDate: '2025-01-30',

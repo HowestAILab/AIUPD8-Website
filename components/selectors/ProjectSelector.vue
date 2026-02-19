@@ -25,7 +25,7 @@
           </div>
           <div>
             <p class="text-xs text-gray-500 uppercase tracking-wider">
-              Viewing
+              {{ t('project.viewing') }}
             </p>
             <h3 class="font-semibold text-gray-900">
               {{ currentProjectDisplayName }}
@@ -87,7 +87,7 @@
             class="mb-3"
           >
             <span class="text-xs text-gray-500 uppercase tracking-wider mr-2"
-              >For:</span
+              >{{ t('project.for') }}:</span
             >
             <span
               v-for="audience in currentProject.targetAudience.slice(0, 3)"
@@ -100,7 +100,7 @@
               v-if="currentProject.targetAudience.length > 3"
               class="text-xs text-gray-500"
             >
-              +{{ currentProject.targetAudience.length - 3 }} more
+              +{{ currentProject.targetAudience.length - 3 }} {{ t('project.more') }}
             </span>
           </div>
 
@@ -110,7 +110,7 @@
             class="flex items-center gap-4"
           >
             <span class="text-xs text-gray-500 uppercase tracking-wider"
-              >Partners:</span
+              >{{ t('project.partners') }}:</span
             >
             <div class="flex items-center gap-3">
               <img
@@ -142,8 +142,7 @@
               />
             </svg>
             <span
-              >This project has {{ customFiltersCount }} additional filters
-              available</span
+              >{{ t('project.additionalFiltersPre') }} {{ customFiltersCount }} {{ t('project.additionalFiltersSuf') }}</span
             >
           </div>
         </div>
@@ -157,15 +156,18 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Dropdown from "primevue/dropdown";
 import { useProjectProfile } from "~/composables/useProjectProfile";
+import { useTranslations } from "~/composables/i18n";
 import { setProjectFilter } from "~/config/filterHandler";
 
 const route = useRoute();
 const router = useRouter();
+const { t } = useTranslations();
 
 const {
   projects,
-  activeProjects,
-  activeProject,
+  localizedProjects,
+  localizedActiveProject,
+  localizedActiveProjects,
   activeProjectId,
   activeFilterConfig,
   setActiveProject,
@@ -178,8 +180,8 @@ const showProjectInfo = ref(false);
 // Create options for dropdown with profile names
 const projectOptions = computed(() => {
   return [
-    { label: "General User", value: "general" },
-    ...activeProjects.value.map((project: any) => ({
+    { label: t('filter.generalUser'), value: "general" },
+    ...localizedActiveProjects.value.map((project: any) => ({
       label: project.profile?.name || project.name,
       value: project.id,
     })),
@@ -188,27 +190,27 @@ const projectOptions = computed(() => {
 
 // Get current project display name (Project Name - Profile Name)
 const currentProjectDisplayName = computed(() => {
-  if (!activeProject.value || activeProject.value.id === "general") {
-    return "General User";
+  if (!localizedActiveProject.value || localizedActiveProject.value.id === "general") {
+    return t('filter.generalUser');
   }
-  const projectName = activeProject.value.name;
-  const profileName = activeProject.value.profile?.name;
+  const projectName = localizedActiveProject.value.name;
+  const profileName = localizedActiveProject.value.profile?.name;
   return profileName ? `${projectName} - ${profileName}` : projectName;
 });
 
 // Get current project name (kept for backward compatibility)
 const currentProjectName = computed(() => {
-  return activeProject.value?.name || "All Tools";
+  return localizedActiveProject.value?.name || "All Tools";
 });
 
 // Get current project color
 const currentProjectColor = computed(() => {
-  return activeProject.value?.color || "#3B82F6";
+  return localizedActiveProject.value?.color || "#3B82F6";
 });
 
 // Get current project details
 const currentProject = computed(() => {
-  return activeProject.value;
+  return localizedActiveProject.value;
 });
 
 // Check if current project has custom filters

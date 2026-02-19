@@ -9,7 +9,7 @@
             class="inline-flex items-center text-light-page-text-dark hover:underline"
           >
             <i class="pi pi-arrow-left"></i>
-            Back to List
+            {{ t('tool.backToList') }}
           </NuxtLink>
         </div>
         <div v-if="item" class="py-2">
@@ -28,13 +28,13 @@
                   v-if="item.isFavourite"
                   class="bg-accent-extra text-light-page-text-dark text-md px-6 py-1 rounded-full cursor-default"
                 >
-                  our favourite
+                  {{ t('tool.favourite') }}
                 </div>
                 <div
                   v-if="item.lastChanged && isToolOutdated(item.lastChanged)"
                   class="bg-orange-500 text-white text-md px-6 py-1 rounded-full cursor-default"
                 >
-                  ⚠️ possibly outdated
+                  {{ t('tool.outdated') }}
                 </div>
               </div>
 
@@ -59,7 +59,7 @@
                 class="mb-6"
               >
                 <h3 class="font-semibold text-xl mb-3 text-green-700">
-                  ✓ Advantages
+                  {{ t('tool.advantages') }}
                 </h3>
                 <ul class="list-disc list-inside space-y-2">
                   <li
@@ -78,7 +78,7 @@
                 class="mb-6"
               >
                 <h3 class="font-semibold text-xl mb-3 text-red-700">
-                  ✗ Disadvantages
+                  {{ t('tool.disadvantages') }}
                 </h3>
                 <ul class="list-disc list-inside space-y-2">
                   <li
@@ -99,7 +99,7 @@
                   target="_blank"
                   class="inline-flex items-center bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 text-lg"
                 >
-                  Go to Tool Website
+                  {{ t('tool.goToWebsite') }}
                 </NuxtLink>
                 <NuxtLink
                   v-if="item.privacyPolicy"
@@ -107,7 +107,7 @@
                   target="_blank"
                   class="inline-flex items-center bg-gray-500 text-white px-6 py-3 rounded-full hover:bg-gray-600 text-lg"
                 >
-                  Privacy Policy
+                  {{ t('tool.privacyPolicy') }}
                 </NuxtLink>
               </div>
             </div>
@@ -151,13 +151,13 @@
           <!-- Specifications -->
           <div class="p-8 mb-8 bg-gray-100 rounded-3xl">
             <div>
-              <h2 class="text-lg font-semibold">Specifications</h2>
+              <h2 class="text-lg font-semibold">{{ t('tool.specifications') }}</h2>
             </div>
             <Divider />
             <div class="flex flex-col gap-4 pt-4">
               <div v-if="item.uses.length > 0">
                 <div class="font-bold text-sm text-light-page-text-light">
-                  use
+                  {{ t('tool.use') }}
                 </div>
                 <div
                   class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -178,7 +178,7 @@
 
               <div v-if="item.setups.length > 0">
                 <div class="font-bold text-sm text-light-page-text-light">
-                  setup
+                  {{ t('tool.setup') }}
                 </div>
                 <div
                   class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -199,7 +199,7 @@
 
               <div v-if="item.pricings.length > 0">
                 <div class="font-bold text-sm text-light-page-text-light">
-                  pricing
+                  {{ t('tool.pricing') }}
                 </div>
                 <div
                   class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -220,7 +220,7 @@
 
               <div v-if="item.licenses.length > 0">
                 <div class="font-bold text-sm text-light-page-text-light">
-                  license
+                  {{ t('tool.license') }}
                 </div>
                 <div
                   class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -241,7 +241,7 @@
 
               <div v-if="item.generationTimes.length > 0">
                 <div class="font-bold text-sm text-light-page-text-light">
-                  average time
+                  {{ t('tool.averageTime') }}
                 </div>
                 <div
                   class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
@@ -269,7 +269,7 @@
                 class="mt-4"
               >
                 <div class="font-bold text-sm text-light-page-text-light mb-2">
-                  Data Storage Locations
+                  {{ t('tool.dataStorage') }}
                 </div>
                 <div class="flex flex-wrap gap-2">
                   <span
@@ -285,7 +285,7 @@
               <!-- Date Added -->
               <div v-if="item.dateAdded" class="mt-4">
                 <div class="font-bold text-sm text-light-page-text-light mb-1">
-                  Date Added
+                  {{ t('tool.dateAdded') }}
                 </div>
                 <span class="text-sm text-gray-700">{{
                   formatDate(item.dateAdded)
@@ -295,7 +295,7 @@
               <!-- Last Updated -->
               <div v-if="item.lastChanged" class="mt-4">
                 <div class="font-bold text-sm text-light-page-text-light mb-1">
-                  Last Updated
+                  {{ t('tool.lastUpdated') }}
                 </div>
                 <span class="text-sm text-gray-700">{{
                   formatDate(item.lastChanged)
@@ -305,13 +305,13 @@
 
             <!-- Additional specifications for inputs, outputs, tasks, and profiles -->
             <div class="mt-8">
-              <h2 class="text-lg font-semibold mb-4">Additional Information</h2>
+              <h2 class="text-lg font-semibold mb-4">{{ t('tool.additionalInfo') }}</h2>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div v-if="item.inputs.length > 0">
                   <div
                     class="font-bold text-sm text-light-page-text-light mb-2"
                   >
-                    Input Types
+                    {{ t('tool.inputTypes') }}
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <span
@@ -328,7 +328,7 @@
                   <div
                     class="font-bold text-sm text-light-page-text-light mb-2"
                   >
-                    Output Types
+                    {{ t('tool.outputTypes') }}
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <span
@@ -345,7 +345,7 @@
                   <div
                     class="font-bold text-sm text-light-page-text-light mb-2"
                   >
-                    Supported Tasks
+                    {{ t('tool.tasks') }}
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <span
@@ -362,7 +362,7 @@
                   <div
                     class="font-bold text-sm text-light-page-text-light mb-2"
                   >
-                    Suitable For
+                    {{ t('tool.suitableFor') }}
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <span
@@ -413,6 +413,10 @@ import { useDatabase, type ToolItem } from "~/composables/useDatabase";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
 import { useProjectProfile } from "~/composables/useProjectProfile";
+import { useLocale, useTranslations } from "~/composables/i18n";
+
+const { locale } = useLocale();
+const { t } = useTranslations();
 
 const route = useRoute();
 const item = ref<ToolItem | null>(null);
@@ -427,7 +431,7 @@ const isGeneralDatabase = computed(() => activeProjectId.value === "general");
 function formatDate(dateString: string): string {
   if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleDateString(locale.value === 'nl' ? 'nl-BE' : 'en-GB', {
     year: "numeric",
     month: "long",
     day: "numeric",

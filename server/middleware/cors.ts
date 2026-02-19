@@ -1,6 +1,11 @@
 import { defineEventHandler, getRequestHeader, setResponseHeader } from 'h3';
 
-const allowedOrigins = ['https://aiupdate.be', 'https://localhost:3000','https://aiupd8frontend.netlify.app'];
+const allowedOrigins = [
+  'https://aiupdate.be',
+  'http://localhost:3000',
+  'http://localhost:3333', // Sanity Studio
+  'https://aiupd8frontend.netlify.app',
+];
 
 export default defineEventHandler((event) => {
   // Get the origin header from the request

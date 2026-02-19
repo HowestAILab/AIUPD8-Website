@@ -25,6 +25,7 @@
           <ProjectSelector />
         </div>
 
+        <!-- Filter Bar -->
         <div class="mb-6 hidden md:block">
           <FilterBar
             :toolOptions="toolOptions"
@@ -52,40 +53,36 @@
               />
             </svg>
             <span class="font-medium"
-              >{{ comparisonCount }} tool{{
-                comparisonCount !== 1 ? "s" : ""
-              }}
-              selected for comparison</span
+              >{{ comparisonCount }} tool{{ comparisonCount !== 1 ? 's' : '' }}
+              {{ t('database.comparison.suffix') }}</span
             >
           </div>
           <button
             @click="openComparisonModal"
             class="px-4 py-2 bg-primary text-white rounded-full hover:bg-primary-dark transition-colors duration-300 flex items-center"
           >
-            Compare Tools
+            {{ t('database.comparison.button') }}
           </button>
         </div>
 
         <div v-if="loading" class="text-center py-8">
-          <p class="mb-2">Loading tools...</p>
+          <p class="mb-2">{{ t('database.loading') }}</p>
         </div>
         <div v-else-if="error" class="text-center text-red-500 py-8">
           {{ error }}
         </div>
         <div v-else-if="filteredItems.length === 0" class="text-center py-8">
-          <p>
-            No tools match your current filters. Try adjusting your search
-            criteria.
-          </p>
+          <p>{{ t('database.empty') }}</p>
         </div>
         <div
           v-else
           class="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6"
         >
           <DatabaseItem
-            v-for="item in filteredItems"
+            v-for="(item, index) in filteredItems"
             :key="item.id"
             :item="item"
+            :is-first="index === 0"
             :items-in-comparison="itemsInComparison"
             @add-to-comparison="addToComparison"
             @remove-from-comparison="removeFromComparison"
@@ -118,7 +115,7 @@
         >
           {{ comparisonCount }}
         </span>
-        <span class="filter-label z-10">Compare</span>
+        <span class="filter-label z-10">{{ t('database.comparison.button') }}</span>
       </button>
 
       <!-- New Mobile Filter Button (visible only on mobile) -->
@@ -147,7 +144,7 @@
           <line x1="9" y1="8" x2="15" y2="8"></line>
           <line x1="17" y1="16" x2="23" y2="16"></line>
         </svg>
-        <span class="filter-label">Filters</span>
+        <span class="filter-label">{{ t('database.filter.label') }}</span>
       </button>
     </div>
 
@@ -165,6 +162,10 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from "vue";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
+import { useTranslations, useToolI18n } from "~/composables/i18n";
+
+const { t } = useTranslations();
+const { toolHasLocaleContent } = useToolI18n();
 import AdvancedFilter from "~/components/filters/AdvancedFilter.vue";
 import FilterBar from "~/components/filters/FilterBar.vue";
 import DatabaseItem from "~/components/items/DatabaseItem.vue";
@@ -183,7 +184,7 @@ import {
 } from "~/config/filterHandler";
 import { useProjectProfile } from "~/composables/useProjectProfile";
 
-const { items, loading, error, fetchDatabaseItems } = useDatabase();
+const { items, loading, error, fetchDatabaseItems, toolLangFilter } = useDatabase();
 const filteredItems = ref<ToolItem[]>([]);
 
 // Show/hide advanced filter sidebar
@@ -272,6 +273,11 @@ function filterItems(filters: any) {
 
   let result = [...items.value];
 
+  // Filter by language content (localized only vs. all)
+  if (toolLangFilter.value === 'localized') {
+    result = result.filter((item) => toolHasLocaleContent(item.i18n));
+  }
+
   // Filter by project-specific data (NEW)
   // Only show tools that have data for the selected project
   const { activeProjectId } = useProjectProfile();
@@ -338,6 +344,11 @@ const handleAdvancedFilters = () => {
 // Watch for changes to showOldTools toggle
 watch(showOldTools, () => {
   // Re-apply current filters when toggle changes
+  filteredItems.value = filterItems(getFilterParams());
+});
+
+// Re-filter when language mode changes
+watch(toolLangFilter, () => {
   filteredItems.value = filterItems(getFilterParams());
 });
 

@@ -17,11 +17,21 @@ export default defineEventHandler(async (event) => {
       _id,
       _createdAt,
       _updatedAt,
-      title,
-      toolsentence,
+      // i18n text fields: resolve to nl with en fallback; also return raw arrays for frontend
+      "title": coalesce(title[_key == "nl"][0].value, title[_key == "en"][0].value, title),
+      "toolsentence": coalesce(toolsentence[_key == "nl"][0].value, toolsentence[_key == "en"][0].value, toolsentence),
+      "advantages": coalesce(advantages[_key == "nl"][0].value, advantages[_key == "en"][0].value, advantages),
+      "disadvantages": coalesce(disadvantages[_key == "nl"][0].value, disadvantages[_key == "en"][0].value, disadvantages),
+      "limitations": coalesce(limitations[_key == "nl"][0].value, limitations[_key == "en"][0].value, limitations),
+      // Full i18n arrays so the frontend can resolve per active locale or show all
+      "i18n": {
+        "title": title[]{ _key, value },
+        "toolsentence": toolsentence[]{ _key, value },
+        "advantages": advantages[]{ _key, value },
+        "disadvantages": disadvantages[]{ _key, value },
+        "limitations": limitations[]{ _key, value },
+      },
       about,
-      advantages,
-      disadvantages,
       isFavourite,
       isExperimental,
       link,
@@ -42,14 +52,17 @@ export default defineEventHandler(async (event) => {
       isAiupdateFavourite,
       "aiupdateWorkflows": aiupdateWorkflows[] {
         _key,
-        name,
+        "name": coalesce(name[_key == "nl"][0].value, name[_key == "en"][0].value, name),
+        "nameI18n": name[]{ _key, value },
         "steps": steps[] {
           _key,
           stepNumber,
-          title,
-          shortDescription,
+          "title": coalesce(title[_key == "nl"][0].value, title[_key == "en"][0].value, title),
+          "titleI18n": title[]{ _key, value },
+          "shortDescription": coalesce(shortDescription[_key == "nl"][0].value, shortDescription[_key == "en"][0].value, shortDescription),
+          "shortDescriptionI18n": shortDescription[]{ _key, value },
           "image": image.asset->url,
-          imageAlt
+          "imageAlt": coalesce(imageAlt[_key == "nl"][0].value, imageAlt[_key == "en"][0].value, imageAlt)
         }
       },
       isPsyaidFavourite,
@@ -67,14 +80,17 @@ export default defineEventHandler(async (event) => {
       culturalAdaptabilities,
       "psyaidWorkflows": psyaidWorkflows[] {
         _key,
-        name,
+        "name": coalesce(name[_key == "nl"][0].value, name[_key == "en"][0].value, name),
+        "nameI18n": name[]{ _key, value },
         "steps": steps[] {
           _key,
           stepNumber,
-          title,
-          shortDescription,
+          "title": coalesce(title[_key == "nl"][0].value, title[_key == "en"][0].value, title),
+          "titleI18n": title[]{ _key, value },
+          "shortDescription": coalesce(shortDescription[_key == "nl"][0].value, shortDescription[_key == "en"][0].value, shortDescription),
+          "shortDescriptionI18n": shortDescription[]{ _key, value },
           "image": image.asset->url,
-          imageAlt
+          "imageAlt": coalesce(imageAlt[_key == "nl"][0].value, imageAlt[_key == "en"][0].value, imageAlt)
         }
       }
     }`
@@ -92,6 +108,9 @@ export default defineEventHandler(async (event) => {
           about: tool.about || "",
           advantages: tool.advantages || [],
           disadvantages: tool.disadvantages || [],
+          limitations: tool.limitations || [],
+          // i18n raw arrays for locale-aware resolution on the frontend
+          i18n: tool.i18n || null,
           isFavourite: !!tool.isFavourite,
           isExperimental: !!tool.isExperimental,
           createdAt: tool._createdAt || "",

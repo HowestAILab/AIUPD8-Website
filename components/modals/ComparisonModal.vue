@@ -7,15 +7,14 @@
   >
     <template #header>
       <div class="flex justify-between items-center w-full">
-        <h2 class="font-semibold text-xl">Comparison</h2>
+        <h2 class="font-semibold text-xl">{{ t('modal.comparison') }}</h2>
       </div>
     </template>
     <div>
       <div v-if="comparisonItems.length === 0" class="text-center py-8">
-        <p>No tools selected for comparison.</p>
+        <p>{{ t('modal.noComparison') }}</p>
         <p class="text-sm text-gray-500 mt-2">
-          Add tools to compare by checking "add to comparison" in the tool
-          details.
+          {{ t('modal.addComparisonHint') }}
         </p>
       </div>
 
@@ -90,7 +89,7 @@
                   v-if="item.isFavourite"
                   class="absolute top-4 right-4 bg-red-200 text-black text-xs px-4 py-1 rounded-full"
                 >
-                  our favourite
+                  {{ t('tool.favourite') }}
                 </div>
                 <h2 class="text-3xl font-semibold text-black mb-4">
                   {{ item.title }}
@@ -105,7 +104,7 @@
               <!-- Input/Output section -->
               <div class="px-6 pb-4 grid grid-cols-2 gap-4">
                 <div v-if="item.inputs && item.inputs.length > 0">
-                  <div class="mb-2 font-medium text-sm">input type</div>
+                  <div class="mb-2 font-medium text-sm">{{ t('tool.inputType') }}</div>
                   <div class="flex flex-wrap gap-2">
                     <span
                       v-for="input in item.inputs"
@@ -117,7 +116,7 @@
                   </div>
                 </div>
                 <div v-if="item.tasks && item.tasks.length > 0">
-                  <div class="mb-2 font-medium text-sm">specific task</div>
+                  <div class="mb-2 font-medium text-sm">{{ t('tool.specificTask') }}</div>
                   <div class="flex flex-wrap gap-2">
                     <span
                       v-for="task in item.tasks"
@@ -132,7 +131,7 @@
 
               <div class="px-6 pb-6 grid grid-cols-2 gap-4">
                 <div v-if="item.outputs && item.outputs.length > 0">
-                  <div class="mb-2 font-medium text-sm">output type</div>
+                  <div class="mb-2 font-medium text-sm">{{ t('tool.outputType') }}</div>
                   <div class="flex flex-wrap gap-2">
                     <span
                       v-for="output in item.outputs"
@@ -144,7 +143,7 @@
                   </div>
                 </div>
                 <div v-if="item.profiles && item.profiles.length > 0">
-                  <div class="mb-2 font-medium text-sm">profile</div>
+                  <div class="mb-2 font-medium text-sm">{{ t('tool.profile') }}</div>
                   <div class="flex flex-wrap gap-2">
                     <span
                       v-for="profile in item.profiles"
@@ -169,11 +168,11 @@
 
             <!-- Specifications section -->
             <div class="rounded-3xl bg-white p-6">
-              <h3 class="text-lg font-medium mb-4">Specifications</h3>
+              <h3 class="text-lg font-medium mb-4">{{ t('tool.specifications') }}</h3>
 
               <!-- Use section remains the same -->
               <div v-if="item.uses && item.uses.length > 0" class="mb-4">
-                <div class="font-medium text-sm mb-2">use</div>
+                <div class="font-medium text-sm mb-2">{{ t('tool.use') }}</div>
                 <div
                   class="flex bg-gray-100 rounded-full w-full border border-gray-200"
                 >
@@ -192,7 +191,7 @@
 
               <!-- Setup -->
               <div v-if="item.setups && item.setups.length > 0" class="mb-4">
-                <div class="font-medium text-sm mb-2">setup</div>
+                <div class="font-medium text-sm mb-2">{{ t('tool.setup') }}</div>
                 <div
                   class="flex bg-gray-100 rounded-full w-full border border-gray-200"
                 >
@@ -214,7 +213,7 @@
                 v-if="item.pricings && item.pricings.length > 0"
                 class="mb-4"
               >
-                <div class="font-medium text-sm mb-2">pricing</div>
+                <div class="font-medium text-sm mb-2">{{ t('tool.pricing') }}</div>
                 <div
                   class="flex flex-wrap bg-gray-100 rounded-full w-full border border-gray-200"
                 >
@@ -237,7 +236,7 @@
                 v-if="item.licenses && item.licenses.length > 0"
                 class="mb-4"
               >
-                <div class="font-medium text-sm mb-2">license</div>
+                <div class="font-medium text-sm mb-2">{{ t('tool.license') }}</div>
                 <div
                   class="flex bg-gray-100 rounded-full w-full border border-gray-200"
                 >
@@ -261,7 +260,7 @@
                 class="mb-4"
               >
                 <div class="font-medium text-sm mb-2">
-                  average time to generate
+                  {{ t('tool.averageTimeGenerate') }}
                 </div>
                 <div
                   class="flex bg-gray-100 rounded-full w-full border border-gray-200"
@@ -286,13 +285,13 @@
                   @click="navigateToTool(item.title)"
                   class="bg-black text-white text-sm font-semibold rounded-full px-4 py-1"
                 >
-                  View Details
+                  {{ t('modal.viewDetails') }}
                 </button>
                 <button
                   @click="removeItem(index)"
                   class="px-4 py-2 bg-red-100 text-red-500 rounded-full text-sm font-medium hover:bg-red-200 transition-colors"
                 >
-                  Remove
+                  {{ t('modal.remove') }}
                 </button>
               </div>
             </div>
@@ -313,6 +312,9 @@ import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 import { useRouter } from "vue-router";
+import { useTranslations } from "~/composables/i18n";
+
+const { t } = useTranslations();
 
 const visible = ref(false);
 const comparisonItems = ref<ToolItem[]>([]);
