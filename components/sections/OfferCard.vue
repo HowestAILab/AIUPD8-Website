@@ -7,10 +7,7 @@
       </p>
     </div>
 
-    <!-- Content not available notice -->
-    <ContentNotAvailable v-if="!hasBody" :locale="locale" kind="pagina" />
-
-    <div v-else class="text-gray-700">
+    <div v-if="hasBody" class="text-gray-700">
       <SanityPortableText :blocks="localBody" />
     </div>
 
@@ -34,7 +31,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import SanityPortableText from "~/components/content/SanityPortableText.vue";
-import ContentNotAvailable from "~/components/ui/ContentNotAvailable.vue";
 import { useMedia } from "~/composables/useMedia";
 import { useLocale, getI18n } from "~/composables/i18n";
 import type { OfferItem } from "~/composables/useOffer";
@@ -55,7 +51,6 @@ const localHeading = computed(() => getI18n(props.heading, locale.value) ?? '')
 const localSubtitle = computed(() => getI18n(props.subtitle, locale.value) ?? '')
 
 // Use getI18n (with DEFAULT_LOCALE fallback) so Dutch body shows even when locale=en.
-// ContentNotAvailable is only shown when there is truly no body content in any language.
 const localBody = computed(() => getI18n(props.blocks, locale.value) ?? [])
 const hasBody = computed(() => Array.isArray(localBody.value) && localBody.value.length > 0)
 
