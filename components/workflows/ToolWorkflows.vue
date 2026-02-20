@@ -265,12 +265,12 @@ const projectsWithWorkflows = computed<ProjectWithWorkflows[]>(() => {
     });
   }
 
-  // PSYaid project
+  // PSY-AID project
   if (props.psyaidWorkflows && props.psyaidWorkflows.length > 0) {
     const config = getProjectConfig("psyaid");
     projectList.push({
       id: "psyaid",
-      name: "PSYaid",
+      name: "PSY-AID",
       profileName: config?.profile.name || "Psychoeducational Professional",
       color: getProjectColor("psyaid"),
       workflows: props.psyaidWorkflows,

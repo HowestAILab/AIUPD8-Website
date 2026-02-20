@@ -66,18 +66,11 @@ export default defineEventHandler(async (event) => {
         }
       },
       isPsyaidFavourite,
-      psychoEducationalProfiles,
-      therapyTypes,
       dataDeletionCapabilities,
-      euAccessibilityActs,
-      aiTransparencies,
-      wcagCompliances,
-      designQualities,
+      suitabilityRobustnesses,
       onboardingEases,
       offlineFunctionalities,
-      readingLevels,
-      languageSupports,
-      culturalAdaptabilities,
+      gdprVerklaringUrl,
       "psyaidWorkflows": psyaidWorkflows[] {
         _key,
         "name": coalesce(name[_key == "nl"][0].value, name[_key == "en"][0].value, name),
@@ -164,19 +157,11 @@ export default defineEventHandler(async (event) => {
           link: tool.link || "",
           youtubeLink: tool.youtubeLink || "",
           aiupdateWorkflows: tool.aiupdateWorkflows || [],
-          // v3.0: PsyAid filters are now string arrays - pass through and filter nulls
-          psychoEducationalProfiles: (tool.psychoEducationalProfiles || []).filter((v: any) => v !== null),
-          therapyTypes: (tool.therapyTypes || []).filter((v: any) => v !== null),
+          // v3.0: PSY-AID filters are now string arrays - pass through and filter nulls
           dataDeletionCapabilities: (tool.dataDeletionCapabilities || []).filter((v: any) => v !== null),
-          euAccessibilityActs: (tool.euAccessibilityActs || []).filter((v: any) => v !== null),
-          aiTransparencies: (tool.aiTransparencies || []).filter((v: any) => v !== null),
-          wcagCompliances: (tool.wcagCompliances || []).filter((v: any) => v !== null),
-          designQualities: (tool.designQualities || []).filter((v: any) => v !== null),
+          suitabilityRobustnesses: (tool.suitabilityRobustnesses || []).filter((v: any) => v !== null),
           onboardingEases: (tool.onboardingEases || []).filter((v: any) => v !== null),
           offlineFunctionalities: (tool.offlineFunctionalities || []).filter((v: any) => v !== null),
-          readingLevels: (tool.readingLevels || []).filter((v: any) => v !== null),
-          languageSupports: (tool.languageSupports || []).filter((v: any) => v !== null),
-          culturalAdaptabilities: (tool.culturalAdaptabilities || []).filter((v: any) => v !== null),
           psyaidWorkflows: tool.psyaidWorkflows || []
         }
       }))

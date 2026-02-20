@@ -74,14 +74,17 @@
 
         <div class="mb-4 p-3 rounded-lg border" :style="badgeStyles">
           <p class="text-sm font-medium">
-            {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} {{ t('filter.specificFilters') }}
+            {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PSY-AID' : 'Project' }} {{ t('filter.specificFilters') }}
           </p>
         </div>
 
         <template v-for="filter in specificFilters" :key="filter.id">
           <!-- Button Group Filters -->
           <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-6">
-            <h3 class="text-lg font-bold mb-2">{{ filter.title }}</h3>
+            <h3 class="text-lg font-bold mb-2 flex items-center gap-1">
+              {{ filter.title }}
+              <InfoBubble v-if="filter.description" :text="filter.description" />
+            </h3>
             <div class="flex w-full overflow-x-auto">
               <ButtonGroup
                 :modelValue="getFilterStateValue(filter)"
@@ -96,13 +99,9 @@
 
           <!-- Multi-Select Filters -->
           <div v-else class="mb-6">
-            <h3 class="text-lg font-bold mb-2">
+            <h3 class="text-lg font-bold mb-2 flex items-center gap-1">
               {{ filter.title }}
-              <i 
-                v-if="filter.description" 
-                class="pi pi-info-circle text-sm text-gray-500 ml-1 cursor-help" 
-                :title="filter.description"
-              ></i>
+              <InfoBubble v-if="filter.description" :text="filter.description" />
             </h3>
             <MultiSelect
               filter
@@ -137,6 +136,7 @@
 import { onMounted, computed, onBeforeUnmount, watch } from "vue";
 import MultiSelect from "primevue/multiselect";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
+import InfoBubble from "~/components/ui/InfoBubble.vue";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
 import { useTranslations } from "~/composables/i18n";
 import {

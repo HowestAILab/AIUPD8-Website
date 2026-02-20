@@ -147,49 +147,22 @@ export const filterLabels = {
 
   // PsyAid Filters (Dutch labels)
 
-  // Platforms
-  platforms: {
-    'web': 'Web',
-    'ios': 'iOS',
-    'android': 'Android',
-    'offline': 'Offline'
-  } as Record<string, string>,
 
-  // Data Deletion Capabilities
+  // Data-verwijdering
   dataDeletionCapabilities: {
     'ja': 'Ja',
     'deels': 'Deels',
     'nee': 'Nee'
   } as Record<string, string>,
 
-  // EU Accessibility Acts
-  euAccessibilityActs: {
-    'ja': 'Ja',
-    'niet-van-toepassing': 'Niet van toepassing'
-  } as Record<string, string>,
-
-  // AI Transparency
-  aiTransparencies: {
+  // Geschiktheid / Robuustheid
+  suitabilityRobustnesses: {
     'volledig-uitgelegd': 'Volledig uitgelegd',
     'versimpeld': 'Versimpeld',
     'niet-transparant': 'Niet transparant'
   } as Record<string, string>,
 
-  // WCAG Compliance
-  wcagCompliances: {
-    'wcag-2.1-aa': 'WCAG 2.1 AA',
-    'wcag-2.1-a': 'WCAG 2.1 A',
-    'geen': 'Geen'
-  } as Record<string, string>,
-
-  // Design Quality
-  designQualities: {
-    'ja': 'Ja',
-    'deels': 'Deels',
-    'nee': 'Nee'
-  } as Record<string, string>,
-
-  // Onboarding Ease
+  // Onboarding
   onboardingEases: {
     'ja': 'Ja',
     'deels': 'Deels',
@@ -202,64 +175,6 @@ export const filterLabels = {
     'beperkt': 'Beperkt',
     'niet': 'Niet'
   } as Record<string, string>,
-
-  // Reading Levels
-  readingLevels: {
-    'a1': 'A1',
-    'a2': 'A2',
-    'b1': 'B1',
-    'b2': 'B2',
-    'c1': 'C1',
-    'c2': 'C2'
-  } as Record<string, string>,
-
-  // Language Support
-  languageSupports: {
-    'nederlands': 'Nederlands',
-    'engels': 'Engels',
-    'meerdere-talen': 'Meerdere talen'
-  } as Record<string, string>,
-
-  // Cultural Adaptability
-  culturalAdaptabilities: {
-    'ja': 'Ja',
-    'beperkt': 'Beperkt',
-    'nee': 'Nee'
-  } as Record<string, string>,
-
-  // Psycho-Educational Profiles
-  psychoEducationalProfiles: {
-    'anxiety': 'Anxiety',
-    'depression': 'Depression',
-    'stress': 'Stress',
-    'ptsd': 'PTSD',
-    'adhd': 'ADHD',
-    'autism': 'Autism',
-    'bipolar': 'Bipolar',
-    'eating-disorders': 'Eating Disorders',
-    'addiction': 'Addiction',
-    'sleep-disorders': 'Sleep Disorders',
-    'general-mental-health': 'General Mental Health',
-    'wellbeing': 'Wellbeing',
-    'mindfulness': 'Mindfulness',
-    'cognitive-behavioral': 'Cognitive Behavioral'
-  } as Record<string, string>,
-
-  // Therapy Types
-  therapyTypes: {
-    'cbt': 'CBT',
-    'act': 'ACT',
-    'dbt': 'DBT',
-    'psychodynamic': 'Psychodynamic',
-    'mindfulness': 'Mindfulness',
-    'emdr': 'EMDR',
-    'solution-focused': 'Solution-Focused',
-    'art-therapy': 'Art Therapy',
-    'music-therapy': 'Music Therapy',
-    'group-therapy': 'Group Therapy',
-    'self-help': 'Self-Help',
-    'psychoeducation': 'Psychoeducation'
-  } as Record<string, string>
 };
 
 /**

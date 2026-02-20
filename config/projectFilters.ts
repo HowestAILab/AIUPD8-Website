@@ -159,114 +159,43 @@ export const projectFilterConfigs: ProjectFilterConfig[] = [
     favouriteField: 'isPsyaidFavourite',
     workflowsField: 'psyaidWorkflows',
     generalFilters: generalFilters,
+    // NOTE: Data-opslaglocatie (dataStorageLocations) is already in generalFilters above.
     specificFilters: [
       {
-        id: 'psychoEducationalProfiles',
-        title: 'Psycho Educational Profile',
-        fieldName: 'psychoEducationalProfiles',
-        filterType: 'psychoEducationalProfile',
-        category: 'project-specific',
-        description: 'Educational profiles this tool is suitable for',
-        apiEndpoint: 'psychoEducationalProfile'
-      },
-      {
-        id: 'therapyTypes',
-        title: 'Therapy Type',
-        fieldName: 'therapyTypes',
-        filterType: 'therapyType',
-        category: 'project-specific',
-        description: 'Types of therapy this tool can support',
-        apiEndpoint: 'therapyType'
-      },
-      {
         id: 'dataDeletionCapabilities',
-        title: 'Data Deletion Capability',
+        title: 'Data-verwijdering',
         fieldName: 'dataDeletionCapabilities',
         filterType: 'dataDeletionCapability',
         category: 'project-specific',
-        description: 'Can users delete their data?',
+        description: 'Kan de gebruiker zijn/haar eigen gegevens volledig verwijderen uit het systeem?',
         apiEndpoint: 'dataDeletionCapability'
       },
       {
-        id: 'euAccessibilityActs',
-        title: 'EU Accessibility Act',
-        fieldName: 'euAccessibilityActs',
-        filterType: 'euAccessibilityAct',
+        id: 'suitabilityRobustnesses',
+        title: 'Geschiktheid / Robuustheid',
+        fieldName: 'suitabilityRobustnesses',
+        filterType: 'suitabilityRobustness',
         category: 'project-specific',
-        description: 'EU Accessibility Act compliance',
-        apiEndpoint: 'euAccessibilityAct'
-      },
-      {
-        id: 'aiTransparencies',
-        title: 'AI Transparency',
-        fieldName: 'aiTransparencies',
-        filterType: 'aiTransparency',
-        category: 'project-specific',
-        description: 'Clarity about AI operation',
-        apiEndpoint: 'aiTransparency'
-      },
-      {
-        id: 'wcagCompliances',
-        title: 'WCAG Compliance',
-        fieldName: 'wcagCompliances',
-        filterType: 'wcagCompliance',
-        category: 'project-specific',
-        description: 'WCAG accessibility compliance level',
-        apiEndpoint: 'wcagCompliance'
-      },
-      {
-        id: 'designQualities',
-        title: 'Design Quality',
-        fieldName: 'designQualities',
-        filterType: 'designQuality',
-        category: 'project-specific',
-        description: 'UI/UX quality assessment',
-        apiEndpoint: 'designQuality'
+        description: 'Mate waarin de tool geschikt is om informatie en psycho-educatie op maat aan te passen of te creëren',
+        apiEndpoint: 'suitabilityRobustness'
       },
       {
         id: 'onboardingEases',
-        title: 'Onboarding Ease',
+        title: 'Onboarding',
         fieldName: 'onboardingEases',
         filterType: 'onboardingEase',
         category: 'project-specific',
-        description: 'How easy it is to get started',
+        description: 'Hoe eenvoudig is het om een account aan te maken en in te loggen? Onboarding verwijst naar het proces waarmee een nieuwe gebruiker snel en vlot aan de slag kan met de tool.',
         apiEndpoint: 'onboardingEase'
       },
       {
         id: 'offlineFunctionalities',
-        title: 'Offline Functionality',
+        title: 'Offline functionaliteit',
         fieldName: 'offlineFunctionalities',
         filterType: 'offlineFunctionality',
         category: 'project-specific',
-        description: 'Offline usage capabilities',
+        description: 'In welke mate is de tool bruikbaar zonder actieve internetverbinding?',
         apiEndpoint: 'offlineFunctionality'
-      },
-      {
-        id: 'readingLevels',
-        title: 'Reading Level',
-        fieldName: 'readingLevels',
-        filterType: 'readingLevel',
-        category: 'project-specific',
-        description: 'CEFR reading level of output',
-        apiEndpoint: 'readingLevel'
-      },
-      {
-        id: 'languageSupports',
-        title: 'Language Support',
-        fieldName: 'languageSupports',
-        filterType: 'languageSupport',
-        category: 'project-specific',
-        description: 'Available interface languages',
-        apiEndpoint: 'languageSupport'
-      },
-      {
-        id: 'culturalAdaptabilities',
-        title: 'Cultural Adaptability',
-        fieldName: 'culturalAdaptabilities',
-        filterType: 'culturalAdaptability',
-        category: 'project-specific',
-        description: 'Cultural context adaptation',
-        apiEndpoint: 'culturalAdaptability'
       }
     ]
   }

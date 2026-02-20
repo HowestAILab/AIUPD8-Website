@@ -87,7 +87,7 @@ export const projectConfigs: ProjectConfig[] = [
   },
   {
     id: 'psyaid',
-    name: 'PSYaid',
+    name: 'PSY-AID',
     slug: 'psyaid',
     color: '#EC4899', // pink-500
     profile: {
@@ -95,7 +95,7 @@ export const projectConfigs: ProjectConfig[] = [
       description: 'For psychologists, educators, and mental health professionals',
     },
     description:
-      'PSYaid is a specialized project focused on psychoeducational tools and therapeutic resources. It provides a curated selection of AI tools specifically designed for mental health professionals, psychologists, and educational practitioners.',
+      'PSY-AID is a specialized project focused on psychoeducational tools and therapeutic resources. It provides a curated selection of AI tools specifically designed for mental health professionals, psychologists, and educational practitioners.',
     shortDescription: 'Psychoeducational tools and therapeutic resources',
     targetAudience: [
       'Psychologists',
@@ -104,7 +104,10 @@ export const projectConfigs: ProjectConfig[] = [
       'Educators',
       'Therapists',
     ],
-    logos: [],
+    logos: [
+      { src: '/images/artevelde-logo.png', alt: 'Artevelde Hogeschool' },
+      { src: '/images/AI-Lab.png', alt: 'AI Lab' },
+    ],
     image: '/images/psyaid-project.jpg',
     isActive: true,
   },

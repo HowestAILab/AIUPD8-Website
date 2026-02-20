@@ -77,7 +77,13 @@
         <template v-for="filter in allFilters" :key="filter.id">
           <!-- Button Group Filters -->
           <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-4">
-            <h4 class="font-medium mb-1">{{ filter.title }}</h4>
+            <h4 class="font-medium mb-1 flex items-center gap-1">
+              {{ filter.title }}
+              <InfoBubble
+                v-if="filter.category === 'project-specific' && filter.description"
+                :text="filter.description"
+              />
+            </h4>
             <div class="ml-1 w-[90%]">
               <ButtonGroup
                 :modelValue="getFilterStateValue(filter)"
@@ -92,13 +98,9 @@
 
           <!-- Multi-Select Filters -->
           <div v-else class="mb-4">
-            <h4 class="font-medium mb-1">
+            <h4 class="font-medium mb-1 flex items-center gap-1">
               {{ filter.title }}
-              <i 
-                v-if="filter.description" 
-                class="pi pi-info-circle text-xs text-gray-500 ml-1 cursor-help" 
-                :title="filter.description"
-              ></i>
+              <InfoBubble v-if="filter.description" :text="filter.description" />
             </h4>
             <MultiSelect
               filter
@@ -121,7 +123,7 @@
         <div class="filter-section">
           <div class="mb-3 p-3 bg-purple-50 rounded-lg border border-purple-200">
             <p class="text-sm text-purple-800 font-medium">
-              {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PsyAid' : 'Project' }} {{ t('filter.specificFilters') }}
+              {{ activeProjectId === 'aiupd8' ? 'AI-UPD8' : activeProjectId === 'psyaid' ? 'PSY-AID' : 'Project' }} {{ t('filter.specificFilters') }}
             </p>
             <p class="text-xs text-purple-600 mt-1">
               {{ specificFilters.length }} {{ t('filter.specializedFilters') }}
@@ -158,6 +160,7 @@ import Dropdown from "primevue/dropdown";
 import MultiSelect from "primevue/multiselect";
 import Divider from "primevue/divider";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
+import InfoBubble from "~/components/ui/InfoBubble.vue";
 import {
   filterState,
   filterOptions,

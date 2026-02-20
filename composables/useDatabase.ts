@@ -55,19 +55,11 @@ export interface ToolItem {
   tasks: string[];
   profiles: string[];
   dataStorageLocations: string[]; // NEW: required filter
-  // PsyAid project-specific filters
-  psychoEducationalProfiles: string[]; // NEW: PsyAid filter
-  therapyTypes: string[]; // NEW: PsyAid filter
-  dataDeletionCapabilities: string[]; // NEW: PsyAid filter
-  euAccessibilityActs: string[]; // NEW: PsyAid filter
-  aiTransparencies: string[]; // NEW: PsyAid filter
-  wcagCompliances: string[]; // NEW: PsyAid filter
-  designQualities: string[]; // NEW: PsyAid filter
-  onboardingEases: string[]; // NEW: PsyAid filter
-  offlineFunctionalities: string[]; // NEW: PsyAid filter
-  readingLevels: string[]; // NEW: PsyAid filter
-  languageSupports: string[]; // NEW: PsyAid filter
-  culturalAdaptabilities: string[]; // NEW: PsyAid filter
+  // PSY-AID project-specific filters
+  dataDeletionCapabilities: string[]; // Data-verwijdering
+  suitabilityRobustnesses: string[]; // Geschiktheid / Robuustheid
+  onboardingEases: string[]; // Onboarding
+  offlineFunctionalities: string[]; // Offline functionaliteit
   Image: any;
   showcaseImages: any[];
   link: string;
@@ -193,19 +185,11 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     tasks: extractRelationNames(attrs.tasks),
     profiles: extractRelationNames(attrs.profiles),
     dataStorageLocations: extractRelationNames(attrs.dataStorageLocations), // NEW: required filter
-    // PsyAid project-specific filters
-    psychoEducationalProfiles: extractRelationNames(attrs.psychoEducationalProfiles),
-    therapyTypes: extractRelationNames(attrs.therapyTypes),
+    // PSY-AID project-specific filters
     dataDeletionCapabilities: extractRelationNames(attrs.dataDeletionCapabilities),
-    euAccessibilityActs: extractRelationNames(attrs.euAccessibilityActs),
-    aiTransparencies: extractRelationNames(attrs.aiTransparencies),
-    wcagCompliances: extractRelationNames(attrs.wcagCompliances),
-    designQualities: extractRelationNames(attrs.designQualities),
+    suitabilityRobustnesses: extractRelationNames(attrs.suitabilityRobustnesses),
     onboardingEases: extractRelationNames(attrs.onboardingEases),
     offlineFunctionalities: extractRelationNames(attrs.offlineFunctionalities),
-    readingLevels: extractRelationNames(attrs.readingLevels),
-    languageSupports: extractRelationNames(attrs.languageSupports),
-    culturalAdaptabilities: extractRelationNames(attrs.culturalAdaptabilities),
     // For backward compatibility
     use: undefined,
     setup: undefined,

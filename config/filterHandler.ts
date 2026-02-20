@@ -27,19 +27,11 @@ export interface FilterState {
   profiles: string[];
   tasks: string[];
   dataStorageLocations: string[];
-  // PsyAid-specific filters
-  psychoEducationalProfiles: string[];
-  therapyTypes: string[];
+  // PSY-AID specific filters
   dataDeletionCapabilities: string[];
-  euAccessibilityActs: string[];
-  aiTransparencies: string[];
-  wcagCompliances: string[];
-  designQualities: string[];
+  suitabilityRobustnesses: string[];
   onboardingEases: string[];
   offlineFunctionalities: string[];
-  readingLevels: string[];
-  languageSupports: string[];
-  culturalAdaptabilities: string[];
 }
 
 // Create a reactive filter state with all possible filters (v3.0 - string arrays)
@@ -55,19 +47,11 @@ export const filterState = reactive<FilterState>({
   profiles: [],
   tasks: [],
   dataStorageLocations: [],
-  // PsyAid-specific filters
-  psychoEducationalProfiles: [],
-  therapyTypes: [],
+  // PSY-AID specific filters
   dataDeletionCapabilities: [],
-  euAccessibilityActs: [],
-  aiTransparencies: [],
-  wcagCompliances: [],
-  designQualities: [],
+  suitabilityRobustnesses: [],
   onboardingEases: [],
   offlineFunctionalities: [],
-  readingLevels: [],
-  languageSupports: [],
-  culturalAdaptabilities: [],
 });
 
 // Loading state for taxonomy data
@@ -89,19 +73,11 @@ export const filterOptions = reactive({
   taskOptions: [] as FilterOption[],
   dataStorageLocationOptions: [] as FilterOption[],
   toolOptions: [] as { name: string }[],
-  // PsyAid-specific filter options
-  psychoEducationalProfileOptions: [] as FilterOption[],
-  therapyTypeOptions: [] as FilterOption[],
+  // PSY-AID specific filter options
   dataDeletionCapabilityOptions: [] as FilterOption[],
-  euAccessibilityActOptions: [] as FilterOption[],
-  aiTransparencyOptions: [] as FilterOption[],
-  wcagComplianceOptions: [] as FilterOption[],
-  designQualityOptions: [] as FilterOption[],
+  suitabilityRobustnessOptions: [] as FilterOption[],
   onboardingEaseOptions: [] as FilterOption[],
   offlineFunctionalityOptions: [] as FilterOption[],
-  readingLevelOptions: [] as FilterOption[],
-  languageSupportOptions: [] as FilterOption[],
-  culturalAdaptabilityOptions: [] as FilterOption[],
 });
 
 // Helper function to reorder filter options based on provided order
@@ -132,19 +108,11 @@ export function clearAllFilters() {
   filterState.profiles = [];
   filterState.tasks = [];
   filterState.dataStorageLocations = [];
-  // PsyAid filters
-  filterState.psychoEducationalProfiles = [];
-  filterState.therapyTypes = [];
+  // PSY-AID filters
   filterState.dataDeletionCapabilities = [];
-  filterState.euAccessibilityActs = [];
-  filterState.aiTransparencies = [];
-  filterState.wcagCompliances = [];
-  filterState.designQualities = [];
+  filterState.suitabilityRobustnesses = [];
   filterState.onboardingEases = [];
   filterState.offlineFunctionalities = [];
-  filterState.readingLevels = [];
-  filterState.languageSupports = [];
-  filterState.culturalAdaptabilities = [];
 }
 
 // Function to add a filter item (v3.0 - now working with strings)
@@ -186,19 +154,11 @@ export function getFilterParams() {
     profiles: filterState.profiles,
     tasks: filterState.tasks,
     dataStorageLocations: filterState.dataStorageLocations,
-    // PsyAid filters
-    psychoEducationalProfiles: filterState.psychoEducationalProfiles,
-    therapyTypes: filterState.therapyTypes,
+    // PSY-AID filters
     dataDeletionCapabilities: filterState.dataDeletionCapabilities,
-    euAccessibilityActs: filterState.euAccessibilityActs,
-    aiTransparencies: filterState.aiTransparencies,
-    wcagCompliances: filterState.wcagCompliances,
-    designQualities: filterState.designQualities,
+    suitabilityRobustnesses: filterState.suitabilityRobustnesses,
     onboardingEases: filterState.onboardingEases,
     offlineFunctionalities: filterState.offlineFunctionalities,
-    readingLevels: filterState.readingLevels,
-    languageSupports: filterState.languageSupports,
-    culturalAdaptabilities: filterState.culturalAdaptabilities,
   };
 }
 
@@ -288,18 +248,10 @@ export function getFilterOptionsKey(filterId: string): string {
     'generationTimes': 'generationTimeOptions',
     'tasks': 'taskOptions',
     'profiles': 'profileOptions',
-    'psychoEducationalProfiles': 'psychoEducationalProfileOptions',
-    'therapyTypes': 'therapyTypeOptions',
     'dataDeletionCapabilities': 'dataDeletionCapabilityOptions',
-    'euAccessibilityActs': 'euAccessibilityActOptions',
-    'aiTransparencies': 'aiTransparencyOptions',
-    'wcagCompliances': 'wcagComplianceOptions',
-    'designQualities': 'designQualityOptions',
+    'suitabilityRobustnesses': 'suitabilityRobustnessOptions',
     'onboardingEases': 'onboardingEaseOptions',
     'offlineFunctionalities': 'offlineFunctionalityOptions',
-    'readingLevels': 'readingLevelOptions',
-    'languageSupports': 'languageSupportOptions',
-    'culturalAdaptabilities': 'culturalAdaptabilityOptions',
   };
   
   return mapping[filterId] || `${filterId}Options`;
@@ -344,17 +296,9 @@ export function initializeFilterOptions() {
   filterOptions.taskOptions = getFilterOptions('tasks');
   filterOptions.profileOptions = getFilterOptions('profiles');
   
-  // PsyAid filters
-  filterOptions.psychoEducationalProfileOptions = getFilterOptions('psychoEducationalProfiles');
-  filterOptions.therapyTypeOptions = getFilterOptions('therapyTypes');
+  // PSY-AID filters
   filterOptions.dataDeletionCapabilityOptions = getFilterOptions('dataDeletionCapabilities');
-  filterOptions.euAccessibilityActOptions = getFilterOptions('euAccessibilityActs');
-  filterOptions.aiTransparencyOptions = getFilterOptions('aiTransparencies');
-  filterOptions.wcagComplianceOptions = getFilterOptions('wcagCompliances');
-  filterOptions.designQualityOptions = getFilterOptions('designQualities');
+  filterOptions.suitabilityRobustnessOptions = getFilterOptions('suitabilityRobustnesses');
   filterOptions.onboardingEaseOptions = getFilterOptions('onboardingEases');
   filterOptions.offlineFunctionalityOptions = getFilterOptions('offlineFunctionalities');
-  filterOptions.readingLevelOptions = getFilterOptions('readingLevels');
-  filterOptions.languageSupportOptions = getFilterOptions('languageSupports');
-  filterOptions.culturalAdaptabilityOptions = getFilterOptions('culturalAdaptabilities');
 }

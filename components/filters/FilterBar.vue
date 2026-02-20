@@ -69,7 +69,7 @@
           />
 
           <!-- Locale toggle: globe = localized only, globe-strikethrough = all languages -->
-          <div class="relative" ref="localeHintRef">
+          <div class="relative">
             <button
               type="button"
               :aria-label="toolLangFilter === 'localized' ? t('database.localizedOnly') : t('database.allLanguages')"
@@ -92,30 +92,10 @@
               </svg>
             </button>
 
-            <!-- Info bubble -->
-            <button
-              type="button"
-              class="absolute -top-1 -right-1 flex items-center justify-center w-3.5 h-3.5 rounded-full bg-gray-200 text-gray-500 text-[8px] font-bold leading-none hover:bg-gray-300 transition-colors"
-              @click.stop="showLocaleHint = !showLocaleHint"
-              aria-label="Info"
-            >i</button>
-
-            <!-- Tooltip -->
-            <Transition
-              enter-active-class="transition ease-out duration-100"
-              enter-from-class="opacity-0 scale-95"
-              enter-to-class="opacity-100 scale-100"
-              leave-active-class="transition ease-in duration-75"
-              leave-from-class="opacity-100 scale-100"
-              leave-to-class="opacity-0 scale-95"
-            >
-              <div
-                v-if="showLocaleHint"
-                class="absolute bottom-full right-0 mb-2 w-52 bg-white border border-gray-200 rounded-xl shadow-lg px-3 py-2 text-xs text-gray-600 z-50 origin-bottom-right"
-              >
-                {{ t('database.langFilterHint') }}
-              </div>
-            </Transition>
+            <!-- Info bubble positioned at top-right of globe icon -->
+            <div class="absolute -top-1 -right-1">
+              <InfoBubble :text="t('database.langFilterHint')" placement="top-right" />
+            </div>
           </div>
         </div>
       </div>
@@ -124,11 +104,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
+import InfoBubble from "~/components/ui/InfoBubble.vue";
 import { useProjectProfile } from "~/composables/useProjectProfile";
 import { useTranslations } from "~/composables/i18n";
 import { useDatabase } from "~/composables/useDatabase";
@@ -143,18 +124,6 @@ import {
 
 const { t } = useTranslations();
 const { toolLangFilter } = useDatabase();
-
-// Locale hint tooltip
-const showLocaleHint = ref(false);
-const localeHintRef = ref<HTMLElement | null>(null);
-
-function handleOutsideClick(e: MouseEvent) {
-  if (localeHintRef.value && !localeHintRef.value.contains(e.target as Node)) {
-    showLocaleHint.value = false;
-  }
-}
-onMounted(() => document.addEventListener('click', handleOutsideClick));
-onBeforeUnmount(() => document.removeEventListener('click', handleOutsideClick));
 
 const router = useRouter();
 const route = useRoute();

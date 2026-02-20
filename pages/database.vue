@@ -298,11 +298,9 @@ function filterItems(filters: any) {
   const filterFields = [
     'uses', 'setups', 'pricings', 'licenses', 'generationTimes',
     'inputs', 'outputs', 'profiles', 'tasks', 'dataStorageLocations',
-    // PsyAid filters
-    'psychoEducationalProfiles', 'therapyTypes', 'dataDeletionCapabilities',
-    'euAccessibilityActs', 'aiTransparencies', 'wcagCompliances',
-    'designQualities', 'onboardingEases', 'offlineFunctionalities',
-    'readingLevels', 'languageSupports', 'culturalAdaptabilities'
+    // PSY-AID filters
+    'dataDeletionCapabilities',
+    'suitabilityRobustnesses', 'onboardingEases', 'offlineFunctionalities'
   ];
 
   filterFields.forEach(fieldName => {
