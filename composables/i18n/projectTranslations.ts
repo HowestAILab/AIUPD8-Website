@@ -46,7 +46,7 @@ const projectTranslations: Record<string, Record<string, LocalizedProjectData>> 
       profileDescription:
         'Voor psychologen, opvoeders en professionals in de geestelijke gezondheidszorg',
       description:
-        'PSYaid is een gespecialiseerd project gericht op psycho-educatieve tools en therapeutische middelen. Het biedt een gecureerde selectie van AI-tools specifiek ontworpen voor professionals in de geestelijke gezondheidszorg, psychologen en opvoeders.',
+        'PSY-AID is een gespecialiseerd project gericht op psycho-educatieve tools en therapeutische middelen. Het biedt een gecureerde selectie van AI-tools specifiek ontworpen voor professionals in de geestelijke gezondheidszorg, psychologen en opvoeders.',
       shortDescription: 'Psycho-educatieve tools en therapeutische middelen',
       targetAudience: [
         'Psychologen',
@@ -86,7 +86,7 @@ const projectTranslations: Record<string, Record<string, LocalizedProjectData>> 
       profileName: 'Psychoeducational Professional',
       profileDescription: 'For psychologists, educators, and mental health professionals',
       description:
-        'PSYaid is a specialized project focused on psychoeducational tools and therapeutic resources. It provides a curated selection of AI tools specifically designed for mental health professionals, psychologists, and educational practitioners.',
+        'PSY-AID is a specialized project focused on psychoeducational tools and therapeutic resources. It provides a curated selection of AI tools specifically designed for mental health professionals, psychologists, and educational practitioners.',
       shortDescription: 'Psychoeducational tools and therapeutic resources',
       targetAudience: [
         'Psychologists',
