@@ -45,8 +45,8 @@
       <Transition name="modal" appear>
         <div
           v-if="isModalOpen"
-          class="fixed inset-0 z-50 flex items-center justify-center bg-white backdrop-blur-sm p-4"
-          @click="closeModal"
+          class="fixed inset-0 z-[9999] flex items-center justify-center bg-white backdrop-blur-sm p-4"
+          @click.stop="closeModal"
           @keydown.esc="closeModal"
           tabindex="0"
           role="dialog"
@@ -56,11 +56,10 @@
           <!-- Modal content -->
           <div
             class="relative flex items-center justify-center w-full h-full"
-            @click.stop
           >
             <!-- Close button -->
             <button
-              @click="closeModal"
+              @click.stop="closeModal"
               class="absolute top-4 right-4 z-10 p-3 bg-black bg-opacity-70 hover:bg-opacity-90 rounded-full text-white transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
               aria-label="Close image viewer"
             >

@@ -23,10 +23,12 @@ export default defineEventHandler(async (event) => {
       "advantages": coalesce(advantages[_key == "nl"][0].value, advantages[_key == "en"][0].value, advantages),
       "disadvantages": coalesce(disadvantages[_key == "nl"][0].value, disadvantages[_key == "en"][0].value, disadvantages),
       "limitations": coalesce(limitations[_key == "nl"][0].value, limitations[_key == "en"][0].value, limitations),
+      "description": coalesce(description[_key == "nl"][0].value, description[_key == "en"][0].value, description),
       // Full i18n arrays so the frontend can resolve per active locale or show all
       "i18n": {
         "title": title[]{ _key, value },
         "toolsentence": toolsentence[]{ _key, value },
+        "description": description[]{ _key, value },
         "advantages": advantages[]{ _key, value },
         "disadvantages": disadvantages[]{ _key, value },
         "limitations": limitations[]{ _key, value },
@@ -99,6 +101,7 @@ export default defineEventHandler(async (event) => {
         attributes: {
           title: tool.title || "Untitled",
           about: tool.about || "",
+          description: tool.description || "",
           advantages: tool.advantages || [],
           disadvantages: tool.disadvantages || [],
           limitations: tool.limitations || [],

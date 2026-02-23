@@ -53,6 +53,11 @@
                 <p class="text-gray-700 text-lg">{{ item.about }}</p>
               </div>
 
+              <!-- Description section (plain text) -->
+              <div class="description mb-6" v-if="item.description">
+                <p class="text-gray-700 text-lg">{{ item.description }}</p>
+              </div>
+
               <!-- Advantages section -->
               <div
                 v-if="item.advantages && item.advantages.length > 0"
@@ -377,23 +382,15 @@
               </div>
             </div>
 
-            <!-- Workflows Section: Show all or project-specific based on context -->
-            <div class="mt-12" v-if="isGeneralDatabase">
-              <!-- General Database: Show all workflows grouped by project -->
-              <ToolWorkflows
-                :aiupdateWorkflows="item.aiupdateWorkflows"
-                :psyaidWorkflows="item.psyaidWorkflows"
-              />
-            </div>
+          </div>
 
-            <div v-else-if="item" class="mt-12">
-              <!-- Project-Specific: Show only workflows for current project -->
-              <ProjectWorkflows
-                :toolId="item.id"
-                :aiupdateWorkflows="item.aiupdateWorkflows"
-                :psyaidWorkflows="item.psyaidWorkflows"
-              />
-            </div>
+          <!-- Workflows Section: all projects grouped, active project pre-expanded -->
+          <div class="mt-8 pb-8">
+            <ToolWorkflows
+              :aiupdateWorkflows="item.aiupdateWorkflows"
+              :psyaidWorkflows="item.psyaidWorkflows"
+              :defaultExpandedProjectId="activeProjectId !== 'general' ? activeProjectId : undefined"
+            />
           </div>
         </div>
       </div>
@@ -408,7 +405,6 @@ import HeaderBar from "~/components/layout/HeaderBar.vue";
 import Galleria from "primevue/galleria";
 import Divider from "primevue/divider";
 import ToolWorkflows from "~/components/workflows/ToolWorkflows.vue";
-import ProjectWorkflows from "~/components/workflows/ProjectWorkflows.vue";
 import { useDatabase, type ToolItem } from "~/composables/useDatabase";
 import { useRichText } from "~/composables/useRichText";
 import { useMedia } from "~/composables/useMedia";
@@ -423,9 +419,6 @@ const item = ref<ToolItem | null>(null);
 const { parseRichText } = useRichText();
 const { getMediaUrl, getYoutubeEmbedUrl } = useMedia();
 const { activeProjectId } = useProjectProfile();
-
-// Check if we're in the general database context
-const isGeneralDatabase = computed(() => activeProjectId.value === "general");
 
 // Format date helper
 function formatDate(dateString: string): string {

@@ -30,6 +30,7 @@ export interface I18nEntry<T> {
 export interface ToolI18n {
   title?: I18nEntry<string>[]
   toolsentence?: I18nEntry<string>[]
+  description?: I18nEntry<string>[]
   advantages?: I18nEntry<string[]>[]
   disadvantages?: I18nEntry<string[]>[]
   limitations?: I18nEntry<string[]>[]

@@ -26,9 +26,11 @@ export default defineEventHandler(async (event) => {
       "advantages": coalesce(advantages[_key == "nl"][0].value, advantages[_key == "en"][0].value, advantages),
       "disadvantages": coalesce(disadvantages[_key == "nl"][0].value, disadvantages[_key == "en"][0].value, disadvantages),
       "limitations": coalesce(limitations[_key == "nl"][0].value, limitations[_key == "en"][0].value, limitations),
+      "description": coalesce(description[_key == "nl"][0].value, description[_key == "en"][0].value, description),
       "i18n": {
         "title": title[]{ _key, value },
         "toolsentence": toolsentence[]{ _key, value },
+        "description": description[]{ _key, value },
         "advantages": advantages[]{ _key, value },
         "disadvantages": disadvantages[]{ _key, value },
         "limitations": limitations[]{ _key, value },
@@ -51,7 +53,28 @@ export default defineEventHandler(async (event) => {
       profiles,
       image,
       showcaseImages,
+      isAiupdateFavourite,
       "aiupdateWorkflows": aiupdateWorkflows[] {
+        _key,
+        "name": coalesce(name[_key == "nl"][0].value, name[_key == "en"][0].value, name),
+        "nameI18n": name[]{ _key, value },
+        "steps": steps[] {
+          _key,
+          stepNumber,
+          "title": coalesce(title[_key == "nl"][0].value, title[_key == "en"][0].value, title),
+          "titleI18n": title[]{ _key, value },
+          "shortDescription": coalesce(shortDescription[_key == "nl"][0].value, shortDescription[_key == "en"][0].value, shortDescription),
+          "shortDescriptionI18n": shortDescription[]{ _key, value },
+          "image": image.asset->url,
+          "imageAlt": coalesce(imageAlt[_key == "nl"][0].value, imageAlt[_key == "en"][0].value, imageAlt)
+        }
+      },
+      isPsyaidFavourite,
+      dataDeletionCapabilities,
+      suitabilityRobustnesses,
+      onboardingEases,
+      offlineFunctionalities,
+      "psyaidWorkflows": psyaidWorkflows[] {
         _key,
         "name": coalesce(name[_key == "nl"][0].value, name[_key == "en"][0].value, name),
         "nameI18n": name[]{ _key, value },
@@ -83,6 +106,7 @@ export default defineEventHandler(async (event) => {
         attributes: {
           title: tool.title || "Untitled",
           about: tool.about || "",
+          description: tool.description || "",
           advantages: tool.advantages || [],
           disadvantages: tool.disadvantages || [],
           limitations: tool.limitations || [],
@@ -136,7 +160,14 @@ export default defineEventHandler(async (event) => {
           },
           link: tool.link || "",
           youtubeLink: tool.youtubeLink || "",
-          aiupdateWorkflows: tool.aiupdateWorkflows || []
+          isAiupdateFavourite: !!tool.isAiupdateFavourite,
+          aiupdateWorkflows: tool.aiupdateWorkflows || [],
+          isPsyaidFavourite: !!tool.isPsyaidFavourite,
+          dataDeletionCapabilities: (tool.dataDeletionCapabilities || []).filter((v: any) => v !== null),
+          suitabilityRobustnesses: (tool.suitabilityRobustnesses || []).filter((v: any) => v !== null),
+          onboardingEases: (tool.onboardingEases || []).filter((v: any) => v !== null),
+          offlineFunctionalities: (tool.offlineFunctionalities || []).filter((v: any) => v !== null),
+          psyaidWorkflows: tool.psyaidWorkflows || [],
         }
       }
     }

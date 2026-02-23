@@ -75,7 +75,7 @@ export interface ToolItem {
   pricing?: string;
   license?: string;
   averageTimeToGenerate?: string;
-  description?: any[]; // DEPRECATED: kept for backward compatibility
+  description?: string; // Optional plain-text description shown above pros and cons (resolved i18n string from Sanity)
   dataStorageLocation?: string; // DEPRECATED: use dataStorageLocations array
 }
 
@@ -196,7 +196,7 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     pricing: undefined,
     license: undefined,
     averageTimeToGenerate: undefined,
-    description: Array.isArray(attrs.description) ? attrs.description : undefined, // DEPRECATED
+    description: typeof attrs.description === 'string' && attrs.description ? attrs.description : undefined,
     dataStorageLocation: undefined, // DEPRECATED
     // Media fields
     Image: attrs.Image?.data?.attributes || attrs.image || null,

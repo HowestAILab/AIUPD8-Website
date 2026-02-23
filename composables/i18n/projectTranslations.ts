@@ -39,14 +39,14 @@ const projectTranslations: Record<string, Record<string, LocalizedProjectData>> 
         'Mediaprofessionals',
         'Marketingteams',
         'Communicatiespecialisten',
-      ],
+      ],    
     },
     psyaid: {
       profileName: 'Psycho-educatieve professional',
       profileDescription:
         'Voor psychologen, opvoeders en professionals in de geestelijke gezondheidszorg',
       description:
-        'PSY-AID is een gespecialiseerd project gericht op psycho-educatieve tools en therapeutische middelen. Het biedt een gecureerde selectie van AI-tools specifiek ontworpen voor professionals in de geestelijke gezondheidszorg, psychologen en opvoeders.',
+        'PSY-AID is een gespecialiseerd project gericht op psycho-educatieve tools en therapeutische middelen. Het biedt een gecureerde selectie van AI-tools specifiek ontworpen voor professionals in welzijn en zorg.',
       shortDescription: 'Psycho-educatieve tools en therapeutische middelen',
       targetAudience: [
         'Psychologen',

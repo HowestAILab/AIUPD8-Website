@@ -92,7 +92,7 @@ export const projectConfigs: ProjectConfig[] = [
     color: '#EC4899', // pink-500
     profile: {
       name: 'Psychoeducational Professional',
-      description: 'For psychologists, educators, and mental health professionals',
+      description: 'Ontworpen voor professionals in welzijn en zorg',
     },
     description:
       'PSY-AID is a specialized project focused on psychoeducational tools and therapeutic resources. It provides a curated selection of AI tools specifically designed for mental health professionals, psychologists, and educational practitioners.',

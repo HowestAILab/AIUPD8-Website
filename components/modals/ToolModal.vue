@@ -3,7 +3,8 @@
     v-model:visible="visible"
     :modal="true"
     header="Review"
-    class="w-full max-w-3xl"
+    class="w-full"
+    :style="{ width: '60vw', minWidth: '320px', maxWidth: '100vw' }"
   >
     <template #header>
       <div class="flex justify-between items-center w-full">
@@ -53,6 +54,11 @@
           <!-- About section (plain text) -->
           <div class="description mb-6" v-if="item.about">
             <p class="text-gray-700">{{ item.about }}</p>
+          </div>
+
+          <!-- Description section (plain text, shown above pros and cons) -->
+          <div class="description mb-6" v-if="item.description">
+            <p class="text-gray-700">{{ item.description }}</p>
           </div>
 
           <!-- Advantages section -->
@@ -380,234 +386,23 @@
             </div>
           </div>
 
-          <!-- Show all workflows grouped by project -->
-          <div v-if="selectedWorkflowProjectId === 'all'">
-            <!-- No workflows message -->
-            <div
-              v-if="!hasAnyWorkflows"
-              class="bg-white rounded-xl p-6 text-center border border-gray-200"
-            >
-              <div
-                class="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center"
-              >
-                <svg
-                  class="w-8 h-8 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                  />
-                </svg>
-              </div>
-              <p class="text-gray-600">
-                {{ t('workflows.noWorkflows') }}
-              </p>
-            </div>
+          <!-- All projects: grouped view (same as tool page) -->
+          <ToolWorkflows
+            v-if="selectedWorkflowProjectId === 'all'"
+            :aiupdateWorkflows="item.aiupdateWorkflows"
+            :psyaidWorkflows="item.psyaidWorkflows"
+            :hideHeader="true"
+          />
 
-            <!-- Workflows List Grouped by Project (Collapsible) -->
-            <div v-else class="space-y-4">
-              <div
-                v-for="projectGroup in availableWorkflowProjects"
-                :key="projectGroup.id"
-                class="project-workflow-group"
-              >
-                <!-- Project Section Header (Clickable) -->
-                <div
-                  class="flex items-center gap-3 p-4 bg-white rounded-xl border-2 cursor-pointer hover:shadow-md transition-all"
-                  :style="{ borderColor: `${projectGroup.color}40` }"
-                  @click="toggleProjectSection(projectGroup.id)"
-                >
-                  <div
-                    class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                    :style="{ backgroundColor: `${projectGroup.color}20` }"
-                  >
-                    <svg
-                      class="w-5 h-5"
-                      :style="{ color: projectGroup.color }"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M13 10V3L4 14h7v7l9-11h-7z"
-                      />
-                    </svg>
-                  </div>
-                  <div class="flex-1">
-                    <div
-                      class="font-semibold text-lg"
-                      :style="{ color: projectGroup.color }"
-                    >
-                      {{ projectGroup.profileName }}
-                    </div>
-                    <div class="text-sm text-gray-500">
-                      {{ projectGroup.workflows.length }} workflow{{
-                        projectGroup.workflows.length !== 1 ? "s" : ""
-                      }}
-                    </div>
-                  </div>
-                  <svg
-                    class="w-5 h-5 text-gray-400 transition-transform flex-shrink-0"
-                    :class="{
-                      'rotate-180': expandedProjectSection === projectGroup.id,
-                    }"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </div>
-
-                <!-- Workflows for this Project (Expandable) -->
-                <transition name="expand">
-                  <div
-                    v-if="expandedProjectSection === projectGroup.id"
-                    class="mt-3 space-y-3 ml-2"
-                  >
-                    <div
-                      v-for="workflow in projectGroup.workflows"
-                      :key="workflow._key"
-                      class="bg-white border-2 rounded-xl overflow-hidden hover:shadow-md transition-shadow"
-                      :style="{ borderColor: `${projectGroup.color}40` }"
-                    >
-                      <!-- Workflow Header (Clickable) -->
-                      <div
-                        class="p-4 cursor-pointer flex items-center justify-between"
-                        :class="{
-                          'border-b-2': expandedWorkflow === workflow._key,
-                        }"
-                        :style="{
-                          borderBottomColor:
-                            expandedWorkflow === workflow._key
-                              ? `${projectGroup.color}40`
-                              : '',
-                        }"
-                        @click="toggleWorkflow(workflow._key)"
-                      >
-                        <div class="flex items-center gap-3">
-                          <div
-                            class="w-10 h-10 rounded-full flex items-center justify-center"
-                            :style="{
-                              backgroundColor: `${projectGroup.color}20`,
-                            }"
-                          >
-                            <svg
-                              class="w-5 h-5"
-                              :style="{ color: projectGroup.color }"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z"
-                              />
-                            </svg>
-                          </div>
-                          <div>
-                            <h4 class="font-semibold text-gray-900">
-                              {{ workflow.name }}
-                            </h4>
-                            <div class="flex items-center gap-2 mt-1">
-                              <span class="text-xs text-gray-500">
-                                {{ workflow.steps?.length || 0 }} {{ (workflow.steps?.length || 0) !== 1 ? t('tool.steps') : t('tool.step') }}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <svg
-                          class="w-5 h-5 text-gray-400 transition-transform"
-                          :class="{
-                            'rotate-180': expandedWorkflow === workflow._key,
-                          }"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="2"
-                            d="M19 9l-7 7-7-7"
-                          />
-                        </svg>
-                      </div>
-
-                      <!-- Workflow Content (Expanded) -->
-                      <transition name="expand">
-                        <div
-                          v-if="expandedWorkflow === workflow._key"
-                          class="p-4 bg-gray-50"
-                        >
-                          <!-- Steps -->
-                          <div class="space-y-3">
-                            <div
-                              v-for="step in getSortedSteps(workflow)"
-                              :key="step._key"
-                              class="flex gap-3 bg-white rounded-lg p-4 shadow-sm"
-                            >
-                              <div
-                                class="flex-shrink-0 w-8 h-8 rounded-full text-white text-sm flex items-center justify-center font-bold"
-                                :style="{
-                                  backgroundColor: projectGroup.color,
-                                }"
-                              >
-                                {{ step.stepNumber }}
-                              </div>
-                              <div class="flex-1">
-                                <h6 class="font-medium text-gray-900 mb-1">
-                                  {{ step.title }}
-                                </h6>
-                                <p
-                                  v-if="step.shortDescription"
-                                  class="text-sm text-gray-600 mb-2"
-                                >
-                                  {{ step.shortDescription }}
-                                </p>
-                                <img
-                                  v-if="step.image"
-                                  :src="step.image"
-                                  :alt="step.imageAlt || step.title"
-                                  class="rounded-lg max-w-full h-auto shadow-md mt-2"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </transition>
-                    </div>
-                  </div>
-                </transition>
-              </div>
-            </div>
-          </div>
-
-          <!-- Show single project workflows -->
-          <div v-else>
-            <ProjectWorkflows
-              :toolId="item.id"
-              :aiupdateWorkflows="item.aiupdateWorkflows"
-              :psyaidWorkflows="item.psyaidWorkflows"
-              :forceProjectId="selectedWorkflowProjectId"
-              :hideHeader="true"
-            />
-          </div>
+          <!-- Single project: filtered view -->
+          <ProjectWorkflows
+            v-else
+            :toolId="item.id"
+            :aiupdateWorkflows="item.aiupdateWorkflows"
+            :psyaidWorkflows="item.psyaidWorkflows"
+            :forceProjectId="selectedWorkflowProjectId"
+            :hideHeader="true"
+          />
         </div>
       </div>
     </div>
@@ -644,8 +439,6 @@ const compareChecked = ref(false);
 
 // Workflow project selector (independent from database selection)
 const selectedWorkflowProjectId = ref<string>("all");
-const expandedWorkflow = ref<string | null>(null);
-const expandedProjectSection = ref<string | null>(null);
 
 // Check if we're in the general database context
 const isGeneralDatabase = computed(() => activeProjectId.value === "general");
@@ -707,32 +500,6 @@ const getCurrentWorkflowProjectColor = () => {
   return project?.color || "#3B82F6";
 };
 
-// Toggle workflow expansion
-const toggleWorkflow = (workflowId: string) => {
-  if (expandedWorkflow.value === workflowId) {
-    expandedWorkflow.value = null;
-  } else {
-    expandedWorkflow.value = workflowId;
-  }
-};
-
-// Toggle project section expansion
-const toggleProjectSection = (projectId: string) => {
-  if (expandedProjectSection.value === projectId) {
-    expandedProjectSection.value = null;
-  } else {
-    expandedProjectSection.value = projectId;
-  }
-};
-
-// Sort workflow steps by stepNumber
-const getSortedSteps = (workflow: any) => {
-  if (!workflow.steps) return [];
-  return [...workflow.steps].sort(
-    (a: any, b: any) => a.stepNumber - b.stepNumber
-  );
-};
-
 // Format date helper
 function formatDate(dateString: string): string {
   if (!dateString) return "";
@@ -762,10 +529,10 @@ const props = defineProps({
 
 const emit = defineEmits(["add-to-comparison", "remove-from-comparison"]);
 
-function handleCompareChange(event) {
+function handleCompareChange(event: Event) {
   if (!item.value) return;
 
-  if (event.target.checked) {
+  if ((event.target as HTMLInputElement).checked) {
     emit("add-to-comparison", item.value);
   } else {
     emit("remove-from-comparison", item.value);
@@ -805,9 +572,7 @@ const open = (toolItem: ToolItem) => {
       : "all";
   }
 
-  // Reset expanded workflow and project section
-  expandedWorkflow.value = null;
-  expandedProjectSection.value = null;
+  // Reset expanded workflow and project section state is now managed by child components
 
   visible.value = true;
 };
