@@ -77,7 +77,7 @@
               </h6>
               <p
                 v-if="step.shortDescription"
-                class="text-lg text-gray-600 mb-2"
+                class="text-lg text-gray-600 mb-2 whitespace-pre-wrap"
               >
                 {{ step.shortDescription }}
               </p>
