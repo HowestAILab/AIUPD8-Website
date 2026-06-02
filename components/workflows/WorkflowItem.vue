@@ -77,12 +77,31 @@
               </h6>
               <p
                 v-if="step.shortDescription"
-                class="text-lg text-gray-600 mb-2 whitespace-pre-wrap"
+                    class="text-lg text-gray-600 mb-2 whitespace-pre-wrap"
               >
                 {{ step.shortDescription }}
               </p>
-              <!-- Centered, zoomable step image -->
-              <div v-if="step.image" class="mt-2 flex justify-center">
+              <!-- Centered, zoomable step image(s) -->
+              <div v-if="step.images && step.images.length > 0" class="mt-2 flex justify-center">
+                <div class="w-full max-w-[50%] rounded-lg overflow-hidden shadow-md border border-gray-100 bg-white">
+                  <Galleria
+                    :value="step.images"
+                    :showThumbnails="false"
+                    :showIndicators="step.images.length > 1"
+                    class="w-full rounded-lg overflow-hidden"
+                  >
+                    <template #item="slotProps">
+                      <img
+                        :src="slotProps.item"
+                        :alt="step.title"
+                        class="w-full h-auto max-h-[300px] object-contain rounded-lg cursor-zoom-in transition-opacity hover:opacity-90 bg-white"
+                        @click.stop="openZoom(slotProps.item, step.title)"
+                      />
+                    </template>
+                  </Galleria>
+                </div>
+              </div>
+              <div v-else-if="step.image" class="mt-2 flex justify-center">
                 <img
                   :src="step.image"
                   :alt="step.imageAlt || step.title"
@@ -129,6 +148,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import Galleria from "primevue/galleria";
 import type { AiupdateWorkflow } from "~/composables/useDatabase"; 
 
 const props = defineProps<{
@@ -200,5 +220,22 @@ onUnmounted(() => {
 .expand-leave-from {
   opacity: 1;
   max-height: 2000px;
+}
+
+/* ── Galleria styles ────────────────────────────────────── */
+:deep(.p-galleria) {
+  border: none !important;
+  border-radius: 0.5rem !important;
+  overflow: hidden;
+}
+:deep(.p-galleria .p-galleria-content),
+:deep(.p-galleria .p-galleria-item-wrapper),
+:deep(.p-galleria .p-galleria-item),
+:deep(.p-galleria-item-container) {
+  border-radius: 0.5rem !important;
+  overflow: hidden;
+}
+:deep(.p-galleria-item img) {
+  border-radius: 0.5rem !important;
 }
 </style>

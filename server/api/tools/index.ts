@@ -64,7 +64,8 @@ export default defineEventHandler(async (event) => {
           "shortDescription": coalesce(shortDescription[_key == "nl"][0].value, shortDescription[_key == "en"][0].value, shortDescription),
           "shortDescriptionI18n": shortDescription[]{ _key, value },
           "image": image.asset->url,
-          "imageAlt": coalesce(imageAlt[_key == "nl"][0].value, imageAlt[_key == "en"][0].value, imageAlt)
+          "imageAlt": coalesce(imageAlt[_key == "nl"][0].value, imageAlt[_key == "en"][0].value, imageAlt),
+          "images": images[].asset->url
         }
       },
       isPsyaidFavourite,
@@ -85,7 +86,8 @@ export default defineEventHandler(async (event) => {
           "shortDescription": coalesce(shortDescription[_key == "nl"][0].value, shortDescription[_key == "en"][0].value, shortDescription),
           "shortDescriptionI18n": shortDescription[]{ _key, value },
           "image": image.asset->url,
-          "imageAlt": coalesce(imageAlt[_key == "nl"][0].value, imageAlt[_key == "en"][0].value, imageAlt)
+          "imageAlt": coalesce(imageAlt[_key == "nl"][0].value, imageAlt[_key == "en"][0].value, imageAlt),
+          "images": images[].asset->url
         }
       }
     }`

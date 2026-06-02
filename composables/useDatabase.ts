@@ -15,6 +15,7 @@ export interface AiupdateWorkflowStep {
   shortDescription?: string; // Optional
   image?: any; // Optional - image URL or Sanity asset
   imageAlt?: string; // Optional
+  images?: any[]; // Optional - multiple resolved image URLs
 }
 
 // Aiupdate Workflow (project-specific)
