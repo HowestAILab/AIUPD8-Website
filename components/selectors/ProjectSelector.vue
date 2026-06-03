@@ -41,7 +41,7 @@
             optionLabel="label"
             optionValue="value"
             placeholder="Select Project"
-            class="w-48"
+            class="w-48 md:w-72"
             @change="handleProjectChange"
           />
 

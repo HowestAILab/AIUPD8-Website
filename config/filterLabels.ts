@@ -177,6 +177,9 @@ export const filterLabels = {
   } as Record<string, string>,
 };
 
+import { useLocale } from '../composables/i18n/useLocale';
+import { translations } from '../composables/i18n/translations';
+
 /**
  * Get human-readable label for a filter value
  * @param filterType The filter type/field name (e.g., 'uses', 'setups', 'therapyTypes')
@@ -184,15 +187,31 @@ export const filterLabels = {
  * @returns The display label, or the value itself if no label found
  */
 export function getFilterLabel(filterType: string, value: string): string {
-  const labels = filterLabels[filterType as keyof typeof filterLabels];
-  if (labels && labels[value]) {
-    return labels[value];
+  let label = '';
+  try {
+    const { locale } = useLocale();
+    const lang = locale.value || 'nl';
+    const translationKey = `filter.option.${filterType}.${value}`;
+    const localized = (translations[lang] as any)[translationKey];
+    if (localized) {
+      label = localized;
+    }
+  } catch (e) {
+    // Fallback if useLocale is called outside Vue context
   }
-  // Fallback: convert kebab-case to Title Case
-  return value
-    .split('-')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
+
+  if (!label) {
+    const labels = filterLabels[filterType as keyof typeof filterLabels];
+    if (labels && labels[value]) {
+      label = labels[value];
+    } else {
+      // Fallback: convert kebab-case to words
+      label = value.split('-').join(' ');
+    }
+  }
+
+  // Ensure all small filter option labels are completely lowercase
+  return label.toLowerCase();
 }
 
 /**
@@ -203,7 +222,10 @@ export function getFilterLabel(filterType: string, value: string): string {
 export function getFilterOptions(filterType: string): FilterOption[] {
   const labels = filterLabels[filterType as keyof typeof filterLabels];
   if (labels) {
-    return Object.entries(labels).map(([value, label]) => ({ value, label }));
+    return Object.entries(labels).map(([value, _]) => ({
+      value,
+      label: getFilterLabel(filterType, value)
+    }));
   }
   return [];
 }

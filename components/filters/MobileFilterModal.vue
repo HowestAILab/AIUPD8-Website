@@ -32,6 +32,7 @@
             v-model="filterState.name"
             :options="filterOptions.toolOptions"
             optionLabel="name"
+            optionValue="name"
             :placeholder="t('filter.selectTool')"
             class="ml-1 w-[90%]"
             filter
@@ -78,7 +79,7 @@
           <!-- Button Group Filters -->
           <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-4">
             <h4 class="font-medium mb-1 flex items-center gap-1">
-              {{ filter.title }}
+              {{ t('filter.title.' + filter.id) || filter.title }}
               <InfoBubble
                 v-if="filter.category === 'project-specific' && filter.description"
                 :text="filter.description"
@@ -99,7 +100,7 @@
           <!-- Multi-Select Filters -->
           <div v-else class="mb-4">
             <h4 class="font-medium mb-1 flex items-center gap-1">
-              {{ filter.title }}
+              {{ t('filter.title.' + filter.id) || filter.title }}
               <InfoBubble v-if="filter.description" :text="filter.description" />
             </h4>
             <MultiSelect
@@ -109,7 +110,7 @@
               :options="getOptionsForFilter(filter)"
               optionLabel="label"
               optionValue="value"
-              :placeholder="`Select ${filter.title.toLowerCase()}`"
+              :placeholder="t('filter.select') + ' ' + (t('filter.title.' + filter.id) || filter.title).toLowerCase()"
               class="ml-1 w-[90%]"
               showClear
             />

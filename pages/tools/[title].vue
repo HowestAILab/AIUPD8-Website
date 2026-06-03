@@ -197,7 +197,7 @@
                         item.setups.includes(option),
                       'text-gray-500': !item.setups.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.setups.' + option) }}</span
                   >
                 </div>
               </div>
@@ -218,7 +218,7 @@
                         item.pricings.includes(option),
                       'text-gray-500': !item.pricings.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.pricings.' + option) }}</span
                   >
                 </div>
               </div>
@@ -239,7 +239,7 @@
                         item.licenses.includes(option),
                       'text-gray-500': !item.licenses.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.licenses.' + option) }}</span
                   >
                 </div>
               </div>
@@ -260,7 +260,7 @@
                         item.generationTimes.includes(option),
                       'text-gray-500': !item.generationTimes.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.generationTimes.' + option) }}</span
                   >
                 </div>
               </div>
@@ -282,7 +282,7 @@
                     :key="location"
                     class="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
                   >
-                    {{ location }}
+                    {{ t('filter.option.dataStorageLocations.' + location) }}
                   </span>
                 </div>
               </div>
@@ -324,7 +324,7 @@
                       :key="input"
                       class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
                     >
-                      {{ input }}
+                      {{ t('filter.option.inputs.' + input) }}
                     </span>
                   </div>
                 </div>
@@ -341,7 +341,7 @@
                       :key="output"
                       class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
                     >
-                      {{ output }}
+                      {{ t('filter.option.outputs.' + output) }}
                     </span>
                   </div>
                 </div>
@@ -358,7 +358,7 @@
                       :key="task"
                       class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
                     >
-                      {{ task }}
+                      {{ t('filter.option.tasks.' + task) }}
                     </span>
                   </div>
                 </div>
@@ -375,7 +375,7 @@
                       :key="profile"
                       class="px-4 py-1 bg-blue-100 text-blue-600 rounded-full text-sm"
                     >
-                      {{ profile }}
+                      {{ t('filter.option.profiles.' + profile) }}
                     </span>
                   </div>
                 </div>
@@ -459,7 +459,7 @@ const specifications = {
   setup: { options: ["no-code", "low-code", "code"] },
   pricing: { options: ["free", "subscription", "credits"] },
   license: { options: ["personal", "commercial"] },
-  averageTime: { options: ["seconds", "minutes", "hours", "days"] },
+  averageTime: { options: ["seconds", "minutes", "hours", "real-time"] },
 };
 
 onMounted(async () => {

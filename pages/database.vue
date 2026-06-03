@@ -19,7 +19,9 @@
 
       <!-- Main content area, with left margin for sidebar on desktop -->
 
-      <div class="w-full p-4 md:max-w-[65%] mx-auto">
+      <div
+        class="w-full p-4 md:max-w-[65%] mx-auto"
+      >
         <!-- Project Selector -->
         <div class="mb-6">
           <ProjectSelector />
@@ -28,6 +30,7 @@
         <!-- Filter Bar -->
         <div class="mb-6 hidden md:block">
           <FilterBar
+            ref="filterBarRef"
             :toolOptions="toolOptions"
             :comparisonCount="comparisonCount"
             @toggle-filters="toggleFilters"
@@ -65,14 +68,53 @@
           </button>
         </div>
 
+        <!-- Active Filter Chips -->
+        <div v-if="activeFilterChips.length > 0" class="mb-6 p-4 bg-white shadow-sm rounded-xl border border-gray-100 flex flex-wrap gap-2 items-center">
+          <span class="text-xs text-gray-400 font-bold uppercase tracking-wider mr-2">{{ t('filter.activeFilterChips') }}</span>
+          <div
+            v-for="chip in activeFilterChips"
+            :key="chip.type + '-' + chip.value"
+            class="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-50 text-purple-700 text-sm font-medium rounded-full border border-purple-100 transition-all hover:bg-purple-100"
+          >
+            <span>{{ chip.label }}</span>
+            <button
+              @click="removeSingleFilter(chip.type, chip.value)"
+              class="w-4 h-4 rounded-full flex items-center justify-center hover:bg-purple-200 text-purple-500 hover:text-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-400 focus:ring-offset-1"
+              aria-label="Remove filter"
+            >
+              <i class="pi pi-times text-[10px]" aria-hidden="true"></i>
+            </button>
+          </div>
+          <button
+            @click="handleClearAllFilters"
+            class="text-sm font-medium text-red-600 hover:text-red-800 transition-colors ml-auto flex items-center gap-1 focus:outline-none focus:underline"
+          >
+            <i class="pi pi-trash text-xs" aria-hidden="true"></i>
+            {{ t('filter.clearAll') }}
+          </button>
+        </div>
+
         <div v-if="loading" class="text-center py-8">
           <p class="mb-2">{{ t('database.loading') }}</p>
         </div>
         <div v-else-if="error" class="text-center text-red-500 py-8">
           {{ error }}
         </div>
-        <div v-else-if="filteredItems.length === 0" class="text-center py-8">
-          <p>{{ t('database.empty') }}</p>
+        <!-- Upgraded premium empty state -->
+        <div v-else-if="filteredItems.length === 0" class="text-center py-16 px-4 bg-white rounded-2xl shadow-sm border border-gray-100 max-w-md mx-auto my-8">
+          <div class="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100 shadow-inner">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">{{ t('filter.emptyHeadline') }}</h3>
+          <p class="text-sm text-gray-500 mb-6">{{ t('filter.emptyDescription') }}</p>
+          <button
+            @click="handleClearAllFilters"
+            class="px-5 py-2.5 bg-primary text-white font-semibold rounded-full hover:bg-primary-dark shadow-sm hover:shadow-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+          >
+            {{ t('filter.clearAll') }}
+          </button>
         </div>
         <div
           v-else
@@ -144,6 +186,12 @@
           <line x1="9" y1="8" x2="15" y2="8"></line>
           <line x1="17" y1="16" x2="23" y2="16"></line>
         </svg>
+        <span
+          v-if="activeFiltersCount > 0"
+          class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold"
+        >
+          {{ activeFiltersCount }}
+        </span>
         <span class="filter-label">{{ t('database.filter.label') }}</span>
       </button>
     </div>
@@ -160,9 +208,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch, nextTick } from "vue";
+import Fuse from "fuse.js";
 import HeaderBar from "~/components/layout/HeaderBar.vue";
-import { useTranslations, useToolI18n } from "~/composables/i18n";
+import { useTranslations, useToolI18n, useLocale, resolveI18nString } from "~/composables/i18n";
 
 const { t } = useTranslations();
 const { toolHasLocaleContent } = useToolI18n();
@@ -172,6 +221,7 @@ import DatabaseItem from "~/components/items/DatabaseItem.vue";
 import ComparisonModal from "~/components/modals/ComparisonModal.vue";
 import MobileFilterModal from "~/components/filters/MobileFilterModal.vue";
 import ProjectSelector from "~/components/selectors/ProjectSelector.vue";
+import { useRouter, useRoute } from "vue-router";
 import type { ToolItem } from "~/composables/useDatabase";
 import { hasProjectSpecificData } from "~/composables/useDatabase";
 import {
@@ -181,14 +231,30 @@ import {
   activeProjectFilter,
   showOldTools,
   initializeFilterOptions,
+  filterState,
+  filterOptions,
+  setProjectFilter,
 } from "~/config/filterHandler";
+import { getFilterLabel, getFilterOptions } from "~/config/filterLabels";
 import { useProjectProfile } from "~/composables/useProjectProfile";
 
 const { items, loading, error, fetchDatabaseItems, toolLangFilter } = useDatabase();
 const filteredItems = ref<ToolItem[]>([]);
+const isMounted = ref(false);
 
 // Show/hide advanced filter sidebar
 const showFilters = ref(false);
+const filterBarRef = ref(null);
+
+// Return focus to the More Filters button when Advanced Filter sidebar is closed to improve A11y
+watch(showFilters, (visible) => {
+  if (!visible) {
+    nextTick(() => {
+      const btn = filterBarRef.value?.$el?.querySelector('.more-filters-button');
+      btn?.focus();
+    });
+  }
+});
 
 // Show/hide mobile filter modal
 const showMobileFilter = ref(false);
@@ -244,10 +310,69 @@ const openComparisonModal = () => {
   comparisonModal.value?.open();
 };
 
-// Compute distinct tool options from database items
+const router = useRouter();
+const route = useRoute();
+
+// Base dataset matching active project and language/search constraints
+const projectItems = computed(() => {
+  if (!items.value) return [];
+  let result = [...items.value];
+
+  // Filter by language content (localized only vs. all)
+  if (toolLangFilter.value === 'localized') {
+    result = result.filter((item) => toolHasLocaleContent(item.i18n));
+  }
+
+  // Filter by project-specific data
+  const { activeProjectId } = useProjectProfile();
+  if (activeProjectId.value && activeProjectId.value !== "general") {
+    result = result.filter((item) =>
+      hasProjectSpecificData(item, activeProjectId.value)
+    );
+  }
+
+  // Filter by search query for dynamic options
+  if (filterState.searchQuery && filterState.searchQuery.trim() !== "") {
+    const originalQuery = filterState.searchQuery.trim();
+    const expandedQuery = expandQueryWithSynonyms(originalQuery);
+    
+    const options = {
+      keys: [
+        { name: 'title', weight: 2.0 },
+        { name: 'toolsentence', weight: 1.5 },
+        { name: 'about', weight: 1.2 },
+        { name: 'advantages', weight: 1.0 },
+        { name: 'disadvantages', weight: 0.8 },
+        { name: 'limitations', weight: 0.8 },
+        { name: 'tasks', weight: 1.2 },
+        { name: 'uses', weight: 1.0 },
+        { name: 'inputs', weight: 1.0 },
+        { name: 'outputs', weight: 1.0 },
+        { name: 'profiles', weight: 1.0 },
+        { name: 'pricings', weight: 1.0 },
+        { name: 'aiupdateWorkflows.name', weight: 1.2 },
+        { name: 'aiupdateWorkflows.steps.title', weight: 1.0 },
+        { name: 'aiupdateWorkflows.steps.shortDescription', weight: 0.8 },
+        { name: 'psyaidWorkflows.name', weight: 1.2 },
+        { name: 'psyaidWorkflows.steps.title', weight: 1.0 },
+        { name: 'psyaidWorkflows.steps.shortDescription', weight: 0.8 },
+      ],
+      threshold: 0.4,
+      shouldSort: true,
+    };
+    
+    const fuse = new Fuse(result, options);
+    const searchResults = fuse.search(expandedQuery);
+    result = searchResults.map(r => r.item);
+  }
+
+  return result;
+});
+
+// Compute distinct tool options from database items matching project/search
 const toolOptions = computed(() => {
   const seen = new Set();
-  return items.value.reduce((acc, item) => {
+  return projectItems.value.reduce((acc, item) => {
     if (!seen.has(item.title)) {
       seen.add(item.title);
       acc.push({ name: item.title });
@@ -267,38 +392,195 @@ watch(
   { immediate: true }
 );
 
+// Recalculate and update filterOptions dynamically as current project matches change
+watch(projectItems, () => {
+  const currentTools = projectItems.value;
+
+  // Helper to extract unique values for a field from currentTools
+  const getUniqueValuesForField = (fieldName: string): Set<string> => {
+    const values = new Set<string>();
+    currentTools.forEach(item => {
+      const itemValues = (item as any)[fieldName];
+      if (Array.isArray(itemValues)) {
+        itemValues.forEach(val => {
+          if (val) values.add(val);
+        });
+      } else if (typeof itemValues === 'string' && itemValues) {
+        values.add(itemValues);
+      }
+    });
+    return values;
+  };
+
+  // Update all options dynamically
+  const updateOptionStore = (filterId: string, optionsKey: string) => {
+    const uniqueValues = getUniqueValuesForField(filterId);
+    const allOptions = getFilterOptions(filterId);
+    (filterOptions as any)[optionsKey] = allOptions.filter(opt => uniqueValues.has(opt.value));
+  };
+
+  updateOptionStore('uses', 'useOptions');
+  updateOptionStore('setups', 'setupOptions');
+  updateOptionStore('pricings', 'pricingOptions');
+  updateOptionStore('licenses', 'licenseOptions');
+  updateOptionStore('inputs', 'inputOptions');
+  updateOptionStore('outputs', 'outputOptions');
+  updateOptionStore('dataStorageLocations', 'dataStorageLocationOptions');
+  
+  // Project specific
+  updateOptionStore('generationTimes', 'generationTimeOptions');
+  updateOptionStore('tasks', 'taskOptions');
+  updateOptionStore('profiles', 'profileOptions');
+  
+  // PSY-AID specific
+  updateOptionStore('dataDeletionCapabilities', 'dataDeletionCapabilityOptions');
+  updateOptionStore('suitabilityRobustnesses', 'suitabilityRobustnessOptions');
+  updateOptionStore('onboardingEases', 'onboardingEaseOptions');
+  updateOptionStore('offlineFunctionalities', 'offlineFunctionalityOptions');
+}, { immediate: true });
+
+// Computed active filter chips for display
+const activeFilterChips = computed(() => {
+  const chips: Array<{ type: string; value: string; label: string }> = [];
+
+  // Search query chip
+  if (filterState.searchQuery) {
+    chips.push({
+      type: 'searchQuery',
+      value: filterState.searchQuery,
+      label: `"${filterState.searchQuery}"`,
+    });
+  }
+
+  if (filterState.capabilitySearch) {
+    chips.push({
+      type: 'capabilitySearch',
+      value: filterState.capabilitySearch,
+      label: `${t('filter.capabilities')}: "${filterState.capabilitySearch}"`,
+    });
+  }
+
+  // Tool name dropdown chip
+  if (filterState.name) {
+    chips.push({
+      type: 'name',
+      value: filterState.name,
+      label: filterState.name,
+    });
+  }
+
+  const filterFields = [
+    'uses', 'setups', 'pricings', 'licenses', 'generationTimes',
+    'inputs', 'outputs', 'profiles', 'tasks', 'dataStorageLocations',
+    'dataDeletionCapabilities',
+    'suitabilityRobustnesses', 'onboardingEases', 'offlineFunctionalities'
+  ];
+
+  filterFields.forEach(fieldName => {
+    const value = filterState[fieldName as keyof typeof filterState];
+    if (Array.isArray(value)) {
+      value.forEach(val => {
+        chips.push({
+          type: fieldName,
+          value: val,
+          label: getFilterLabel(fieldName, val),
+        });
+      });
+    }
+  });
+
+  return chips;
+});
+
+// Computed active filters count
+const activeFiltersCount = computed(() => activeFilterChips.value.length);
+
+// Remove a single active filter chip
+function removeSingleFilter(type: string, value: string) {
+  if (type === 'searchQuery') {
+    filterState.searchQuery = "";
+  } else if (type === 'capabilitySearch') {
+    filterState.capabilitySearch = "";
+  } else if (type === 'name') {
+    filterState.name = null;
+  } else {
+    const array = filterState[type as keyof typeof filterState] as string[];
+    if (Array.isArray(array)) {
+      const idx = array.indexOf(value);
+      if (idx !== -1) {
+        array.splice(idx, 1);
+      }
+    }
+  }
+  // Trigger filter refresh
+  filteredItems.value = filterItems(getFilterParams());
+}
+
+// Clear all active filters and project selector back to general
+function handleClearAllFilters() {
+  clearAllFilters();
+  const { setActiveProject } = useProjectProfile();
+  setActiveProject('general');
+  setProjectFilter('general');
+  // Update URL to clean state
+  router.push({ path: "/database", query: {} });
+  // Trigger filter refresh
+  filteredItems.value = filterItems(getFilterParams());
+}
+
+// Expand search query with common synonyms
+function expandQueryWithSynonyms(query: string): string {
+  const synonyms: Record<string, string> = {
+    "make easier": "simplify",
+    "picture": "image",
+    "movie": "video",
+    "voice": "audio",
+    "free": "no cost gratis",
+    "afbeelding": "image",
+    "foto": "image",
+    "geluid": "audio",
+    "stem": "audio",
+    "filmpje": "video",
+    "vertalen": "translate",
+  };
+
+  let expanded = query.toLowerCase();
+  Object.entries(synonyms).forEach(([synonym, replacement]) => {
+    if (expanded.includes(synonym)) {
+      expanded += " " + replacement;
+    }
+  });
+  return expanded;
+}
+
 // Filter items based on selected filters
 function filterItems(filters: any) {
-  if (!items.value) return [];
+  // We start with projectItems (which handles active language, active project, and search fuzzy queries)
+  let result = [...projectItems.value];
 
-  let result = [...items.value];
-
-  // Filter by language content (localized only vs. all)
-  if (toolLangFilter.value === 'localized') {
-    result = result.filter((item) => toolHasLocaleContent(item.i18n));
-  }
-
-  // Filter by project-specific data (NEW)
-  // Only show tools that have data for the selected project
-  const { activeProjectId } = useProjectProfile();
-  if (activeProjectId.value && activeProjectId.value !== "general") {
-    result = result.filter((item) =>
-      hasProjectSpecificData(item, activeProjectId.value)
-    );
-  }
-
-  // New filter: tool name
+  // Tool name filter
   if (filters.name && filters.name.trim() !== "") {
     const search = filters.name.toLowerCase();
     result = result.filter((item) => item.title.toLowerCase().includes(search));
   }
 
-  // Dynamic filtering based on filter configuration
-  // This handles all general and project-specific filters automatically
+  // Capability search filter – locale-aware title & toolsentence, word-based
+  if (filters.capabilitySearch && filters.capabilitySearch.trim() !== "") {
+    const words = filters.capabilitySearch.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    result = result.filter((item) => {
+      // Resolve title and toolsentence for the active locale
+      const titleText = resolveI18nString(item.i18n?.title, locale.value) || item.title || "";
+      const sentenceText = resolveI18nString(item.i18n?.toolsentence, locale.value) || item.toolsentence || "";
+      const combined = (titleText + " " + sentenceText).toLowerCase();
+      // Every word in the query must appear as a whole word somewhere
+      return words.every((word: string) => new RegExp(`\\b${word}`, 'i').test(combined));
+    });
+  }
+
+  // Dynamic filtering based on active filter fields
   const filterFields = [
     'uses', 'setups', 'pricings', 'licenses', 'generationTimes',
     'inputs', 'outputs', 'profiles', 'tasks', 'dataStorageLocations',
-    // PSY-AID filters
     'dataDeletionCapabilities',
     'suitabilityRobustnesses', 'onboardingEases', 'offlineFunctionalities'
   ];
@@ -326,49 +608,153 @@ function filterItems(filters: any) {
   return result;
 }
 
+// Sync active filters to URL query parameters
+function syncFiltersToUrl() {
+  if (!isMounted.value) return;
+  const query: Record<string, string | string[]> = {};
+  
+  const { activeProjectId } = useProjectProfile();
+  if (activeProjectId.value && activeProjectId.value !== 'general') {
+    query.project = activeProjectId.value;
+  }
+  
+  if (filterState.searchQuery) {
+    query.search = filterState.searchQuery;
+  }
+
+  if (filterState.capabilitySearch) {
+    query.capabilities = filterState.capabilitySearch;
+  }
+
+  if (filterState.name) {
+    query.name = filterState.name;
+  }
+
+  const filterFields = [
+    'uses', 'setups', 'pricings', 'licenses', 'generationTimes',
+    'inputs', 'outputs', 'profiles', 'tasks', 'dataStorageLocations',
+    'dataDeletionCapabilities',
+    'suitabilityRobustnesses', 'onboardingEases', 'offlineFunctionalities'
+  ];
+
+  filterFields.forEach(fieldName => {
+    const value = filterState[fieldName as keyof typeof filterState];
+    if (Array.isArray(value) && value.length > 0) {
+      query[fieldName] = value.join(',');
+    }
+  });
+
+  router.push({ path: '/database', query });
+}
+
+// Sync URL query parameters to reactive filterState
+function syncUrlToFilters() {
+  const query = route.query;
+  
+  if (typeof query.search === 'string') {
+    filterState.searchQuery = query.search;
+  } else {
+    filterState.searchQuery = "";
+  }
+
+  if (typeof query.capabilities === 'string') {
+    filterState.capabilitySearch = query.capabilities;
+  } else {
+    filterState.capabilitySearch = "";
+  }
+
+  if (typeof query.name === 'string') {
+    filterState.name = query.name;
+  } else {
+    filterState.name = null;
+  }
+
+  const filterFields = [
+    'uses', 'setups', 'pricings', 'licenses', 'generationTimes',
+    'inputs', 'outputs', 'profiles', 'tasks', 'dataStorageLocations',
+    'dataDeletionCapabilities',
+    'suitabilityRobustnesses', 'onboardingEases', 'offlineFunctionalities'
+  ];
+
+  filterFields.forEach(fieldName => {
+    const queryVal = query[fieldName];
+    if (typeof queryVal === 'string' && queryVal.trim() !== '') {
+      (filterState as any)[fieldName] = queryVal.split(',');
+    } else {
+      (filterState as any)[fieldName] = [];
+    }
+  });
+
+  const { setActiveProject, activeProjectId: profileActiveProjectId } = useProjectProfile();
+  if (typeof query.project === 'string') {
+    if (profileActiveProjectId.value !== query.project) {
+      setActiveProject(query.project);
+      setProjectFilter(query.project);
+    }
+  } else {
+    if (profileActiveProjectId.value !== 'general') {
+      setActiveProject('general');
+      setProjectFilter('general');
+    }
+  }
+}
+
+// Watch for changes to route query (browser navigation) and sync to filters
+watch(() => route.query, () => {
+  syncUrlToFilters();
+  filteredItems.value = filterItems(getFilterParams());
+}, { deep: true });
+
 // Apply filters from the top filter bar or mobile filter modal
 const handleFiltersApplied = (filters) => {
   console.log("Filters applied:", filters);
-  filteredItems.value = filterItems(filters);
+  filteredItems.value = filterItems(getFilterParams());
+  syncFiltersToUrl();
   showMobileFilter.value = false; // Close mobile filter modal after applying filters
 };
 
 // Apply filters from the advanced sidebar
 const handleAdvancedFilters = () => {
   console.log("Advanced filters applied:", getFilterParams());
-  filteredItems.value = filterItems(getFilterParams());
+  syncFiltersToUrl();
 };
 
 // Watch for changes to showOldTools toggle
 watch(showOldTools, () => {
-  // Re-apply current filters when toggle changes
-  filteredItems.value = filterItems(getFilterParams());
+  syncFiltersToUrl();
 });
 
 // Re-filter when language mode changes
 watch(toolLangFilter, () => {
-  filteredItems.value = filterItems(getFilterParams());
+  syncFiltersToUrl();
 });
 
-// Watch for changes to active project and reapply filters
-const { activeProjectId } = useProjectProfile();
-watch(activeProjectId, () => {
-  // Re-apply current filters when project changes
-  filteredItems.value = filterItems(getFilterParams());
+// Reactively reinitialize filter options on active locale switch to translate dropdowns instantly
+const { locale } = useLocale();
+watch(locale, () => {
+  initializeFilterOptions();
 });
 
 onMounted(async () => {
   // Initialize filter options from hardcoded labels (v3.0)
   initializeFilterOptions();
   
+  // Sync URL parameters to filterState on load
+  syncUrlToFilters();
+  
   await fetchDatabaseItems();
-  // Apply filters on initial load to respect preselected project
+  
+  // Apply filters on initial load to respect preselected project/query parameters
   filteredItems.value = filterItems(getFilterParams());
 
   // Set tool options in the filter handler
   if (toolOptions.value.length > 0) {
     setToolOptions(toolOptions.value);
   }
+
+  nextTick(() => {
+    isMounted.value = true;
+  });
 });
 </script>
 

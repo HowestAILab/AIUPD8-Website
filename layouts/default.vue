@@ -41,4 +41,16 @@ html {
   scrollbar-width: thin;
   scrollbar-color: #b0b0b0 transparent;
 }
+
+/* Styling PrimeVue filter inputs in panel overlays to match formField borderRadius (9999px) */
+.p-multiselect-filter-container,
+.p-dropdown-filter-container {
+  position: relative;
+}
+
+.p-multiselect-filter,
+.p-dropdown-filter {
+  border-radius: 9999px !important;
+  padding: 0.5rem 2.5rem 0.5rem 1.25rem !important; /* Extra padding to prevent text overlapping search icon */
+}
 </style>

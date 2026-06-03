@@ -4,7 +4,7 @@
       v-for="option in options"
       :key="getOptionValue(option)"
       @click="toggleSelection(option)"
-      class="px-3 py-1.5 rounded-full text-sm font-medium transition-colors border"
+      class="px-3 py-1.5 rounded-full text-sm font-medium transition-colors border focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-main"
       :class="[
         isSelected(option)
           ? 'bg-main text-white border-main'

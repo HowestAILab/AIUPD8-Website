@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div ref="sidebarRef" class="w-full h-full flex flex-col">
     <!-- Fixed header with title and close button -->
     <div
       class="flex-shrink-0 bg-white px-4 py-4 flex items-center justify-between border-b border-gray-200 shadow-sm"
@@ -8,6 +8,7 @@
 
       <!-- Close button next to title -->
       <button
+        ref="closeBtnRef"
         type="button"
         class="ml-4 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
         aria-label="Close filters"
@@ -23,7 +24,7 @@
       <template v-for="filter in generalFilters" :key="filter.id">
         <!-- Button Group Filters -->
         <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-6">
-          <h3 class="text-lg font-bold mb-2">{{ filter.title }}</h3>
+          <h3 class="text-lg font-bold mb-2">{{ t('filter.title.' + filter.id) || filter.title }}</h3>
           <div class="flex w-full overflow-x-auto">
             <ButtonGroup
               :modelValue="getFilterStateValue(filter)"
@@ -38,7 +39,7 @@
 
         <!-- Multi-Select Filters -->
         <div v-else class="mb-6">
-          <h3 class="text-lg font-bold mb-2">{{ filter.title }}</h3>
+          <h3 class="text-lg font-bold mb-2">{{ t('filter.title.' + filter.id) || filter.title }}</h3>
           <MultiSelect
             filter
             :modelValue="getFilterStateValue(filter)"
@@ -46,7 +47,7 @@
             :options="getOptionsForFilter(filter)"
             optionLabel="label"
             optionValue="value"
-            :placeholder="`Select ${filter.title.toLowerCase()}`"
+            :placeholder="t('filter.select') + ' ' + (t('filter.title.' + filter.id) || filter.title).toLowerCase()"
             :loading="loading"
             class="w-full"
           />
@@ -82,7 +83,7 @@
           <!-- Button Group Filters -->
           <div v-if="getFilterComponentType(filter.id) === 'button-group'" class="mb-6">
             <h3 class="text-lg font-bold mb-2 flex items-center gap-1">
-              {{ filter.title }}
+              {{ t('filter.title.' + filter.id) || filter.title }}
               <InfoBubble v-if="filter.description" :text="filter.description" />
             </h3>
             <div class="flex w-full overflow-x-auto">
@@ -100,7 +101,7 @@
           <!-- Multi-Select Filters -->
           <div v-else class="mb-6">
             <h3 class="text-lg font-bold mb-2 flex items-center gap-1">
-              {{ filter.title }}
+              {{ t('filter.title.' + filter.id) || filter.title }}
               <InfoBubble v-if="filter.description" :text="filter.description" />
             </h3>
             <MultiSelect
@@ -110,7 +111,7 @@
               :options="getOptionsForFilter(filter)"
               optionLabel="label"
               optionValue="value"
-              :placeholder="`Select ${filter.title.toLowerCase()}`"
+              :placeholder="t('filter.select') + ' ' + (t('filter.title.' + filter.id) || filter.title).toLowerCase()"
               :loading="loading"
               class="w-full"
               showClear
@@ -133,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, onBeforeUnmount, watch } from "vue";
+import { onMounted, computed, onBeforeUnmount, watch, ref, nextTick } from "vue";
 import MultiSelect from "primevue/multiselect";
 import ButtonGroup from "~/components/ui/ButtonGroup.vue";
 import InfoBubble from "~/components/ui/InfoBubble.vue";
@@ -238,14 +239,53 @@ function clearFilters() {
   clearAllFilters();
 }
 
+const sidebarRef = ref<HTMLElement | null>(null);
+const closeBtnRef = ref<HTMLElement | null>(null);
+
+// Automatically focus the close button when the panel opens to manage focus entry
+watch(() => props.isVisible, (visible) => {
+  if (visible) {
+    nextTick(() => {
+      closeBtnRef.value?.focus();
+    });
+  }
+}, { immediate: true });
+
+function handleTabKey(e: KeyboardEvent) {
+  if (!sidebarRef.value) return;
+  const focusables = sidebarRef.value.querySelectorAll(
+    'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+  );
+  if (focusables.length === 0) return;
+  
+  const firstEl = focusables[0] as HTMLElement;
+  const lastEl = focusables[focusables.length - 1] as HTMLElement;
+  
+  if (e.shiftKey) {
+    if (document.activeElement === firstEl) {
+      lastEl.focus();
+      e.preventDefault();
+    }
+  } else {
+    if (document.activeElement === lastEl) {
+      firstEl.focus();
+      e.preventDefault();
+    }
+  }
+}
+
 // Close handler for the Close/Done button and other programmatic closes
 function closeFilters() {
   emits("update:isVisible", false);
 }
 
-// Allow closing with the Escape key for desktop/keyboard users
+// Allow closing with the Escape key and trap tab keyboard focus
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === "Escape") closeFilters();
+  if (e.key === "Escape") {
+    closeFilters();
+  } else if (e.key === "Tab") {
+    handleTabKey(e);
+  }
 }
 
 onMounted(() => {

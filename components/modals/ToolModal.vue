@@ -132,7 +132,7 @@
                 :key="input"
                 class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
-                {{ input }}
+                {{ t('filter.option.inputs.' + input) }}
               </span>
             </div>
           </div>
@@ -144,7 +144,7 @@
                 :key="task"
                 class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
-                {{ task }}
+                {{ t('filter.option.tasks.' + task) }}
               </span>
             </div>
           </div>
@@ -159,7 +159,7 @@
                 :key="output"
                 class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
-                {{ output }}
+                {{ t('filter.option.outputs.' + output) }}
               </span>
             </div>
           </div>
@@ -171,7 +171,7 @@
                 :key="profile"
                 class="px-7 py-1 bg-white text-gray-600 rounded-full"
               >
-                {{ profile }}
+                {{ t('filter.option.profiles.' + profile) }}
               </span>
             </div>
           </div>
@@ -223,7 +223,7 @@
                     item.uses.includes(option),
                   'text-gray-500': !item.uses.includes(option),
                 }"
-                >{{ option }}</span
+                >{{ t('filter.option.uses.' + option) }}</span
               >
             </div>
           </div>
@@ -244,7 +244,7 @@
                     item.setups.includes(option),
                   'text-gray-500': !item.setups.includes(option),
                 }"
-                >{{ option }}</span
+                >{{ t('filter.option.setups.' + option) }}</span
               >
             </div>
           </div>
@@ -265,7 +265,7 @@
                     item.pricings.includes(option),
                   'text-gray-500': !item.pricings.includes(option),
                 }"
-                >{{ option }}</span
+                >{{ t('filter.option.pricings.' + option) }}</span
               >
             </div>
           </div>
@@ -286,7 +286,7 @@
                     item.licenses.includes(option),
                   'text-gray-500': !item.licenses.includes(option),
                 }"
-                >{{ option }}</span
+                >{{ t('filter.option.licenses.' + option) }}</span
               >
             </div>
           </div>
@@ -299,7 +299,7 @@
               class="flex sm:flex-nowrap flex-wrap bg-gray-100 rounded-full w-full mt-1 border border-gray-200"
             >
               <span
-                v-for="option in ['seconds', 'minutes', 'hours', 'days']"
+                v-for="option in ['seconds', 'minutes', 'hours', 'real-time']"
                 :key="option"
                 class="sm:flex-1 basis-1/2 text-center px-4 py-1 rounded-full transition-all"
                 :class="{
@@ -307,7 +307,7 @@
                     item.generationTimes.includes(option),
                   'text-gray-500': !item.generationTimes.includes(option),
                 }"
-                >{{ option }}</span
+                >{{ t('filter.option.generationTimes.' + option) }}</span
               >
             </div>
           </div>
@@ -328,7 +328,7 @@
                 :key="location"
                 class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm"
               >
-                {{ location }}
+                {{ t('filter.option.dataStorageLocations.' + location) }}
               </span>
             </div>
           </div>

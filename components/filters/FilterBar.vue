@@ -7,6 +7,7 @@
         v-model="filterState.name"
         :options="filterOptions.toolOptions"
         optionLabel="name"
+        optionValue="name"
         :placeholder="t('filter.selectTool')"
         class="w-full"
         filter
@@ -44,17 +45,14 @@
         @change="emitInstantFilters"
       />
     </div>
-    <!-- Project/Profile Selector -->
+    <!-- Capabilities Search -->
     <div class="w-full sm:w-48 flex flex-col">
-      <h3 class="font-semibold">{{ t('filter.profile') }}</h3>
-      <Dropdown
-        v-model="localSelectedProject"
-        :options="projectOptions"
-        optionLabel="label"
-        optionValue="value"
-        :placeholder="t('filter.selectProfile')"
+      <h3 class="font-semibold">{{ t('filter.capabilities') }}</h3>
+      <InputText
+        v-model="filterState.capabilitySearch"
+        :placeholder="t('filter.capabilitiesPlaceholder')"
         class="w-full"
-        @change="handleProjectChange"
+        @input="emitInstantFilters"
       />
     </div>
     <div class="w-full sm:w-48 flex flex-col justify-end mt-[24px]">
@@ -62,10 +60,11 @@
         <!-- Filter button + locale toggle -->
         <div class="flex gap-2 w-full justify-center sm:justify-start items-center">
           <Button
-            :label="t('filter.moreFilters')"
+            :label="activeFiltersCount > 0 ? `${t('filter.moreFilters')} (${activeFiltersCount})` : t('filter.moreFilters')"
             icon="pi pi-filter"
             @click="toggleFilters"
             class="p-button more-filters-button flex-grow"
+            :class="{ 'p-button-raised': activeFiltersCount > 0 }"
           />
 
           <!-- Locale toggle: globe = localized only, globe-strikethrough = all languages -->
@@ -109,6 +108,7 @@ import { useRouter, useRoute } from "vue-router";
 import MultiSelect from "primevue/multiselect";
 import Button from "primevue/button";
 import Dropdown from "primevue/dropdown";
+import InputText from "primevue/inputtext";
 import InfoBubble from "~/components/ui/InfoBubble.vue";
 import { useProjectProfile } from "~/composables/useProjectProfile";
 import { useTranslations } from "~/composables/i18n";
@@ -127,6 +127,26 @@ const { toolLangFilter } = useDatabase();
 
 const router = useRouter();
 const route = useRoute();
+
+const activeFiltersCount = computed(() => {
+  let count = 0;
+  if (filterState.name) count++;
+  if (filterState.searchQuery) count++;
+  if (filterState.capabilitySearch) count++;
+  const filterFields = [
+    'uses', 'setups', 'pricings', 'licenses', 'generationTimes',
+    'inputs', 'outputs', 'profiles', 'tasks', 'dataStorageLocations',
+    'dataDeletionCapabilities',
+    'suitabilityRobustnesses', 'onboardingEases', 'offlineFunctionalities'
+  ];
+  filterFields.forEach(fieldName => {
+    const val = filterState[fieldName as keyof typeof filterState];
+    if (Array.isArray(val)) {
+      count += val.length;
+    }
+  });
+  return count;
+});
 
 const { projects, activeProjects, activeProjectId, setActiveProject } =
   useProjectProfile();

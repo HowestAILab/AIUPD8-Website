@@ -17,6 +17,8 @@ export interface DynamicFilterState {
 // Base filter state for general filters (v3.0 - all string arrays)
 export interface FilterState {
   name: string | null;
+  searchQuery: string;
+  capabilitySearch: string;
   uses: string[];
   setups: string[];
   pricings: string[];
@@ -37,6 +39,8 @@ export interface FilterState {
 // Create a reactive filter state with all possible filters (v3.0 - string arrays)
 export const filterState = reactive<FilterState>({
   name: null,
+  searchQuery: "",
+  capabilitySearch: "",
   uses: [],
   setups: [],
   pricings: [],
@@ -98,6 +102,8 @@ export function reorderOptions(
 // Function to clear all filters
 export function clearAllFilters() {
   filterState.name = null;
+  filterState.searchQuery = "";
+  filterState.capabilitySearch = "";
   filterState.uses = [];
   filterState.setups = [];
   filterState.pricings = [];
@@ -144,6 +150,8 @@ export function removeFilter(type: keyof FilterState, value: string) {
 export function getFilterParams() {
   return {
     name: filterState.name || "",
+    searchQuery: filterState.searchQuery || "",
+    capabilitySearch: filterState.capabilitySearch || "",
     uses: filterState.uses,
     setups: filterState.setups,
     pricings: filterState.pricings,

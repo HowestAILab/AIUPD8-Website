@@ -111,7 +111,7 @@
                       :key="input"
                       class="px-4 py-1 bg-white text-gray-600 rounded-full text-sm"
                     >
-                      {{ input }}
+                      {{ t('filter.option.inputs.' + input) }}
                     </span>
                   </div>
                 </div>
@@ -123,7 +123,7 @@
                       :key="task"
                       class="px-4 py-1 bg-white text-gray-600 rounded-full text-sm"
                     >
-                      {{ task }}
+                      {{ t('filter.option.tasks.' + task) }}
                     </span>
                   </div>
                 </div>
@@ -138,7 +138,7 @@
                       :key="output"
                       class="px-4 py-1 bg-white text-gray-600 rounded-full text-sm"
                     >
-                      {{ output }}
+                      {{ t('filter.option.outputs.' + output) }}
                     </span>
                   </div>
                 </div>
@@ -150,7 +150,7 @@
                       :key="profile"
                       class="px-4 py-1 bg-white text-gray-600 rounded-full text-sm"
                     >
-                      {{ profile }}
+                      {{ t('filter.option.profiles.' + profile) }}
                     </span>
                   </div>
                 </div>
@@ -184,7 +184,7 @@
                       'bg-blue-200 text-blue-700': item.uses.includes(option),
                       'text-gray-500': !item.uses.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.uses.' + option) }}</span
                   >
                 </div>
               </div>
@@ -203,7 +203,7 @@
                       'bg-blue-200 text-blue-700': item.setups.includes(option),
                       'text-gray-500': !item.setups.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.setups.' + option) }}</span
                   >
                 </div>
               </div>
@@ -226,7 +226,7 @@
                         item.pricings.includes(option),
                       'text-gray-500': !item.pricings.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.pricings.' + option) }}</span
                   >
                 </div>
               </div>
@@ -249,7 +249,7 @@
                         item.licenses.includes(option),
                       'text-gray-500': !item.licenses.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.licenses.' + option) }}</span
                   >
                 </div>
               </div>
@@ -266,7 +266,7 @@
                   class="flex bg-gray-100 rounded-full w-full border border-gray-200"
                 >
                   <span
-                    v-for="option in ['seconds', 'minutes', 'hours', 'days']"
+                    v-for="option in ['seconds', 'minutes', 'hours', 'real-time']"
                     :key="option"
                     class="flex-1 text-center px-2 py-1 rounded-full text-sm"
                     :class="{
@@ -274,7 +274,7 @@
                         item.generationTimes.includes(option),
                       'text-gray-500': !item.generationTimes.includes(option),
                     }"
-                    >{{ option }}</span
+                    >{{ t('filter.option.generationTimes.' + option) }}</span
                   >
                 </div>
               </div>

@@ -63,9 +63,9 @@
             <InfoBubble v-if="isFirst" :aria-label="t('info.setup.title')">
               <p class="font-semibold text-gray-900 mb-2">{{ t('info.setup.title') }}</p>
               <ul class="space-y-1.5">
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>No-code</strong> — {{ t('info.setup.noCode') }}</span></li>
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>Low-code</strong> — {{ t('info.setup.lowCode') }}</span></li>
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>Code</strong> — {{ t('info.setup.code') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.setups.no-code') }}</strong> — {{ t('info.setup.noCode') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.setups.low-code') }}</strong> — {{ t('info.setup.lowCode') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.setups.code') }}</strong> — {{ t('info.setup.code') }}</span></li>
               </ul>
             </InfoBubble>
           </div>
@@ -82,7 +82,7 @@
                 'text-gray-500': !item.setups.includes(option),
               }"
             >
-              {{ option }}
+              {{ t('filter.option.setups.' + option) }}
             </span>
           </div>
         </div>
@@ -93,9 +93,9 @@
             <InfoBubble v-if="isFirst" :aria-label="t('info.use.title')">
               <p class="font-semibold text-gray-900 mb-2">{{ t('info.use.title') }}</p>
               <ul class="space-y-1.5">
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>No-code</strong> — {{ t('info.use.noCode') }}</span></li>
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>Low-code</strong> — {{ t('info.use.lowCode') }}</span></li>
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>Code</strong> — {{ t('info.use.code') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.uses.no-code') }}</strong> — {{ t('info.use.noCode') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.uses.low-code') }}</strong> — {{ t('info.use.lowCode') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.uses.code') }}</strong> — {{ t('info.use.code') }}</span></li>
               </ul>
             </InfoBubble>
           </div>
@@ -112,7 +112,7 @@
                 'text-gray-500': !item.uses.includes(option),
               }"
             >
-              {{ option }}
+              {{ t('filter.option.uses.' + option) }}
             </span>
           </div>
         </div>
@@ -123,9 +123,9 @@
             <InfoBubble v-if="isFirst" :aria-label="t('info.pricing.title')">
               <p class="font-semibold text-gray-900 mb-2">{{ t('info.pricing.title') }}</p>
               <ul class="space-y-1.5">
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>Free</strong> — {{ t('info.pricing.free') }}</span></li>
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>Subscription</strong> — {{ t('info.pricing.subscription') }}</span></li>
-                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>Credits</strong> — {{ t('info.pricing.credits') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.pricings.free') }}</strong> — {{ t('info.pricing.free') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.pricings.subscription') }}</strong> — {{ t('info.pricing.subscription') }}</span></li>
+                <li class="flex gap-2"><span class="shrink-0 mt-0.5 w-2 h-2 rounded-full bg-blue-400 inline-block"></span><span><strong>{{ t('filter.option.pricings.credits') }}</strong> — {{ t('info.pricing.credits') }}</span></li>
               </ul>
             </InfoBubble>
           </div>
@@ -142,7 +142,7 @@
                 'text-gray-500': !item.pricings.includes(option),
               }"
             >
-              {{ option }}
+              {{ t('filter.option.pricings.' + option) }}
             </span>
           </div>
         </div>
