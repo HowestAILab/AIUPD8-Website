@@ -264,10 +264,14 @@ export function useDatabase() {
     error.value = null;
 
     // Caching logic: use localStorage to cache for 1 day (24h)
-    const CACHE_KEY = 'aiupd8_tools_cache';
+    // The cache holds already-mapped items, so bump the version suffix whenever the mapped shape changes
+    // (v2: adds `listed`) to stop returning visitors from reading a stale list for up to 24h.
+    const CACHE_KEY = 'aiupd8_tools_cache_v2';
     const CACHE_TTL = 24 * 60 * 60 * 1000; // 1 day in ms
     try {
       if (typeof window !== 'undefined') {
+        // Drop the pre-v2 entry so it does not linger in storage
+        try { localStorage.removeItem('aiupd8_tools_cache'); } catch { /* storage unavailable */ }
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) {
           const { data, timestamp } = JSON.parse(cached);
