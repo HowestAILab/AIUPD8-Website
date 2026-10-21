@@ -224,6 +224,7 @@ import ProjectSelector from "~/components/selectors/ProjectSelector.vue";
 import { useRouter, useRoute } from "vue-router";
 import type { ToolItem } from "~/composables/useDatabase";
 import { hasProjectSpecificData } from "~/composables/useDatabase";
+import { isToolNotUpdatedForOverOneYear } from "~/utils/toolAge";
 import {
   getFilterParams,
   clearAllFilters,
@@ -258,15 +259,6 @@ watch(showFilters, (visible) => {
 
 // Show/hide mobile filter modal
 const showMobileFilter = ref(false);
-
-// Helper function to check if tool is older than 1 year
-function isToolOlderThanOneYear(dateAdded: string): boolean {
-  if (!dateAdded) return false;
-  const added = new Date(dateAdded);
-  const oneYearAgo = new Date();
-  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  return added < oneYearAgo;
-}
 
 const comparisonModal = ref(null);
 
@@ -600,9 +592,8 @@ function filterItems(filters: any) {
 
   // Filter out tools older than 1 year only when showOldTools is turned off (default: on)
   if (!showOldTools.value) {
-    result = result.filter(
-      (item) => !isToolOlderThanOneYear(item.dateAdded || "")
-    );
+    // Based on last updated date (falls back to dateAdded)
+    result = result.filter((item) => !isToolNotUpdatedForOverOneYear(item));
   }
 
   return result;

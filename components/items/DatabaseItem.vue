@@ -186,6 +186,7 @@ import SanityPortableText from "~/components/content/SanityPortableText.vue";
 import { useMedia } from "~/composables/useMedia";
 import type { ToolItem } from "~/composables/useDatabase";
 import { defaultSelectionOrder } from "~/config/selectionOrder";
+import { isToolNotUpdatedForOverOneYear } from "~/utils/toolAge";
 import { useTranslations } from "~/composables/i18n";
 
 const { t } = useTranslations();
@@ -251,19 +252,8 @@ function isToolOutdated(lastChangedDate: string): boolean {
   return lastChanged < fiveMonthsAgo;
 }
 
-// Check if tool is older than 1 year
-function isToolOlderThanOneYear(dateAdded: string): boolean {
-  if (!dateAdded) return false;
-  const added = new Date(dateAdded);
-  const oneYearAgo = new Date();
-  oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  return added < oneYearAgo;
-}
-
-// Computed to check if this tool is old
-const isToolOld = computed(() =>
-  isToolOlderThanOneYear(props.item.dateAdded || "")
-);
+// Computed to check if this tool has not been updated for over a year
+const isToolOld = computed(() => isToolNotUpdatedForOverOneYear(props.item));
 </script>
 
 <style scoped>
