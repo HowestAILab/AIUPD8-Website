@@ -598,7 +598,7 @@ function filterItems(filters: any) {
     }
   });
 
-  // Filter out tools older than 1 year unless showOldTools is true
+  // Filter out tools older than 1 year only when showOldTools is turned off (default: on)
   if (!showOldTools.value) {
     result = result.filter(
       (item) => !isToolOlderThanOneYear(item.dateAdded || "")

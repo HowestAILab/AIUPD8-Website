@@ -61,8 +61,9 @@ export const filterState = reactive<FilterState>({
 // Loading state for taxonomy data
 export const loading = ref(false);
 
-// Show old tools toggle (tools older than 1 year)
-export const showOldTools = ref(false);
+// Show old tools toggle (tools older than 1 year). On by default; users can opt out.
+// Not persisted in the URL and not touched by clearAllFilters, so the default always applies on load/reset.
+export const showOldTools = ref(true);
 
 // Option stores for each filter type - now using FilterOption[] with labels
 export const filterOptions = reactive({
