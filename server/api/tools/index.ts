@@ -52,6 +52,7 @@ export default defineEventHandler(async (event) => {
       image,
       showcaseImages,
       isAiupdateFavourite,
+      isAiupdateListed,
       "aiupdateWorkflows": aiupdateWorkflows[] {
         _key,
         "name": coalesce(name[_key == "nl"][0].value, name[_key == "en"][0].value, name),
@@ -129,6 +130,7 @@ export default defineEventHandler(async (event) => {
           profiles: (tool.profiles || []).filter((v: any) => v !== null),
           // Project-specific favorite fields
           isAiupdateFavourite: !!tool.isAiupdateFavourite,
+          isAiupdateListed: !!tool.isAiupdateListed,
           isPsyaidFavourite: !!tool.isPsyaidFavourite,
           // Map image to match Strapi format
           image: {

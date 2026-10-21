@@ -54,6 +54,7 @@ export default defineEventHandler(async (event) => {
       image,
       showcaseImages,
       isAiupdateFavourite,
+      isAiupdateListed,
       "aiupdateWorkflows": aiupdateWorkflows[] {
         _key,
         "name": coalesce(name[_key == "nl"][0].value, name[_key == "en"][0].value, name),
@@ -163,6 +164,7 @@ export default defineEventHandler(async (event) => {
           link: tool.link || "",
           youtubeLink: tool.youtubeLink || "",
           isAiupdateFavourite: !!tool.isAiupdateFavourite,
+          isAiupdateListed: !!tool.isAiupdateListed,
           aiupdateWorkflows: tool.aiupdateWorkflows || [],
           isPsyaidFavourite: !!tool.isPsyaidFavourite,
           dataDeletionCapabilities: (tool.dataDeletionCapabilities || []).filter((v: any) => v !== null),

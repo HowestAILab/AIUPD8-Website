@@ -45,6 +45,8 @@ export interface ToolItem {
   // Map of projectId -> boolean indicating if favorite for that project
   favorites?: Record<string, boolean>;
   isFavourite?: boolean; // DEPRECATED: kept for backward compatibility
+  // Project-specific "listed" flags (projectId -> boolean), independent of the favourite highlight
+  listed?: Record<string, boolean>;
   isExperimental: boolean;
   uses: string[];
   setups: string[];
@@ -119,7 +121,8 @@ const extractRelationNames = (relation: any): string[] => {
  * Check if a tool has project-specific data filled in
  * A tool belongs to a project if:
  * 1. It has workflows for that project, OR
- * 2. It's marked as a favorite for that project
+ * 2. It's marked as a favorite for that project, OR
+ * 3. (aiupd8) It is explicitly listed in the project (isAiupdateListed)
  * @param tool - The tool item to check
  * @param projectId - The project ID to check for
  * @returns true if the tool has project-specific data for this project
@@ -131,10 +134,11 @@ export const hasProjectSpecificData = (tool: ToolItem, projectId: string): boole
   // Check if this tool is marked as favorite for this project
   const isFavorite = tool.favorites && tool.favorites[projectId];
   
-  // aiupd8 project - check for workflows OR favorite
+  // aiupd8 project - check for workflows OR favorite OR explicitly listed
   if (projectId === 'aiupd8') {
     const hasWorkflows = !!(tool.aiupdateWorkflows && tool.aiupdateWorkflows.length > 0);
-    return isFavorite || hasWorkflows;
+    const isListed = !!(tool.listed && tool.listed['aiupd8']);
+    return isFavorite || hasWorkflows || isListed;
   }
   
   // psyaid project - check for workflows OR favorite
@@ -163,6 +167,10 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
   if (attrs.isPsyaidFavourite) favorites['psyaid'] = true;
   // When adding new projects, add their favorite field here:
   // if (attrs.isNewprojectFavourite) favorites['newproject'] = true;
+
+  // Project-specific "listed in project" flags
+  const listed: Record<string, boolean> = {};
+  if (attrs.isAiupdateListed) listed['aiupd8'] = true;
   
   const result: ToolItem = {
     id: item.id || item._id || '',
@@ -175,6 +183,7 @@ export const mapDatabaseItemToToolItem = (item: any): ToolItem => {
     i18n: attrs.i18n || null,
     favorites: favorites, // NEW: project-specific favorites
     isFavourite: Object.keys(favorites).length > 0, // For backward compatibility
+    listed: listed, // Project-specific listing (not a highlight)
     isExperimental: !!attrs.isExperimental,
     uses: extractRelationNames(attrs.uses),
     setups: extractRelationNames(attrs.setups),
